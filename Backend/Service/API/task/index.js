@@ -12,10 +12,10 @@ const get_task = async ({ }, { email, role, subdivision_id, division_id }) => {
         }
 
         const insert_task = await pg.select('*').from('task').innerJoin('task_type as tt', 'tt.task_type_id', 'task.task_type_id')
-        .where({ subdivision_id: subdivision_id })
-        .andWhere({ 'task.task_type_id': '1' })
-        .orWhere({ 'task.opener_task': email })
-        .orderBy('task.start_date', 'desc');
+            .where({ subdivision_id: subdivision_id })
+            .andWhere({ 'task.task_type_id': '1' })
+            .orWhere({ 'task.opener_task': email })
+            .orderBy('task.start_date', 'desc');
         const data_ = await insert_task.map(async (e) => {
             const file = await readfile_({ id: `tsk-${e.task_id}`, full_path: e.file_path })
                 .then((e) => e)
@@ -50,23 +50,53 @@ const insert_task = async ({ values }, { email, role, subdivision_id }) => {
         }
         for (let i = 0; i < values.length; i++) {
             const tsk = values[i];
-            const insert_task = await pg('task').insert({
-                task_id: tsk.task_id,
-                task_title: tsk.task_title,
-                task_detail: tsk.task_detail,
-                start_date: moment(tsk.start_date).format("YYYY-MM-DD HH:mm:ss"),
-                end_date: moment(tsk.end_date).format("YYYY-MM-DD HH:mm:ss"),
-                opener_task: email,
-                status: tsk.status,
-                file_path: tsk.file_path,
-                task_type_id: tsk.task_type_id,
-                create_date: moment().format("YYYY-MM-DD HH:mm:ss"),
-                del_flag: tsk.del_flag,
-                subdivision_id: subdivision_id,
-                user_id: email,
-                remark: tsk.remark,
-                real_work: tsk.real_work
-            })
+            let sc = {}
+            if (tsk.task_type_id != 1) {
+                const insert_task = await pg.select('up.fristname', 'up.lastname').from('user_master as um')
+                    .innerJoin('user_profile as up', 'up.user_pro_id', 'um.user_pro_id').where({ 'um.email': email })
+
+                sc = {
+                    task_id: tsk.task_id,
+                    task_title: tsk.task_title,
+                    task_detail: tsk.task_detail,
+                    start_date: moment(tsk.start_date).format("YYYY-MM-DD HH:mm:ss"),
+                    end_date: moment(tsk.end_date).format("YYYY-MM-DD HH:mm:ss"),
+                    opener_task: email,
+                    status: tsk.status,
+                    file_path: tsk.file_path,
+                    task_type_id: tsk.task_type_id,
+                    create_date: moment().format("YYYY-MM-DD HH:mm:ss"),
+                    del_flag: tsk.del_flag,
+                    subdivision_id: subdivision_id,
+                    user_id: email,
+                    remark: tsk.remark,
+                    real_work: tsk.real_work,
+                    person_responsible: insert_task[0].fristname + ' ' + insert_task[0].lastname
+                }
+            }
+            if (tsk.task_type_id == 1) {
+                const insert_task = await pg.select('subdivision_name').from('subdivision_master').where({ subdivision_id: subdivision_id })
+                sc = {
+                    task_id: tsk.task_id,
+                    task_title: tsk.task_title,
+                    task_detail: tsk.task_detail,
+                    start_date: moment(tsk.start_date).format("YYYY-MM-DD HH:mm:ss"),
+                    end_date: moment(tsk.end_date).format("YYYY-MM-DD HH:mm:ss"),
+                    opener_task: email,
+                    status: tsk.status,
+                    file_path: tsk.file_path,
+                    task_type_id: tsk.task_type_id,
+                    create_date: moment().format("YYYY-MM-DD HH:mm:ss"),
+                    del_flag: tsk.del_flag,
+                    subdivision_id: subdivision_id,
+                    user_id: email,
+                    remark: tsk.remark,
+                    real_work: tsk.real_work,
+                    person_responsible: insert_task[0].subdivision_name
+
+                }
+            }
+            const insert_task = await pg('task').insert(sc)
 
             if (!insert_task) {
                 return { code: true, status: 400, message: insert_task, data: [] };
@@ -118,6 +148,53 @@ const update_task = async ({ values }, { email, role, subdivision_id }) => {
 
 
         return { code: false, status: 200, message: "success", data: [] };
+
+    } catch (error) {
+        return { code: true, status: 400, message: error.message, data: [] };
+    }
+}
+const update_end_task = async ({ end_task, task_id }, { email, role, subdivision_id }) => {
+    try {
+
+        if (!end_task || !task_id) {
+            return { code: true, status: 400, message: "ข้อมูลไม่ครบถ้วน", data: [] };
+        }
+        if (+role == 3) {
+            return { code: true, status: 400, message: "คุณไม่มีสิทธิ์เข้าถึงข้อมูลนี้", data: [] };
+        }
+
+        const insert_task = await pg('task').update({ detail_end_html: end_task }).where({ task_id: task_id })
+
+        if (!insert_task) {
+            return { code: true, status: 400, message: insert_task, data: [] };
+        }
+
+
+        return { code: false, status: 200, message: "success", data: insert_task };
+
+    } catch (error) {
+        return { code: true, status: 400, message: error.message, data: [] };
+    }
+}
+
+const update_status_task = async ({ status, task_id }, { email, role, subdivision_id }) => {
+    try {
+
+        if (!status || !task_id) {
+            return { code: true, status: 400, message: "ข้อมูลไม่ครบถ้วน", data: [] };
+        }
+        if (+role == 3) {
+            return { code: true, status: 400, message: "คุณไม่มีสิทธิ์เข้าถึงข้อมูลนี้", data: [] };
+        }
+
+        const insert_task = await pg('task').update({ status: status == 1 ? 8 : 3 }).where({ task_id: task_id }).returning('status')
+
+        if (!insert_task) {
+            return { code: true, status: 400, message: insert_task, data: [] };
+        }
+
+
+        return { code: false, status: 200, message: "success", data: insert_task };
 
     } catch (error) {
         return { code: true, status: 400, message: error.message, data: [] };
@@ -182,4 +259,4 @@ const delete_file = async ({ task_id, file_name }, { email, role }) => {
         return { code: true, status: 400, message: error.message, data: [] };
     }
 }
-module.exports = { get_task, insert_task, update_task, delete_task, get_type_task, delete_file }
+module.exports = { get_task, insert_task, update_task, delete_task, get_type_task, delete_file, update_status_task ,update_end_task}

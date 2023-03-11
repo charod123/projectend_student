@@ -10,7 +10,7 @@ const { create_content, update_content, create_main_menu, update_main_menu, dele
 const { update_token_line } = require('../API/token-line');
 const { insert_user_admin, delete_user_admin, update_user_admin } = require('../API/Admin/user');
 const { delete_user, update_user } = require('../API/login & Register/user');
-const { insert_task, delete_file, update_task, delete_task } = require('../API/task');
+const { insert_task, delete_file, update_task, delete_task, update_status_task, update_end_task } = require('../API/task');
 
 
 const resourceMethods = {
@@ -42,7 +42,9 @@ const resourceMethods = {
   insert_task,
   delete_file,
   update_task,
-  delete_task
+  delete_task,
+  update_status_task,
+  update_end_task
 };
 
 dynamicWriteRouter.post("/:resource", async (req, res) => {

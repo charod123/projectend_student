@@ -7,20 +7,11 @@ import { FilterMatchMode } from 'primevue/api';
 import moment from 'moment';
 
 const toast = useToast();
-const data_user = ref();
 const confirm = useConfirm();
 const filters1 = ref(null);
 const service = new Service();
-const option_sundivision = ref();
-// const sigup_popup = ref(false);
-// const disabled_on_edit = ref(false);
-// const conut_user = ref();
-// const otion_gender = ref([{ name: 'ชาย', value: 1 }, { name: 'หญิง', value: 2 }]);
-// const total_users = ref(0);
 const expandedRows = ref([]);
-const selectedTask = ref();
 const task_type = ref();
-const data_on_edit = ref([]);
 const visibleFull = ref(false);
 const values = ref({ task: [{}] });
 const totalSize = ref(0);
@@ -50,11 +41,6 @@ const onRemoveTemplatingFile = (file, removeFileCallback, index, m) => {
     totalSizePercent.value = totalSize.value / 10;
 };
 
-const onClearTemplatingUpload = (clear) => {
-    clear();
-    totalSize.value = 0;
-    totalSizePercent.value = 0;
-};
 
 const onSelectedFiles = async (event, m) => {
     if (event.files.length > 10) {
@@ -67,12 +53,6 @@ const onSelectedFiles = async (event, m) => {
         totalSize.value += parseInt(formatSize(file.size));
     });
 };
-
-const uploadEvent = (callback) => {
-    totalSizePercent.value = totalSize.value / 10;
-    callback();
-};
-
 
 
 const formatSize = (bytes) => {
@@ -362,23 +342,23 @@ const delete_file = async (data, m) => {
             </Column>
             <Column field="create_date" header="สร้างเมื่อ" style="min-width: 10rem" :sortable="true">
                 <template #body="{ data }">
-                    {{ $moment(data.create_date).format("DD/MM/YYYY HH:mm:ss") }}
+                    {{ $moment(data.create_date,'YYYY-MM-DD').format("DD/MM/YYYY HH:mm:ss") }}
                 </template>
             </Column>
             <Column field="start_date" header="วันที่เริ่มงาน" style="min-width:15rem" :sortable="true">
                 <template #body="{ data }">
-                    {{ $moment(data.start_date).format("DD/MM/YYYY") }}
+                    {{ $moment(data.start_date,'YYYY-MM-DD').format("DD/MM/YYYY") }}
                 </template>
             </Column>
             <Column field="end_date" header="กำหนดเสร็จ" style="min-width:15rem" :sortable="true">
                 <template #body="{ data }">
-                    {{ $moment(data.end_date).format("DD/MM/YYYY") }}
+                    {{ $moment(data.end_date,'YYYY-MM-DD').format("DD/MM/YYYY") }}
                 </template>
             </Column>
 
             <Column field="end_date" header="เหลือ (วัน)" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ $moment(data.end_date).format("YYYYMMDD") - $moment(data.start_date).format("YYYYMMDD") }}
+                    {{ $moment(data.end_date,'YYYY-MM-DD').format("YYYYMMDD") - $moment(data.start_date,'YYYY-MM-DD').format("YYYYMMDD") }}
                 </template>
             </Column>
             <Column field="status" header="สถานะ" style="min-width: 15rem" :sortable="true">
@@ -404,7 +384,8 @@ const delete_file = async (data, m) => {
 
         </DataTable>
         <ConfirmPopup></ConfirmPopup>
-        <Sidebar v-model:visible="visibleFull" :baseZIndex="10000" position="full" style="font-family: Kanit;">
+        <Sidebar v-model:visible="visibleFull" style="font-family: Kanit;" maximizable modal header="รายละเอียดงาน"
+            :style="{ width: '100vw' }">
             <template #header>
 
                 <div class="flex justify-content-between align-items-center w-60rem  gap-6">
@@ -430,7 +411,7 @@ const delete_file = async (data, m) => {
                         <div class="flex-auto p-fluid grid">
                             <div class="sm:col-12 md:col-12 lg:col-12 xl:col-12">
 
-                                <div class="card mt-5 shadow-7 bg-bluegray-50" v-for="(m, index) in values.task"
+                                <div class=" card mt-5 shadow-7 bg-blue-100" v-for="(m, index) in values.task"
                                 :key="index">
 
                                 <div class="flex justify-content-between">
@@ -580,7 +561,7 @@ const delete_file = async (data, m) => {
                 </div>
             </div>
         </Sidebar>
-        <Dialog v-model:visible="view_detail" style="font-family: Kanit;" maximizable modal header="รายละเอียดงาน"
+        <Sidebar v-model:visible="view_detail" style="font-family: Kanit;" maximizable modal header="รายละเอียดงาน"
             :style="{ width: '100vw' }">
             <template #header>
 
@@ -602,7 +583,7 @@ const delete_file = async (data, m) => {
                 <div class="flex-auto p-fluid grid">
 
                     <div class="sm:col-12 md:col-12 lg:col-12 xl:col-12">
-                        <div class="card mt-5 shadow-7 bg-bluegray-50" v-for="(m, index) in data_view" :key="index">
+                        <div class="mt-5" v-for="(m, index) in data_view" :key="index">
 
                             <div class="flex justify-content-between">
                                 <h3>กรอกรายละเอียดงาน</h3>
@@ -647,7 +628,7 @@ const delete_file = async (data, m) => {
                                 </div>
                                 <div class="col-12">
                                     <p class="text-xl">อำอธิบายเพิ่มเติม</p>
-                                    <Editor v-model="m.remark" :style="{ height: '30%' }" :init="tinymceSettings"
+                                    <Editor v-if="on_edit_task" v-model="m.remark" :style="{ height: '100vh' }" :init="tinymceSettings"
                                         :disabled="!on_edit_task">
                                         <template #toolbar>
                                             <span class="ql-formats">
@@ -657,6 +638,7 @@ const delete_file = async (data, m) => {
                                             </span>
                                         </template>
                                     </Editor>
+                                    <div v-if="!on_edit_task" v-html="m.remark"></div>
                                 </div>
                                 <div class="sm:col-12 md:col-12 lg:col-12 xl:col-12">
                                     <h3>ไฟล์แนบ</h3>
@@ -775,7 +757,7 @@ const delete_file = async (data, m) => {
                 </div>
             </div>
 
-        </Dialog>
+        </Sidebar>
 
     </div>
 </template>
