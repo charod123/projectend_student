@@ -1,0 +1,371 @@
+.leaflet-control-measure h3,
+.leaflet-measure-resultpopup h3 {
+    font-family: "Kanit";
+    margin: 0 0 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd
+}
+
+.leaflet-control-measure p,
+.leaflet-measure-resultpopup p {
+    font-family: "Kanit";
+    margin: 10px 0 0;
+    line-height: 1.5em;
+    font-size: 1rem;
+}
+
+.leaflet-control-measure p:first-child,
+.leaflet-measure-resultpopup p:first-child {
+    margin-top: 0
+}
+
+.leaflet-control-measure .tasks,
+.leaflet-measure-resultpopup .tasks {
+    margin: 12px 0 0;
+    padding: 10px 0 0;
+    border-top: 1px solid #ddd;
+    text-align: right;
+    list-style: none;
+    list-style-image: none
+}
+
+.leaflet-control-measure .tasks li,
+.leaflet-measure-resultpopup .tasks li {
+    display: inline;
+    margin: 0 10px 0 0
+}
+
+.leaflet-control-measure .tasks li:last-child,
+.leaflet-measure-resultpopup .tasks li:last-child {
+    margin-right: 0
+}
+
+.leaflet-control-measure .coorddivider,
+.leaflet-measure-resultpopup .coorddivider {
+    color: #999;
+}
+
+.leaflet-control-measure {
+    max-width: 280px;
+    background: #fff
+}
+
+.leaflet-control-measure .leaflet-control-measure-toggle,
+.leaflet-control-measure .leaflet-control-measure-toggle:hover {
+    background-size: 14px 14px;
+    /* background-image: url(../img/plans.png); */
+    background-image: url("../img/plans.png");
+    background-size: 85%;
+    border: 0;
+    border-radius: 4px;
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-bottom: 35px;
+    padding-left: 35px;
+}
+
+.leaflet-touch .leaflet-control-measure .leaflet-control-measure-toggle,
+.leaflet-touch .leaflet-control-measure .leaflet-control-measure-toggle:hover {
+    border-radius: 2px
+}
+
+.leaflet-retina .leaflet-control-measure .leaflet-control-measure-toggle,
+.leaflet-retina .leaflet-control-measure .leaflet-control-measure-toggle:hover {
+    /* background-image: url(../img/plans.png); */
+    background-image: url("../img/plans.png");
+    background-size: 85%;
+}
+
+.leaflet-touch .leaflet-control-measure .leaflet-control-measure-toggle,
+.leaflet-touch .leaflet-control-measure .leaflet-control-measure-toggle:hover {
+    background-size: 16px 16px
+}
+
+.leaflet-control-measure .startprompt h3 {
+    margin-bottom: 10px
+}
+
+.leaflet-control-measure .startprompt .tasks {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+    text-align: left
+}
+
+.leaflet-control-measure .leaflet-control-measure-interaction {
+    padding: 10px 12px
+}
+
+.leaflet-control-measure .results .group {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dotted #eaeaea
+}
+
+.leaflet-control-measure .results .group:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0
+}
+
+.leaflet-control-measure .results .heading {
+    margin-right: 5px;
+    color: #999
+}
+
+.leaflet-control-measure a.start {
+    display: inline;
+    width: auto;
+    height: auto;
+    padding-left: 20px;
+    margin-right: 4px;
+    line-height: 1em;
+    border: 0;
+    text-align: left;
+    background-image: url("../assets/start.png");
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    background-size: 12px 12px;
+    color: #ffffff;
+    text-decoration: none;
+    font-family: "Kanit";
+    font-size: 1rem;
+}
+
+.leaflet-control-measure a.start,
+.leaflet-control-measure a.start:hover {
+    background-color: transparent
+}
+
+.leaflet-retina .leaflet-control-measure a.start {
+    background-image: url("../assets/start_@2X.png")
+}
+
+.leaflet-control-measure a.start:hover {
+    opacity: .5;
+    text-decoration: none
+}
+
+.leaflet-control-measure a.cancel {
+    display: inline;
+    width: auto;
+    height: auto;
+    padding-left: 20px;
+    margin-right: 4px;
+    line-height: 1em;
+    border: 0;
+    text-align: left;
+    background-image: url("../assets/cancel.png");
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    background-size: 12px 12px;
+    color: #ffffff;
+    text-decoration: none;
+    font-family: "Kanit";
+    font-size: 1rem;
+}
+
+.leaflet-control-measure a.cancel,
+.leaflet-control-measure a.cancel:hover {
+    background-color: transparent
+}
+
+.leaflet-retina .leaflet-control-measure a.cancel {
+    background-image: url("../assets/cancel_@2X.png")
+}
+
+.leaflet-control-measure a.cancel:hover {
+    opacity: .5;
+    text-decoration: none
+}
+
+.leaflet-control-measure a.finish {
+    display: inline;
+    width: auto;
+    height: auto;
+    padding-left: 20px;
+    margin-right: 4px;
+    line-height: 1em;
+    border: 0;
+    text-align: left;
+    background-image: url("../assets/check.png");
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    background-size: 12px 12px;
+    color: #ffffff;
+    text-decoration: none;
+    font-family: "Kanit";
+    font-size: 1rem;
+}
+
+.leaflet-control-measure a.finish,
+.leaflet-control-measure a.finish:hover {
+    background-color: transparent
+}
+
+.leaflet-retina .leaflet-control-measure a.finish {
+    background-image: url("../assets/check_@2X.png")
+}
+
+.leaflet-control-measure a.finish:hover {
+    opacity: .5;
+    text-decoration: none
+}
+
+.leaflet-measure-resultpopup a.zoomto {
+    display: inline;
+    width: auto;
+    height: auto;
+    padding-left: 20px;
+    margin-right: 4px;
+    line-height: 1em;
+    border: 0;
+    text-align: left;
+    background-image: url("../assets/focus.png");
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    background-size: 12px 12px;
+    color: #000000;
+    text-decoration: none
+}
+
+.leaflet-measure-resultpopup a.zoomto,
+.leaflet-measure-resultpopup a.zoomto:hover {
+    background-color: transparent
+}
+
+.leaflet-retina .leaflet-measure-resultpopup a.zoomto {
+    background-image: url("../assets/focus_@2X.png")
+}
+
+.leaflet-measure-resultpopup a.zoomto:hover {
+    opacity: .5;
+    text-decoration: none
+}
+
+.leaflet-measure-resultpopup a.deletemarkup {
+    display: inline;
+    width: auto;
+    height: auto;
+    padding-left: 20px;
+    margin-right: 4px;
+    line-height: 1em;
+    border: 0;
+    text-align: left;
+    background-image: url("../assets/trash.png");
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    background-size: 12px 12px;
+    color: #000000;
+    text-decoration: none
+}
+
+.leaflet-measure-resultpopup a.deletemarkup,
+.leaflet-measure-resultpopup a.deletemarkup:hover {
+    background-color: transparent
+}
+
+.leaflet-retina .leaflet-measure-resultpopup a.deletemarkup {
+    background-image: url("../assets/trash_@2X.png")
+}
+
+.leaflet-measure-resultpopup a.deletemarkup:hover {
+    opacity: .5;
+    text-decoration: none
+}
+
+.heading {
+    color: #000000;
+}
+
+.leaflet-bottom .leaflet-control-scale {
+    margin-bottom: 10px;
+}
+
+.leaflet-left .leaflet-control-scale {
+    margin-left: 10px;
+}
+
+.leaflet-bar {
+    background-color: #898989;
+    color: rgb(255, 255, 255);
+}
+
+.leaflet-bar a {
+    background-color: #898989;
+    border-bottom: 1px solid #ccc;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+}
+
+.leaflet-control-layers-toggle {
+    background-image: url(https://i.stack.imgur.com/3keSg.png) !important;
+    background-color: #898989;
+    background-size: 35px 35px;
+    border-radius: 10%;
+    width: 50px;
+    height: 50px;
+}
+
+.leaflet-touch .leaflet-control-layers-toggle {
+    background-image: url(https://i.stack.imgur.com/3keSg.png) !important;
+    /* background-color: #1F4386; */
+    background-color: #898989;
+}
+
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+    border: 1px solid rgb(255, 255, 255);
+    background-clip: padding-box;
+}
+
+.leaflet-control-layers-expanded {
+    color: rgb(7, 6, 46);
+    background-color: #ffffff;
+}
+
+a.polyline-measure-controlOnBgColor,
+a.polyline-measure-controlOnBgColor:hover {
+    background-color: rgb(235, 221, 31);
+}
+
+a.polyline-measure-clearControl:active {
+    background-color: rgb(255, 136, 0);
+}
+
+.leaflet-control-coordinates {
+    /* background-color: #1F4386 !important; */
+    background-color: #898989 !important;
+    border: 1px solid white;
+    cursor: pointer;
+    color: #fff;
+    font-family: 'Sukhumvit';
+    font-size: 12px;
+}
+
+.leaflet-control-scale-line {
+    border: 1px solid rgb(255, 255, 255);
+    line-height: 1.1;
+    padding: 2px 5px 1px;
+    font-size: 12px;
+    font-family: "Sukhumvit";
+    white-space: nowrap;
+    overflow: hidden;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #fffefe;
+    /* background: #1F4386; */
+    background: #898989;
+}
+
+.leaflet-control-scale-line:not(:first-child) {
+    margin-top: 0;
+    border: 1px solid rgb(255, 255, 255);
+    border-top: none;
+}

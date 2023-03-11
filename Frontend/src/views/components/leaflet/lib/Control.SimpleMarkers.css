@@ -1,0 +1,51 @@
+.add_marker_control {
+    background-image: url(../img/target.png);
+    width: 20px;
+    height: 20px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    display: block;
+    padding: 3px;
+    margin-bottom: 5px;
+    margin-left: -5px;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    box-shadow: 0 1px 7px rgba(0, 0, 0, 0.65);
+    cursor: auto;
+    text-align: center;
+    background-color: #f80000;
+    padding-bottom: 35px;
+    padding-left: 35px;
+}
+
+.add_marker_control:hover {
+    background-color: #fdee16;
+    background-image: url(../img/target1.png);
+}
+
+.del_marker_control {
+    background-image: url(../img/recycle.png);
+    background-size: 90%;
+    width: 20px;
+    height: 20px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    display: block;
+    padding: 3px;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    box-shadow: 0 1px 7px rgba(0, 0, 0, 0.65);
+    cursor: auto;
+    text-align: center;
+    background-color: #ff0000;
+    padding-bottom: 35px;
+    padding-left: 35px;
+    margin-left: -5px;
+}
+
+.del_marker_control:hover {
+    background-color: #fdee16;
+    background-image: url(../img/recycle1.png);
+}

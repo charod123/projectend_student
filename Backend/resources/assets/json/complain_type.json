@@ -1,0 +1,14 @@
+[
+    {
+        "complain_type_id": "1",
+        "complain_type_name": "แจ้งปัญหาการใช้งานระบบ"
+    },
+    {
+        "complain_type_id": "2",
+        "complain_type_name": "แจ้งปัญหาอุปกรณ์"
+    },
+    {
+        "complain_type_id": "3",
+        "complain_type_name": "อื่นๆ"
+    }
+]
