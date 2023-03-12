@@ -36,7 +36,7 @@ const get_task = async ({ }, { email, role, subdivision_id, division_id }) => {
         if (role == 3) {
             return { code: true, status: 400, message: "คุณไม่มีสิทธิ์เข้าถึงข้อมูลนี้", data: [] };
         }
-        let sql = pg.select('*').from('task').innerJoin('task_type as tt', 'tt.task_type_id', 'task.task_type_id')
+        let sql = pg.select('task.*','tt.task_type_id','tt.task_type_name').from('task').innerJoin('task_type as tt', 'tt.task_type_id', 'task.task_type_id')
             .where({ subdivision_id: subdivision_id })
 
 
@@ -48,15 +48,17 @@ const get_task = async ({ }, { email, role, subdivision_id, division_id }) => {
         if (role == 2) {
             sql = sql.andWhere({ 'task.task_type_id': '1' })
             sql = sql.orWhere({ 'task.opener_task': email })
+            sql = sql.orWhere({ 'task.person_responsible': email })
             sql = sql.orderBy('task.start_date', 'desc');
         }
         const insert_task = await sql
 
 
         const data_ = await insert_task.map(async (e) => {
-            const file = await readfile_({ id: `tsk-${e.task_id}`, full_path: e.file_path })
-                .then((e) => e)
-                .catch((err) => err);
+            const file = await readfile_({ id: `tsk-${e.task_id}`, full_path: e.file_path }).then((e) => e).catch((err) => err);
+            e.start_date = moment(e.start_date).format("YYYY-MM-DD HH:mm:ss")
+            e.end_date = moment(e.end_date).format("YYYY-MM-DD HH:mm:ss")
+            e.create_date = moment(e.create_date).format("YYYY-MM-DD HH:mm:ss")
             e.file = file
             return e
         })
@@ -168,8 +170,8 @@ const update_task = async ({ values }, { email, role, subdivision_id }) => {
             const insert_task = await pg('task').update({
                 task_title: tsk.task_title,
                 task_detail: tsk.task_detail,
-                start_date: moment(tsk.start_date, 'YYYY-MM-DD').format("YYYY-MM-DD HH:mm:ss"),
-                end_date: moment(tsk.end_date, 'YYYY-MM-DD').format("YYYY-MM-DD HH:mm:ss"),
+                start_date: moment(tsk.start_date).format("YYYY-MM-DD HH:mm:ss"),
+                end_date: moment(tsk.end_date).format("YYYY-MM-DD HH:mm:ss"),
                 opener_task: email,
                 task_type_id: tsk.task_type_id,
                 update_date: moment().format("YYYY-MM-DD HH:mm:ss"),

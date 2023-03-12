@@ -13,6 +13,7 @@ const { get_clint } = require('../API/clint');
 const { get_user_admin, get_count_on_subdivision } = require('../API/Admin/user');
 const { get_count_user_devive } = require('../API/login & Register/user');
 const { get_type_task, get_task, get_user_in_subdivision } = require('../API/task');
+const { get_dashboard_task } = require('../API/Reports/Tasks');
 
 const resourceMethods = {
   get_patient_all: get_patient_all,
@@ -37,7 +38,8 @@ const resourceMethods = {
   get_content_on_show,
   get_type_task,
   get_task,
-  get_user_in_subdivision
+  get_user_in_subdivision,
+  get_dashboard_task
 
 };
 

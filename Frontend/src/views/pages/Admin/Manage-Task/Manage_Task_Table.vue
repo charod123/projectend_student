@@ -313,22 +313,28 @@ const delete_file = async (data, m) => {
             :globalFilterFields="['task_type_name', 'opener_task', 'task_title', 'start_date', 'end_date']"
             :paginator="true" :rows="10">
             <template #header>
-                <div class="flex justify-content-between">
-                    <span class="p-input-icon-left mb-2">
-                        <i class="pi pi-search" />
-                        <InputText v-model="filters1['global'].value" placeholder="Keyword Search" style="width: auto;" />
-                    </span>
-                    <div style="font-family: Kanit;">
-                        <h2>จัดการงาน</h2>
+                <div class="grid w-full">
+                    <div class="sm:col-12 md:col-12 lx:col-4 lg:col-4">
+                        <span class="p-input-icon-left mb-2">
+                            <i class="pi pi-search" />
+                            <InputText v-model="filters1['global'].value" placeholder="Keyword Search"
+                                style="width: auto;" />
+                        </span>
                     </div>
-                    <div class="table-header-container flex justify-content-between">
-                        <div>
+                    <div class="sm:col-12 md:col-12 lx:col-4 lg:col-4">
+                        <div style="font-family: Kanit;" class="flex justify-content-center">
+                            <h2>จัดการงาน</h2>
+                        </div>
+                    </div>
+
+                    <div class="sm:col-12 md:col-12 lx:col-4 lg:col-4">
+                        <div class="flex justify-content-end">
                             <Button style="font-family: Kanit;" class="w-10rem p-button-success" icon="pi pi-plus"
                                 label="เปิดงานใหม่" @click="visibleFull = true" />
                         </div>
-
                     </div>
                 </div>
+
 
             </template>
             <template #empty> ไม่มีข้อมูล</template>
@@ -522,9 +528,9 @@ const delete_file = async (data, m) => {
                                                             <Button @click="chooseCallback()" icon="pi pi-cloud-upload"
                                                                 class="p-button-rounded p-button-info p-button-outlined mr-2 mb-2 w-3rem"></Button>
                                                             <!-- <Button @click="uploadEvent(uploadCallback)"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                icon="pi pi-cloud-upload"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                :disabled="!files || files.length === 0"></Button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    icon="pi pi-cloud-upload"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    :disabled="!files || files.length === 0"></Button> -->
                                                             <Button @click="clearCallback()" icon="pi pi-times"
                                                                 class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2 w-3rem"
                                                                 :disabled="!files || files.length === 0"></Button>
@@ -726,9 +732,9 @@ const delete_file = async (data, m) => {
                                                     <Button @click="chooseCallback()" icon="pi pi-cloud-upload"
                                                         class="p-button-rounded p-button-info p-button-outlined mr-2 mb-2 w-3rem"></Button>
                                                     <!-- <Button @click="uploadEvent(uploadCallback)"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                icon="pi pi-cloud-upload"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                :disabled="!files || files.length === 0"></Button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    icon="pi pi-cloud-upload"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    :disabled="!files || files.length === 0"></Button> -->
                                                     <Button @click="clearCallback()" icon="pi pi-times"
                                                         class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2 w-3rem"
                                                         :disabled="!files || files.length === 0"></Button>
