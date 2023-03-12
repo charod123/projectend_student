@@ -6,13 +6,13 @@ const { get_divison } = require('../API/division');
 const { get_district, get_province, get_subdistrict, get_pro_dis_sub_by_id } = require('../API/pro_dis_sub');
 const { get_disease } = require('../API/disease');
 const { get_notify } = require('../API/notify');
-const { get_priority,get_on_role } = require('../API/priority');
+const { get_priority, get_on_role } = require('../API/priority');
 const { get_complain, get_type_complain, get_count_title } = require('../API/complain');
-const { get_content,get_main_menu,get_content_on_show } = require('../API/content-diseases');
+const { get_content, get_main_menu, get_content_on_show } = require('../API/content-diseases');
 const { get_clint } = require('../API/clint');
 const { get_user_admin, get_count_on_subdivision } = require('../API/Admin/user');
 const { get_count_user_devive } = require('../API/login & Register/user');
-const { get_type_task,get_task } = require('../API/task');
+const { get_type_task, get_task, get_user_in_subdivision } = require('../API/task');
 
 const resourceMethods = {
   get_patient_all: get_patient_all,
@@ -36,7 +36,8 @@ const resourceMethods = {
   get_main_menu,
   get_content_on_show,
   get_type_task,
-  get_task
+  get_task,
+  get_user_in_subdivision
 
 };
 

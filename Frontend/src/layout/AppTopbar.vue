@@ -135,11 +135,11 @@ const isOutsideClicked = (event) => {
                     </div> -->
             <Avatar :image="img_user" class="p-link layout-topbar-button mr-2" size="large" shape="circle" />
 
-            <button @click="onSettingsClick()" class="p-link layout-topbar-button" badge="8">
+            <!-- <button @click="onSettingsClick()" class="p-link layout-topbar-button" badge="8">
                 <i class="pi pi-bell"></i>
                 <span>Settings</span>
-            </button>
-            <Badge value="8"></Badge>
+            </button> -->
+            <!-- <Badge value="8"></Badge> -->
             <button @click="openConfirmation" class="p-link layout-topbar-button p-button-danger">
                 <i class="pi pi-sign-out"></i>
                 <span>Logout</span>

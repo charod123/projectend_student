@@ -10,6 +10,7 @@ import Multimonth from '@fullcalendar/multimonth';
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import moment from 'moment';
 import { useStore } from "../../../../store";
+import { useToast } from 'primevue/usetoast';
 import Service from '../../../../service/api';
 const service = new Service();
 const evnet_task = ref();
@@ -22,8 +23,14 @@ const event = ref();
 const event_resources = ref();
 const end_task = ref();
 const tasks = ref();
+const toast = useToast();
+const showbtn = ref(false);
+const header_end_task = ref('เหตุผลที่จบงาน');
+const subdivision = ref();
+
 onBeforeMount(() => {
 })
+
 onMounted(() => {
     get();
 })
@@ -33,7 +40,10 @@ const get = async () => {
     if (res.message == 'success') {
         task_type.value = res.data;
     }
-
+    const sub = await service.post('/read/get_subdivison', {});
+    if (sub.message == 'success') {
+        subdivision.value = sub.data[0];
+    }
 
 }
 const ddd = async () => {
@@ -43,7 +53,7 @@ const ddd = async () => {
         event_resources.value = task_.data.map(e => {
             return {
                 id: e.task_id,
-                title: e.task_title,
+                title: e.opener_task,
                 eventColor: e.status == 1 ? 'blue' : e.status == 2 ? 'orange' : e.status == 3 ? 'grey' : e.status == 8 ? 'help' : 'red',
             }
         })
@@ -57,13 +67,14 @@ const options_ = ref({
     headerToolbar: {
         left: 'prev,next today',
         center: 'title',
-        right: store.role == 1 ? 'resourceTimeline,resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth' : 'dayGridMonth,dayGridWeek,dayGridDay,multiMonthYear'
+        right: JSON.parse(sessionStorage.getItem('priority'))[0].role_id == 1 ? 'resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth' : 'dayGridMonth,dayGridWeek,dayGridDay,multiMonthYear'
     },
     locale: 'th',
     timeZone: 'Bangkok',
     resourceAreaHeaderContent: 'พนักงาน',
     resources: async () => await ddd(),
     events: async () => {
+        JSON.parse(sessionStorage.getItem('priority'))[0].role_id == 1 ? showbtn.value = true : false
         const task_ = await service.post('/read/get_task', {});
         if (task_.message == 'success') {
             evnet_task.value = task_.data;
@@ -97,8 +108,13 @@ const options_ = ref({
 
 });
 const update_task = async (data) => {
-    if (data.status == 8) {
+    if (data.status == 8 || data.status == 2) {
         tasks.value = data;
+        if (data.status == 2) {
+            header_end_task.value = 'ข้อแนะนำ'
+            return show_input_end_task.value = true;
+        }
+        header_end_task.value = 'เหตุผลที่จบงาน'
         return show_input_end_task.value = true;
     }
     tasks.value = null;
@@ -123,11 +139,14 @@ const tinymceSettings = {
     ]
 }
 const save_end_task = async (data) => {
-    const res = await service.post('/write/update_end_task', { task_id: tasks.value.task_id , end_task: data });
-    if (res.message == 'succetask_idss') {
-        data.status = res.data[0].status;
+    const res = await service.post('/write/update_end_task', { task: tasks.value, end_task: data });
+    if (res.message == 'success') {
         get();
         ddd();
+        show_input_end_task.value = false;
+        view_detail.value = false
+        window.location.reload();
+        return toast.add({ severity: 'success', summary: res.message, life: 3000 });
     }
 }
 
@@ -168,6 +187,9 @@ const save_end_task = async (data) => {
 
 <template>
     <div>
+        <div class="flex justify-content-center">
+            <h1>เทศบาล {{ subdivision?.division_name }} &nbsp;&nbsp; หน่วยงาน {{ subdivision?.subdivision_name }}</h1>
+        </div>
         <FullCalendar :events="events" :options="options_" />
         <Dialog v-model:visible="view_detail" style="font-family: Kanit;" maximizable modal header="รายละเอียดงาน"
             :style="{ width: '100vw' }">
@@ -175,7 +197,7 @@ const save_end_task = async (data) => {
 
                 <div class="flex justify-content-between align-items-center w-60rem  gap-6">
                     <div>
-                        <p class="text-6xl font-semibold">รายละเอียดงานของคุณ</p>
+                        <p class="text-6xl font-semibold">รายละเอียดงาน</p>
                     </div>
 
                     <div v-if="on_edit_task">
@@ -218,37 +240,54 @@ const save_end_task = async (data) => {
                                     </Column>
                                     <Column field="start_date" header="วันที่เริ่มต้น">
                                         <template #body="{ data }">
-                                            {{ $moment(data.start_date, 'YYYY-MM-DD').format("YYYYMMDD") }}
+                                            {{ $moment(data.start_date, 'YYYY-MM-DD').format("YYYY-MM-DD") }}
                                         </template>
                                     </Column>
                                     <Column field="end_date" header="วันที่สิ้นสุด">
                                         <template #body="{ data }">
-                                            {{ $moment(data.end_date, 'YYYY-MM-DD').format("YYYYMMDD") }}
+                                            {{ $moment(data.end_date, 'YYYY-MM-DD').format("YYYY-MM-DD") }}
                                         </template>
                                     </Column>
                                     <Column field="end_date" header="เหลือ (วัน)">
                                         <template #body="{ data }">
-                                            {{ $moment(data.end_date, 'YYYY-MM-DD').format("YYYYMMDD") -
-                                                $moment(data.start_date, 'YYYY-MM-DD').format("YYYYMMDD") }}
+                                            {{ $moment(data.end_date).diff(moment(data.start_date), 'days')
+                                           }}
                                         </template>
                                     </Column>
                                     <Column field="real_work" header="ชั่วโมงทำงานจริง">
                                     </Column>
                                     <Column field="status" header="สถานะ" style="width: 15rem">
                                         <template #body="{ data }">
-                                            <Button
-                                                :label="data.status == 1 ? 'รับงาน' : data.status == 8 ? 'ส่งงาน' : data.status == 3 ? 'ปิดงานแล้ว' : data.status == 0 ? 'งานยกเลิก' : 'รอดำเนินการตรวจสอบ'"
-                                                :severity="data.status == 1 ? 'info' : data.status == 8 ? 'help' : data.status == 3 ? 'secondary' : data.status == 0 ? 'danger' : 'warning'"
-                                                rounded :disabled="data.status == 2" @click="update_task(data)" />
+                                            <div v-if="!showbtn">
+                                                <Button
+                                                    :label="data.status == 1 ? 'รับงาน' : data.status == 8 ? 'ส่งงาน' : data.status == 3 ? 'ปิดงานแล้ว' : data.status == 0 ? 'งานยกเลิก' : 'รอดำเนินการตรวจสอบ'"
+                                                    :severity="data.status == 1 ? 'info' : data.status == 8 ? 'help' : data.status == 3 ? 'secondary' : data.status == 0 ? 'danger' : 'warning'"
+                                                    rounded :disabled="data.status == 2" @click="update_task(data)" />
+                                            </div>
+                                            <div v-if="showbtn && data.status == 2">
+                                                <Button :label="data.status == 3 ? 'งานปิดแล้ว' : 'ปิดงาน'"
+                                                    :severity="'secondary'" rounded @click="update_task(data)"
+                                                    :disabled="data.status == 3" />
+                                            </div>
+                                            <div v-if="showbtn && data.status != 2">
+                                                <Button
+                                                    :label="data.status == 1 ? 'รับงาน' : data.status == 8 ? 'ส่งงาน' : data.status == 3 ? 'ปิดงานแล้ว' : data.status == 0 ? 'งานยกเลิก' : 'รอดำเนินการตรวจสอบ'"
+                                                    :severity="data.status == 1 ? 'info' : data.status == 8 ? 'help' : data.status == 3 ? 'secondary' : data.status == 0 ? 'danger' : 'warning'"
+                                                    rounded disabled />
+                                            </div>
 
                                         </template>
                                     </Column>
                                 </DataTable>
-
+                                <div class="col-12 bg-orange-100" v-if="m.status == 2 || m.status == 3">
+                                    <p class="text-xl">เหตุผลที่จบงาน</p>
+                                    <div v-html="m.detail_end_html"></div>
+                                </div>
                                 <div class="col-12">
                                     <p class="text-xl">อำอธิบายเพิ่มเติม</p>
                                     <div v-html="m.remark"></div>
                                 </div>
+
                                 <div class="sm:col-12 md:col-12 lg:col-12 xl:col-12">
                                     <h3>ไฟล์แนบ</h3>
                                     <DataTable v-if="typeof m.file == 'object'" :value="m.file">
@@ -297,12 +336,12 @@ const save_end_task = async (data) => {
             </div>
 
         </Dialog>
-        <Dialog v-model:visible="show_input_end_task" style="font-family: Kanit;" maximizable modal header="เหตุผลที่จบ"
+        <Dialog v-model:visible="show_input_end_task" style="font-family: Kanit;" maximizable modal header="เหตุผลที่จบงาน"
             :style="{ width: '50vw' }">
             <template #header>
                 <div class="flex justify-content-between align-items-center w-60rem  gap-6">
                     <div>
-                        <p class="text-6xl font-semibold">เหตุผลที่จบ</p>
+                        <p class="text-6xl font-semibold">{{ header_end_task }}</p>
                     </div>
 
                 </div>

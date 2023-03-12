@@ -26,9 +26,13 @@ const data = ref({
     files: []
 
 })
+const users = ref();
+const select_user = ref();
+const subdivision = ref();
 const task = ref();
 const task_backup = ref();
 const data_view = ref();
+const showdropdonw = ref(false);
 const addUertry = async (value) => {
     values.value.task.length > 5 ? toast.add({ severity: 'warn', summary: 'สามารถเพิ่มอุปกรณ์ได้แค่ 5 ชิ้น', life: 3000 }) : values.value.task = (value.task || []).concat([{}]);
 }
@@ -96,7 +100,10 @@ const save_edit = async (data) => {
                 }
                 return toast.add({ severity: 'error', summary: res.message, life: 3000 });
             }
+
         }
+        on_edit_task.value = false;
+        view_detail.value = false;
         return toast.add({ severity: 'success', summary: res.message, life: 3000 });
 
     }
@@ -114,23 +121,27 @@ const save = async () => {
     if (res.message == 'success') {
         for (let q = 0; q < data_.length; q++) {
             const id = data_[q];
-            const formData = new FormData();
-            formData.append('full_path', "resources/assets/task-file");
-            formData.append('id', `tsk-${id.task_id}`);
+            if (id.files) {
+                const formData = new FormData();
+                formData.append('full_path', "resources/assets/task-file");
+                formData.append('id', `tsk-${id.task_id}`);
 
-            for (let q = 0; q < id.files.length; q++) {
-                const file = id.files[q];
-                formData.append('file', file)
+                for (let q = 0; q < id.files.length; q++) {
+                    const file = id.files[q];
+                    formData.append('file', file)
 
+                }
+                const res1 = await service.post('/upload/upload-file-over-one', formData);
+                if (res1.message == "success") {
+                    get();
+                    visibleFull.value = false;
+                    return toast.add({ severity: 'success', summary: res.message, life: 3000 });
+                }
+                return toast.add({ severity: 'error', summary: res.message, life: 3000 });
             }
-            const res1 = await service.post('/upload/upload-file-over-one', formData);
-            if (res1.message == "success") {
-                get();
-                visibleFull.value = false;
-                return toast.add({ severity: 'success', summary: res.message, life: 3000 });
-            }
-            return toast.add({ severity: 'error', summary: res.message, life: 3000 });
+
         }
+        return toast.add({ severity: 'success', summary: res.message, life: 3000 });
 
     }
     return toast.add({ severity: 'error', summary: res.message, life: 3000 });
@@ -160,6 +171,15 @@ const get = async () => {
         task_backup.value = task_.data;
         console.log(task.value);
     }
+    const user = await service.post('/read/get_user_in_subdivision', {});
+    if (user.message == 'success') {
+        users.value = user.data;
+    }
+    const sub = await service.post('/read/get_subdivison', {});
+    if (sub.message == 'success') {
+        subdivision.value = sub.data[0];
+    }
+
 }
 const getmax_id = async () => {
     const res = await service.post('/get_id', { table: 'task', filed: 'task_id' });
@@ -169,6 +189,8 @@ const getmax_id = async () => {
 }
 
 onMounted(() => {
+    JSON.parse(sessionStorage.getItem('priority'))[0].role_id == 1 ? showdropdonw.value = true : false
+
     get();
     getmax_id();
 
@@ -224,8 +246,8 @@ const filter_on_btn = (status) => {
     task.value = task_backup.value.filter(x => x.status == status);
 }
 const opendetail = (data) => {
-    data.start_date = moment(data.start_date).format("DD/MM/YYYY");
-    data.end_date = moment(data.end_date).format("DD/MM/YYYY");
+    data.start_date = moment(data.start_date, 'YYYY-MM-DD').format("YYYY-MM-DD");
+    data.end_date = moment(data.end_date, 'YYYY-MM-DD').format("YYYY-MM-DD");
     data_view.value = [data];
     console.log(data_view.value);
     headeronview.value = 'รายละเอียดงาน'
@@ -234,8 +256,8 @@ const opendetail = (data) => {
 
 const openedit = (data) => {
     headeronview.value = 'แก้ไขงาน'
-    data.start_date = moment(data.start_date).format("DD/MM/YYYY");
-    data.end_date = moment(data.end_date).format("DD/MM/YYYY");
+    data.start_date = moment(data.start_date, 'YYYY-MM-DD').format("YYYY-MM-DD");
+    data.end_date = moment(data.end_date, 'YYYY-MM-DD').format("YYYY-MM-DD");
     data_view.value = [data];
     on_edit_task.value = true;
     view_detail.value = true;
@@ -255,18 +277,23 @@ const delete_file = async (data, m) => {
 </script>
 <template>
     <div>
+        <div class="flex justify-content-center">
+            <h1>เทศบาล {{ subdivision?.division_name }} &nbsp;&nbsp; หน่วยงาน {{ subdivision?.subdivision_name }}</h1>
+
+        </div>
         <div class="card grid">
             <span class="p-buttonset col-12">
                 <Button style="font-family: Kanit;" icon="pi pi-tag" label="งานเปิด" class="w-15rem p-button-info" raised
                     @click="filter_on_btn(1)" />
 
-                <Button style="font-family: Kanit;"   icon="pi pi-tag" label="กำลังดำเนินการ" class="w-20rem p-button-help"
+                <Button style="font-family: Kanit;" icon="pi pi-tag" label="กำลังดำเนินการ" class="w-20rem p-button-help"
                     raised @click="filter_on_btn(8)" />
 
                 <Button style="font-family: Kanit;" icon="pi pi-tag" label="งานที่รอดำเนินการตรวจสอบ"
                     class="w-20rem p-button-warning" raised @click="filter_on_btn(2)" />
-
                 <Button style="font-family: Kanit;" icon="pi pi-tag" label="งานยกเลิก" class="w-15rem p-button-danger"
+                    @click="filter_on_btn(4)" />
+                <Button style="font-family: Kanit;" icon="pi pi-tag" label="งานสาย" class="w-15rem p-button-danger"
                     @click="filter_on_btn(0)" />
                 <Button style="font-family: Kanit;" icon="pi pi-tag" label="งานปิด" class="w-15rem p-button-secondary"
                     @click="filter_on_btn(3)" />
@@ -283,7 +310,8 @@ const delete_file = async (data, m) => {
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5, 10, 25]" :filters="filters1" v-model:filters="filters1"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" responsiveLayout="scroll"
-            :globalFilterFields="['task_type_name', 'task_title', 'start_date', 'end_date']" :paginator="true" :rows="10">
+            :globalFilterFields="['task_type_name', 'opener_task', 'task_title', 'start_date', 'end_date']"
+            :paginator="true" :rows="10">
             <template #header>
                 <div class="flex justify-content-between">
                     <span class="p-input-icon-left mb-2">
@@ -337,48 +365,49 @@ const delete_file = async (data, m) => {
             </Column>
             <Column field="person_responsible" header="ผู้รับผิดชอบ" style="min-width: 10rem" :sortable="true">
                 <template #body="{ data }">
-                    {{ !data.person_responsible?'ยังไม่มีผู้รับผิดชอบ': data.person_responsible}}
+                    {{ !data.person_responsible ? 'ยังไม่มีผู้รับผิดชอบ' : data.person_responsible }}
                 </template>
             </Column>
             <Column field="create_date" header="สร้างเมื่อ" style="min-width: 10rem" :sortable="true">
                 <template #body="{ data }">
-                    {{ $moment(data.create_date,'YYYY-MM-DD').format("DD/MM/YYYY HH:mm:ss") }}
+                    {{ $moment(data.create_date, 'YYYY-MM-DD').format("DD/MM/YYYY HH:mm:ss") }}
                 </template>
             </Column>
             <Column field="start_date" header="วันที่เริ่มงาน" style="min-width:15rem" :sortable="true">
                 <template #body="{ data }">
-                    {{ $moment(data.start_date,'YYYY-MM-DD').format("DD/MM/YYYY") }}
+                    {{ $moment(data.start_date, 'YYYY-MM-DD').format("DD/MM/YYYY") }}
                 </template>
             </Column>
             <Column field="end_date" header="กำหนดเสร็จ" style="min-width:15rem" :sortable="true">
                 <template #body="{ data }">
-                    {{ $moment(data.end_date,'YYYY-MM-DD').format("DD/MM/YYYY") }}
+                    {{ $moment(data.end_date, 'YYYY-MM-DD').format("DD/MM/YYYY") }}
                 </template>
             </Column>
 
             <Column field="end_date" header="เหลือ (วัน)" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ $moment(data.end_date,'YYYY-MM-DD').format("YYYYMMDD") - $moment(data.start_date,'YYYY-MM-DD').format("YYYYMMDD") }}
+                    {{ $moment(data.end_date, 'YYYY-MM-DD').format("MMDD") -
+                        $moment(data.start_date, 'YYYY-MM-DD').format("MMDD") }}
                 </template>
             </Column>
-            <Column field="status" header="สถานะ" style="min-width: 15rem" :sortable="true">
+            <Column field="status" header="สถานะ" style="min-width: 20rem" :sortable="true">
                 <template #body="{ data }">
                     <Tag class="text-lg p-2" style="font-family: Kanit;"
-                        :value="data.status == 1 ? 'งานเปิด' : data.status == 2 ? 'งานที่รอดำเนินการตรวจสอบ' : data.status == 0 ? 'งานที่ยกเลิก' : data.status == 8 ? 'กำลังดำเนินการ' : 'งานที่ปิด'"
-                        :severity="data.status == 1 ? 'info' : data.status == 2 ? 'warning' : data.status == 0 ? 'danger' : data.status == 8 ? 'help' : 'secondary'" />
+                        :value="data.status == 1 ? 'งานเปิด' : data.status == 2 ? 'งานที่รอดำเนินการตรวจสอบ' : data.status == 0 ? 'งานที่ยกเลิก' : data.status == 8 ? 'กำลังดำเนินการ' : data.status == 4 ? 'งานสาย' : 'งานที่ปิด'"
+                        :severity="data.status == 1 ? 'info' : data.status == 2 ? 'warning' : data.status == 0 ? 'danger' : data.status == 8 ? 'help' : data.status == 4 ? 'danger' : 'secondary'" />
 
                 </template>
             </Column>
-            
+
 
             <Column header="Tools" style="min-width: 15rem">
                 <template #body="{ data }">
                     <Button icon="pi pi-spin pi-eye" class="p-button-info m-1" aria-label="Filter"
                         @click="opendetail(data)" />
-                    <Button icon="pi pi-spin pi-cog" class="p-button-warning m-1" aria-label="Search"
-                        @click="openedit(data)" />
-                    <Button icon="pi pi-spin pi-trash" class="p-button-danger m-1" aria-label="Bookmark"
-                        @click="confirm3($event, data)" />
+                    <Button v-if="data.status == 1 || data.status == 8" icon="pi pi-spin pi-cog"
+                        class="p-button-warning m-1" aria-label="Search" @click="openedit(data)" />
+                    <Button v-if="data.status == 1 || data.status == 8" icon="pi pi-spin pi-trash"
+                        class="p-button-danger m-1" aria-label="Bookmark" @click="confirm3($event, data)" />
                 </template>
             </Column>
 
@@ -411,21 +440,30 @@ const delete_file = async (data, m) => {
                         <div class="flex-auto p-fluid grid">
                             <div class="sm:col-12 md:col-12 lg:col-12 xl:col-12">
 
-                                <div class=" card mt-5 shadow-7 bg-blue-100" v-for="(m, index) in values.task"
-                                :key="index">
+                                <div class=" card mt-5 shadow-7 bg-blue-100" v-for="(m, index) in values.task" :key="index">
 
-                                <div class="flex justify-content-between">
+                                    <div class="flex justify-content-between">
                                         <h3>กรอกรายละเอียดงาน</h3>
                                         <Button @click="removeUsertry(index, values)" icon="pi pi-spin pi-times"
                                             class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2 w-3rem"></Button>
                                     </div>
 
-                                    <div class="pb-3">
+                                    <div class="pb-3 flex gap-3">
+                                    <div>
                                         <p class="text-xl">เลือกประเภทงาน:</p>
-                                        <Dropdown v-model="m.task_type_id" :options="task_type" optionLabel="task_type_name"
-                                            optionValue="task_type_id" placeholder="เลือกประเภท" id="withoutgrouping"
-                                            class="w-full md:w-20rem" />
+                                        <Dropdown v-model="m.task_type_id" :options="task_type"
+                                                optionLabel="task_type_name" optionValue="task_type_id"
+                                                placeholder="เลือกประเภท" id="withoutgrouping" class="w-full md:w-20rem" />
+                                        </div>
+
+                                        <div v-if="showdropdonw && m.task_type_id != 1">
+                                            <p class="text-xl">เลือกผู้รับผิดชอบ:</p>
+                                            <Dropdown v-model="m.user_id" :options="users" filter optionLabel="fullname"
+                                                optionValue="email" placeholder="เลือกประเภท" id="withoutgrouping"
+                                                class="w-full md:w-20rem" />
+                                        </div>
                                     </div>
+
                                     <div class="grid">
                                         <div class="sm:col-12 md:col-4 lg:col-2 xl:col-2">
                                             <p class="text-xl">ชื่องาน</p>
@@ -444,11 +482,11 @@ const delete_file = async (data, m) => {
 
                                         <div class="sm:col-12 md:col-4 lg:col-3 xl:col-3">
                                             <p class="text-xl">วันที่เริ่มงาน</p>
-                                            <Calendar v-model="m.start_date" showButtonBar showIcon />
+                                            <Calendar v-model="m.start_date" showButtonBar showIcon dateFormat="yy-mm-dd" />
                                         </div>
                                         <div class="sm:col-12 md:col-4 lg:col-3 xl:col-3">
                                             <p class="text-xl">กำหนดเสร็จ</p>
-                                            <Calendar v-model="m.end_date" showButtonBar showIcon />
+                                            <Calendar v-model="m.end_date" showButtonBar showIcon dateFormat="yy-mm-dd" />
                                         </div>
                                         <div class="sm:col-12 md:col-4 lg:col-1 xl:col-1">
                                             <p class="text-xl">ชั่วโมงทำงานจริง</p>
@@ -484,9 +522,9 @@ const delete_file = async (data, m) => {
                                                             <Button @click="chooseCallback()" icon="pi pi-cloud-upload"
                                                                 class="p-button-rounded p-button-info p-button-outlined mr-2 mb-2 w-3rem"></Button>
                                                             <!-- <Button @click="uploadEvent(uploadCallback)"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        icon="pi pi-cloud-upload"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        :disabled="!files || files.length === 0"></Button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                icon="pi pi-cloud-upload"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                :disabled="!files || files.length === 0"></Button> -->
                                                             <Button @click="clearCallback()" icon="pi pi-times"
                                                                 class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2 w-3rem"
                                                                 :disabled="!files || files.length === 0"></Button>
@@ -613,11 +651,11 @@ const delete_file = async (data, m) => {
 
                                 <div class="sm:col-12 md:col-4 lg:col-3 xl:col-3">
                                     <p class="text-xl">วันที่เริ่มงาน</p>
-                                    <Calendar v-model="m.start_date" showButtonBar showIcon />
+                                    <Calendar v-model="m.start_date" showButtonBar showIcon dateFormat="yy-mm-dd" />
                                 </div>
                                 <div class="sm:col-12 md:col-4 lg:col-3 xl:col-3">
                                     <p class="text-xl">กำหนดเสร็จ</p>
-                                    <Calendar v-model="m.end_date" showButtonBar showIcon />
+                                    <Calendar v-model="m.end_date" showButtonBar showIcon dateFormat="yy-mm-dd" />
                                 </div>
                                 <div class="sm:col-12 md:col-4 lg:col-1 xl:col-1">
                                     <p class="text-xl">ชั่วโมงทำงานจริง</p>
@@ -628,8 +666,8 @@ const delete_file = async (data, m) => {
                                 </div>
                                 <div class="col-12">
                                     <p class="text-xl">อำอธิบายเพิ่มเติม</p>
-                                    <Editor v-if="on_edit_task" v-model="m.remark" :style="{ height: '100vh' }" :init="tinymceSettings"
-                                        :disabled="!on_edit_task">
+                                    <Editor v-if="on_edit_task" v-model="m.remark" :style="{ height: '100vh' }"
+                                        :init="tinymceSettings" :disabled="!on_edit_task">
                                         <template #toolbar>
                                             <span class="ql-formats">
                                                 <button class="ql-bold"></button>
@@ -688,9 +726,9 @@ const delete_file = async (data, m) => {
                                                     <Button @click="chooseCallback()" icon="pi pi-cloud-upload"
                                                         class="p-button-rounded p-button-info p-button-outlined mr-2 mb-2 w-3rem"></Button>
                                                     <!-- <Button @click="uploadEvent(uploadCallback)"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        icon="pi pi-cloud-upload"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        :disabled="!files || files.length === 0"></Button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                icon="pi pi-cloud-upload"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                :disabled="!files || files.length === 0"></Button> -->
                                                     <Button @click="clearCallback()" icon="pi pi-times"
                                                         class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2 w-3rem"
                                                         :disabled="!files || files.length === 0"></Button>

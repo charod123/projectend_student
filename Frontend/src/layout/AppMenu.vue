@@ -44,45 +44,52 @@ const model = ref([
     {
         label: 'ระบบจัดการแผนปฏิบัติงาน',
         items: [
-            { label: 'รายงานสรุป', icon: 'pi pi-fw pi-id-card', to: '/admin/dashboard_task', flag: 1 },
-            { label: 'แก้ไขและจัดการงาน', icon: 'pi pi-fw pi-id-card', to: '/admin/manage_task', flag: 1 },
-            { label: 'ปฏิทินงาน', icon: 'pi pi-fw pi-id-card', to: '/admin/fullcalendar', flag: 1, priority_id: 13 },
+            { label: 'รายงานสรุป', icon: 'pi pi-fw pi-id-card', to: '/admin/dashboard_task', flag: 1, priority_id: 19 },
+            { label: 'ปฏิทินงาน', icon: 'pi pi-fw pi-id-card', to: '/admin/fullcalendar', flag: 1, priority_id: 17 },
+            { label: 'จัดการงาน', icon: 'pi pi-fw pi-id-card', to: '/admin/manage_task', flag: 1, priority_id: 9 },
 
-            { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/uikit/formlayout' },
-            { label: 'Input', icon: 'pi pi-fw pi-check-square', to: '/uikit/input' },
-            { label: 'Float Label', icon: 'pi pi-fw pi-bookmark', to: '/uikit/floatlabel' },
-            { label: 'Invalid State', icon: 'pi pi-fw pi-exclamation-circle', to: '/uikit/invalidstate' },
-            { label: 'Button', icon: 'pi pi-fw pi-mobile', to: '/uikit/button', class: 'rotated-icon' },
-            { label: 'Table', icon: 'pi pi-fw pi-table', to: '/uikit/table' },
-            { label: 'List', icon: 'pi pi-fw pi-list', to: '/uikit/list' },
-            { label: 'Tree', icon: 'pi pi-fw pi-share-alt', to: '/uikit/tree' },
-            { label: 'Panel', icon: 'pi pi-fw pi-tablet', to: '/uikit/panel' },
-            { label: 'Overlay', icon: 'pi pi-fw pi-clone', to: '/uikit/overlay' },
-            { label: 'Media', icon: 'pi pi-fw pi-image', to: '/uikit/media' },
-            { label: 'Menu', icon: 'pi pi-fw pi-bars', to: '/uikit/menu', preventExact: true },
-            { label: 'Message', icon: 'pi pi-fw pi-comment', to: '/uikit/message' },
-            { label: 'File', icon: 'pi pi-fw pi-file', to: '/uikit/file' },
-            { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/charts' },
-            { label: 'Misc', icon: 'pi pi-fw pi-circle', to: '/uikit/misc' },
+            // { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/uikit/formlayout' },
+            // { label: 'Input', icon: 'pi pi-fw pi-check-square', to: '/uikit/input' },
+            // { label: 'Float Label', icon: 'pi pi-fw pi-bookmark', to: '/uikit/floatlabel' },
+            // { label: 'Invalid State', icon: 'pi pi-fw pi-exclamation-circle', to: '/uikit/invalidstate' },
+            // { label: 'Button', icon: 'pi pi-fw pi-mobile', to: '/uikit/button', class: 'rotated-icon' },
+            // { label: 'Table', icon: 'pi pi-fw pi-table', to: '/uikit/table' },
+            // { label: 'List', icon: 'pi pi-fw pi-list', to: '/uikit/list' },
+            // { label: 'Tree', icon: 'pi pi-fw pi-share-alt', to: '/uikit/tree' },
+            // { label: 'Panel', icon: 'pi pi-fw pi-tablet', to: '/uikit/panel' },
+            // { label: 'Overlay', icon: 'pi pi-fw pi-clone', to: '/uikit/overlay' },
+            // { label: 'Media', icon: 'pi pi-fw pi-image', to: '/uikit/media' },
+            // { label: 'Menu', icon: 'pi pi-fw pi-bars', to: '/uikit/menu', preventExact: true },
+            // { label: 'Message', icon: 'pi pi-fw pi-comment', to: '/uikit/message' },
+            // { label: 'File', icon: 'pi pi-fw pi-file', to: '/uikit/file' },
+            // { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/charts' },
+            // { label: 'Misc', icon: 'pi pi-fw pi-circle', to: '/uikit/misc' },
         ]
     },
 
 ]);
 
 const get_priority = async () => {
-    if (!store.priority) {
+    // if (!store.priority) {
         const res = await service.post('read/get_on_role', {});
         if (res.message == 'success') {
             store.role = res.data[0].role_id
             sessionStorage.setItem('priority', JSON.stringify(res.data))
-            return model.value[0].items.map((e) => {
-                console.log(e.flag = res.data.filter(x => x.priority_id == e.priority_id)[0]?.can_read ?? 1);
-            })
+            for (let i = 0; i < model.value.length; i++) {
+                const model_ = model.value[i];
+                model.value[model_] = model_.items.map((e) => {
+                    console.log(e.flag = res.data.filter(x => x.priority_id == e.priority_id)[0]?.can_read ?? 1);
+                })
+            }
         }
-    }
-    return model.value[0].items.map((e) => {
-        console.log(e.flag = store.priority.filter(x => x.priority_id == e.priority_id)[0]?.can_read ?? 1);
-    })
+    // // }
+    // for (let i = 0; i < model.value.length; i++) {
+    //     const model_ = model.value[i];
+    //     model.value[model_] = model_.items.map((e) => {
+    //         console.log(e.flag = store.priority.filter(x => x.priority_id == e.priority_id)[0]?.can_read ?? 1);
+    //     })
+    // }
+
 
 }
 onMounted(() => {

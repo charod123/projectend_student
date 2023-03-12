@@ -115,6 +115,7 @@ const sigin = async () => {
         const res = await service.post('/login', data);
         if (res.message === 'success') {
             store.priority = null;
+            store.role = null;
             localStorage.setItem('token', res.data[0].token);
             localStorage.setItem('details', JSON.stringify(res.data[0]));
             toast.add({ severity: 'success', summary: 'Successful', detail: 'Signin Successful', life: 3000 });

@@ -163,7 +163,6 @@ const openpopup = () => {
                     @click="openpopup">เพิ่มเรื่องร้องเรียน</Button>
             </div>
         </div>
-
         <div :class="`col-12 lg:col-12 xl:col-${+store.role == 1 || +store.role == 2 ? '8' : '12'}`">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">

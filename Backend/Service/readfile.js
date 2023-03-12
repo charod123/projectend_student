@@ -7,13 +7,7 @@ const readfile_ = ({ id, full_path }) => {
     fs.readdir(pat, (err, data) => {
       console.log(data);
       if (err) {
-        // if (id.split("-")[0] === 'onborading') {
-        //   reject(`${config.ip_getimg}resources/assets/mian-icon/default/no-img/no-photo-onborading.png`);
-
-        // } else {
         reject(`${config.ip_getimg}resources/assets/mian-icon/default/no-img/no-photo.png`);
-        // }
-
       } else {
         const data_ = data.map(file => `${config.ip_getimg}${full_path}/${id}/${file}`);
         resolve(data_);

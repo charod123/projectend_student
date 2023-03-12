@@ -19,9 +19,9 @@ const Login = async ({ email, password }) => {
     let sql
     if (query[0].role_id != 3) {
       sql = await pg.select('user_master.*', 'subdivision_master.*', 'division_master.division_id', 'division_master.subdistrict_id').from('user_master')
-        .leftJoin('employee', 'employee.user_id', 'user_master.user_id')
-        .leftJoin('subdivision_master', 'subdivision_master.subdivision_id', 'employee.subdivision_id')
-        .leftJoin('division_master', 'division_master.division_id', 'subdivision_master.division_id')
+        .innerJoin('employee', 'employee.user_id', 'user_master.user_id')
+        .innerJoin('subdivision_master', 'subdivision_master.subdivision_id', 'employee.subdivision_id')
+        .innerJoin('division_master', 'division_master.division_id', 'subdivision_master.division_id')
         .where('user_master.email', '=', email)
     }
     if (query[0].role_id == 3) {
