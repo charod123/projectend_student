@@ -63,7 +63,7 @@ exports.connectionString = () => {
     return connectionDB;
 };
 exports.connectionString_pg = () => {
-    return connectionDB_pg;
+    return connectionDB_mssql;
 };
 exports.connectionString_sqlite = () => {
     return connectionDB_sqlite;

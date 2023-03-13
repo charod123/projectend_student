@@ -11,15 +11,17 @@ const get_dashboard_task = async ({ start_date, end_date }, { email, role, subdi
             return { code: true, status: 400, message: "คุณไม่มีสิทธิ์เข้าถึงข้อมูลนี้", data: [] };
         }
         if (role == 2) {
-           
+
             const task = await pg('task as t')
                 .join('task_type as tt', 'tt.task_type_id', 't.task_type_id')
                 .where('t.subdivision_id', subdivision_id)
-                .andWhere({ 't.task_type_id': '1' })
-                .orWhere({ 't.opener_task': email })
-                .orWhere({ 't.person_responsible': email })
-                // .andWhere('t.create_date', '>', start_date)
-                // .andWhere('t.create_date', '<', end_date)
+                .andWhere('t.create_date', '>', start_date)
+                .andWhere('t.create_date', '<', end_date)
+                .andWhere((builder) => {
+                    builder.where('t.task_type_id', 1)
+                        .orWhere('t.opener_task', email)
+                        .orWhere('t.person_responsible', email);
+                })
                 .select(
                     pg.raw('COUNT(t.task_id) as all_task'),
                     pg.raw(`SUM(CASE WHEN t.status = '1' THEN 1 ELSE 0 END) as open_task`),
@@ -28,19 +30,34 @@ const get_dashboard_task = async ({ start_date, end_date }, { email, role, subdi
                     pg.raw(`SUM(CASE WHEN t.status = '4' THEN 1 ELSE 0 END) as late_task`),
                     pg.raw(`SUM(CASE WHEN t.status = '8' THEN 1 ELSE 0 END) as action_task`),
                     pg.raw(`SUM(CASE WHEN t.status = '0' THEN 1 ELSE 0 END) as cancel_task`)
-                )
-            const tasl_type_count = await pg.select('*').from('task_type as tt').where({ del_flag: '1' })
-            const task_type = tasl_type_count.map(async (e) => {
-                const task = await pg('task').select(pg.raw(`SUM(CASE WHEN task_type_id = '${e.task_type_id}' THEN 1 ELSE 0 END) as count_task_type`))
+                );
+
+            const taskTypes = await pg.select('task_type_id')
+                .from('task_type')
+                .where({ del_flag: '1' });
+
+            const taskTypePromises = taskTypes.map(async (taskType) => {
+                const countTaskType = await pg('task')
+                    .select(pg.raw(`SUM(CASE WHEN task_type_id = '${taskType.task_type_id}' THEN 1 ELSE 0 END) as count_task_type`))
                     .where('subdivision_id', subdivision_id)
                     .andWhere('create_date', '>', start_date)
                     .andWhere('create_date', '<', end_date)
-                    .andWhere({ 'del_flag': '1' })
-                    .orWhere({ 'opener_task': email })
-                    .orWhere({ 'person_responsible': email })
-                return task[0]
-            })
-            return { code: false, status: 200, message: "success", data: { task: task[0], task_type: await Promise.all(task_type) } };
+                    .andWhere({ del_flag: '1' })
+                    .andWhere((builder) => {
+                        builder.where('task_type_id', taskType.task_type_id)
+                            .orWhere('opener_task', email)
+                            .orWhere('person_responsible', email);
+                    });
+
+                return {
+                    task_type_id: taskType.task_type_id,
+                    count_task_type: countTaskType[0].count_task_type,
+                };
+            });
+
+
+
+            return { code: false, status: 200, message: "success", data: { task: task[0], task_type: await Promise.all(taskTypePromises) } };
 
         }
         if (role == 1) {
@@ -77,6 +94,7 @@ const get_dashboard_task = async ({ start_date, end_date }, { email, role, subdi
 
                 return task[0]
             })
+
             return { code: false, status: 200, message: "success", data: { task: task[0], user: user[0], task_type: await Promise.all(task_type) } };
 
         }

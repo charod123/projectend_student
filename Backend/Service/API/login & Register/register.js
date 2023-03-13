@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 const moment = require('moment')
 const bcrypt = require('bcryptjs')
 const pg = config.connectionString_pg();
+const { get_id } = require('../get-id')
 const register = async (data) => {
     const {
         user_pro_id,
@@ -49,9 +50,9 @@ const register = async (data) => {
         }
         // `INSERT INTO user_profile VALUES  ('${get_maxid_user_pro}','${fristname}','${lastname}','${birthday}','${gender}','${phone}') RETURNING user_pro_id `;
         // const r1 = await pgcon.get(sql_pro, config.connectionString());
-        const r1 = await pgcon_pg.insert(table, script, pg)
-        if (r1.code) {
-            return { code: true, status: 400, message: r1.message, data: [] };
+        const r1 = await pg(table).insert(script)
+        if (!r1) {
+            return { code: true, status: 400, message: r1, data: [] };
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         // const sql_pat = `INSERT INTO user_master VALUES  ('${get_maxid_user}','${email}','${hashedPassword}','${img_path}','1','${r1.data[0].user_pro_id}',NULL,now(),NULL,'${role_id}','${province_id.pro_id}','${district_id.dis_id}','${subdistrict_id.sub_id}')RETURNING user_id `;
@@ -70,16 +71,17 @@ const register = async (data) => {
             role_id: role_id,
             province_id: province_id.pro_id ?? province_id,
             district_id: district_id.dis_id ?? district_id,
-            subdistrict_id: subdistrict_id.sub_id??subdistrict_id
+            subdistrict_id: subdistrict_id.sub_id ?? subdistrict_id
         }
-        const r2 = await pgcon_pg.insert(table_user, script_user, pg)
+        const r2 = await pg(table_user).insert(script_user)
 
-        if (r2.code) {
-            return { code: true, status: 400, message: r2.message, data: [] };
+
+        if (!r2) {
+            return { code: true, status: 400, message: r2, data: [] };
         }
         // const data = await readDataRole(r2.data[0].user_id).then(e => e).catch(err => err)
 
-        return { code: false, status: 200, message: "success", data: r2.data[0].user_id };
+        return { code: false, status: 200, message: "success", data: r2.user_id };
 
     } catch (error) {
         return { code: true, status: 400, message: error.message, data: [] };

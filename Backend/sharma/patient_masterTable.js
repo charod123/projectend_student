@@ -5,7 +5,7 @@ async function schema() {
   const user_profile = await ms.schema.hasTable('user_profile').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('user_profile', function (t) {
-        t.increments('user_pro_id').primary();
+        t.integer('user_pro_id').primary();
         t.string('fristname', 100).notNullable();
         t.string('lastname', 100).notNullable();
         t.date('birthday');
@@ -17,7 +17,7 @@ async function schema() {
   const complain = await ms.schema.hasTable('complain').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('complain', function (t) {
-        t.increments('cp_id').primary();
+        t.integer('cp_id').primary();
         t.integer('cp_type_id').notNullable();
         t.string('cp_title', 255).notNullable();
         t.text('cp_detail');
@@ -38,7 +38,7 @@ async function schema() {
   const content_diseases = await ms.schema.hasTable('content_diseases').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('content_diseases', function (t) {
-        t.increments('content_id').primary();
+        t.integer('content_id').primary();
         t.text('detail_on_edit');
         t.text('detail_on_show');
         t.integer('division_id');
@@ -71,7 +71,7 @@ async function schema() {
   const disease_master = await ms.schema.hasTable('disease_master').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('disease_master', function (t) {
-        t.increments('cd_id').primary();
+        t.integer('cd_id').primary();
         t.string('cd_name', 155).notNullable();
         t.string('del_flag', 1).notNullable();
         t.timestamp('create_date').defaultTo(ms.fn.now()).notNullable();
@@ -84,7 +84,7 @@ async function schema() {
   const districts = await ms.schema.hasTable('districts').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('districts', function (t) {
-        t.increments('dis_id').primary();
+        t.integer('dis_id').primary();
         t.integer('code');
         t.string('dis_name_in_thai', 150).notNullable();
         t.integer('province_id').notNullable();
@@ -96,7 +96,7 @@ async function schema() {
   const division_master = await ms.schema.hasTable('division_master').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('division_master', function (t) {
-        t.increments('division_id').primary();
+        t.integer('division_id').primary();
         t.string('division_name', 50).notNullable();
         t.string('del_flag', 1).notNullable();
         t.timestamp('create_date').defaultTo(ms.fn.now()).notNullable();
@@ -117,7 +117,7 @@ async function schema() {
   const employee = await ms.schema.hasTable('employee').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('employee', function (t) {
-        t.increments('emp_id').primary();
+        t.integer('emp_id').primary();
         t.string('emp_name_position', 50).notNullable();
         t.integer('subdivision_id').notNullable();
         t.timestamp('create_date').defaultTo(ms.fn.now()).notNullable();
@@ -131,7 +131,7 @@ async function schema() {
   const main_menu = await ms.schema.hasTable('main_menu').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('main_menu', function (t) {
-        t.increments('main_menu_id').primary();
+        t.integer('main_menu_id').primary();
         t.string('main_menu_name', 255).notNullable();
         t.integer('subdivision_id').notNullable();
         t.timestamp('create_date').defaultTo(ms.fn.now()).notNullable();
@@ -148,7 +148,7 @@ async function schema() {
   const notification = await ms.schema.hasTable('notification').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('notification', function (t) {
-        t.increments('ni_id').primary();
+        t.integer('ni_id').primary();
         t.text('detail_deliver')
         t.string('del_flag', 1).notNullable();
         t.text('detail_patient')
@@ -193,7 +193,7 @@ async function schema() {
   const priority = await ms.schema.hasTable('priority').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('priority', function (t) {
-        t.increments('priority_id').primary();
+        t.integer('priority_id').primary();
         t.string('priority_name_th', 100).notNullable();
         t.string('del_flag', 1).notNullable();
       });
@@ -206,7 +206,7 @@ async function schema() {
   const priority_config = await ms.schema.hasTable('priority_config').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('priority_config', function (t) {
-        t.increments('priority_id').primary();
+        t.integer('priority_id').primary();
         t.string('can_read', 1).notNullable();
         t.string('can_delete', 1).notNullable();
         t.string('can_write', 1).notNullable();
@@ -220,7 +220,7 @@ async function schema() {
   const provinces = await ms.schema.hasTable('provinces').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('provinces', function (t) {
-        t.increments('pro_id').primary();
+        t.integer('pro_id').primary();
         t.integer('code')
         t.string('pro_name_in_thai', 150).notNullable();
       });
@@ -233,13 +233,13 @@ async function schema() {
   const subdistricts = await ms.schema.hasTable('subdistricts').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('subdistricts', function (t) {
-        t.increments('sub_id').primary();
+        t.integer('sub_id').primary();
         t.integer('code')
         t.string('sub_name_in_thai', 150).notNullable();
         t.string('latitude', 20)
         t.string('longitude', 20);
         t.integer('district_id').notNullable();
-        t.integer('zip_code')
+        t.string('zip_code')
       });
     }
   });
@@ -248,7 +248,7 @@ async function schema() {
   const subdivision_master = await ms.schema.hasTable('subdivision_master').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('subdivision_master', function (t) {
-        t.increments('subdivision_id').primary();
+        t.integer('subdivision_id').primary();
         t.string('subdivision_name', 200).notNullable();
         t.string('create_by', 32)
         t.integer('division_id').notNullable();
@@ -262,7 +262,7 @@ async function schema() {
   const task = await ms.schema.hasTable('task').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('task', function (t) {
-        t.increments('task_id').primary();
+        t.integer('task_id').primary();
         t.string('task_title', 255).notNullable();
         t.text('task_detail')
         t.timestamp('start_date').defaultTo(ms.fn.now()).notNullable();
@@ -290,7 +290,7 @@ async function schema() {
   const task_type = await ms.schema.hasTable('task_type').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('task_type', function (t) {
-        t.increments('task_type_id').primary();
+        t.integer('task_type_id').primary();
         t.string('task_type_name', 255).notNullable();
         t.string('create_by', 32).notNullable();
         t.timestamp('create_date').defaultTo(ms.fn.now()).notNullable();
@@ -303,7 +303,7 @@ async function schema() {
   const user_master = await ms.schema.hasTable('user_master').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('user_master', function (t) {
-        t.increments('user_id').primary();
+        t.integer('user_id').primary();
         t.string('email', 50).notNullable();
         t.string('password', 200).notNullable();
         t.string('img_path', 255);
@@ -324,7 +324,7 @@ async function schema() {
   const usertry_master = await ms.schema.hasTable('usertry_master').then(function (exists) {
     if (!exists) {
       return ms.schema.createTable('usertry_master', function (t) {
-        t.increments('ut_id').primary();
+        t.integer('ut_id').primary();
         t.string('ut_relationship', 20).notNullable();
         t.integer('user_pro_id').notNullable();
         t.timestamp('create_date').defaultTo(ms.fn.now()).notNullable();
@@ -334,7 +334,7 @@ async function schema() {
       });
     }
   });
-  const inset = await ms('districts').insert({ dis_id: 171, code: 017, dis_name_in_thai: 'เขต ห้วยขวาง', province_id: 1 })
+  // const inset = await ms('districts').insert({ dis_id: 171, code: 017, dis_name_in_thai: 'เขต ห้วยขวาง', province_id: 1 })
  
 }
 schema()
