@@ -29,6 +29,7 @@ const getMarker = (data) => {
         const dev = data.device[i];
         map_.value.setView([dev.latitude, dev.longgitude], 8);
         console.log(data);
+        data.disease = JSON.parse(data.disease);
         const myIcon = L.icon({
             iconUrl: hereIcon,
             iconSize: [50, 60],
@@ -151,7 +152,7 @@ const get_data_noti = async () => {
                     </div>
                 </div>
                 <div v-if="!loading" class="card mb-0 mt-3">
-                  
+
                     <div class="flex justify-content-between mb-3">
                         <div class="grid p-fluid p-2">
                             <span class="block text-3xl mb-3">SOS แจ้งเตือนฉุกเฉิน</span>
@@ -163,14 +164,14 @@ const get_data_noti = async () => {
                                     :class="`customer-badge status-${!item.detail_patient ? 'unqualified' : 'qualified'}`">{{
                                         !item.detail_patient ? 'ไม่มีการการดำเนินการจากเจ้าหน้าที่' :
                                         'ดำเนินการเรียบร้อย' }}</span>
-                                <span>{{item.time_event_dashborad }}</span>
+                                <span>{{ item.time_event_dashborad }}</span>
                             </div>
                         </div>
 
                         <!-- <div class="flex align-items-center justify-content-center bg-red-300 border-round"
-                                            style="width: 2.5rem; height: 2.5rem;border: 1px solid red;">
-                                            <i class="pi pi-exclamation-triangle text-blue-500 text-xl"></i>
-                                        </div> -->
+                                                style="width: 2.5rem; height: 2.5rem;border: 1px solid red;">
+                                                <i class="pi pi-exclamation-triangle text-blue-500 text-xl"></i>
+                                            </div> -->
                     </div>
                     <Button style="font-family: Kanit;" label="ดูทั้งหมด" class="p-button-text mr-2 mb-2"
                         @click.prevent="$router.push('/main/recoad_notification')" />

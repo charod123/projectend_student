@@ -210,7 +210,7 @@ const get_count_title = async ({ }, { email, role, subdistrict_id }) => {
             .where('c.del_flag', '=', '1')
 
         if (+role === 3) {
-            query = query.andWhere('user_id', '=', email).groupBy('c.cp_status');
+            query = query.andWhere('c.user_id', '=', email).groupBy('c.cp_status');
         }
 
         if (+role == 1 || +role == 2) {

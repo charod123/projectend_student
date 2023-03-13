@@ -155,17 +155,16 @@ const get_patient_all = async ({ }, { email, role, subdistrict_id }) => {
 }
 const add_patient = async ({ pat, device, usertry }, { email, role, subdistrict_id }) => {
     try {
-        if (!pat.pat_id || !pat.disease || !pat.member || !pat.postal_code || !pat.province_id || !pat.district_id || !pat.subdistrict_id || device.length < 1 || usertry.length < 1) {
+        if (!pat.pat_id || !pat.disease || !pat.member || !pat.province_id || !pat.district_id || !pat.subdistrict_id || device.length < 1 || usertry.length < 1) {
             return { code: true, status: 400, message: "ข้อมูลไม่ครบถ้วน", data: [] };
         }
         if (pat.subdistrict_id != subdistrict_id) {
             return { code: true, status: 403, message: "ที่อยู่ของผู้ป่วยที่คุณสร้างไม่อยู่ในเขตของคุณ", data: [] };
         }
-        const getMaxIdProFile = await pg('user_profile').max('user_pro_id');
-        const maxIdPro = getMaxIdProFile[0].max || 0;
+        const maxIdPro = await get_id({ table: 'user_profile', filed: 'user_pro_id' })
 
         const insertProfile = await pg('user_profile').insert({
-            user_pro_id: maxIdPro + 1,
+            user_pro_id: maxIdPro.data + 1,
             fristname: pat.pat_fristname,
             lastname: pat.pat_lastname,
             birthday: moment(pat.pat_birthday, 'YYYY-MM-DD').format("YYYY-MM-DD"),
@@ -185,7 +184,7 @@ const add_patient = async ({ pat, device, usertry }, { email, role, subdistrict_
             member: pat.member,
             road: pat.road,
             alley: pat.alley,
-            postal_code: pat.postal_code,
+            postal_code: pat.postal_code ?? 0,
             province_id: pat.province_id,
             district_id: pat.district_id,
             subdistrict_id: pat.subdistrict_id,
@@ -214,7 +213,7 @@ const add_patient = async ({ pat, device, usertry }, { email, role, subdistrict_
                 del_flag: '1'
 
             }
-            const r1 = await pgcon_pg.insert(table, script, pg)
+            const r1 = await pg(table).insert(script);
             if (r1.rowaction == 0) {
                 return { code: true, status: 400, message: r1.message, data: [] };
             }
@@ -320,20 +319,20 @@ const update_patient = async ({ pat, device, usertry }, { email, role }) => {
 
         }
         const update_pat = await pg('patient_master')
-        .where('pat_id', pat.pat_id)
-        .update({
-          pat_weight: pat.pat_weight,
-          pat_height: pat.pat_height,
-          member: pat.member,
-          road: pat.road,
-          alley: pat.alley,
-          update_date: pg.raw('now()'), // use the `now()` function as raw SQL
-          disease: JSON.stringify(pat.disease),
-        });
-      
-      if (!update_pat) {
-        return { code: true, status: 400, message: 'Failed to update patient', data: [] };
-      }
+            .where('pat_id', pat.pat_id)
+            .update({
+                pat_weight: pat.pat_weight,
+                pat_height: pat.pat_height,
+                member: pat.member,
+                road: pat.road,
+                alley: pat.alley,
+                update_date: pg.raw('now()'), // use the `now()` function as raw SQL
+                disease: JSON.stringify(pat.disease),
+            });
+
+        if (!update_pat) {
+            return { code: true, status: 400, message: 'Failed to update patient', data: [] };
+        }
         // const insert_pat = await pgcon.execute(`UPDATE patient_master SET pat_weight='${pat.pat_weight}', pat_height='${pat.pat_height}',member='${pat.member}',road='${pat.road}',alley='${pat.alley}',update_date=now(),disease='${JSON.stringify(pat.disease)}' WHERE pat_id='${pat.pat_id}'`, config.connectionString());
         // if (insert_pat.code) {
         //     return { code: true, status: 400, message: insert_pat.message, data: [] };
@@ -383,12 +382,12 @@ const update_patient = async ({ pat, device, usertry }, { email, role }) => {
 const delete_patient = async ({ pat_id }, { email, role }) => {
     try {
         await pg('patient_master')
-          .where({ pat_id: pat_id })
-          .update({ del_flag: '0', update_date: pg.fn.now() });
+            .where({ pat_id: pat_id })
+            .update({ del_flag: '0', update_date: pg.fn.now() });
         return { code: false, status: 200, message: "success", data: [] };
-      } catch (error) {
+    } catch (error) {
         return { code: true, status: 400, message: error.message, data: [] };
-      }
+    }
 }
 module.exports = {
     get_patient_all,

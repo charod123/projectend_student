@@ -64,24 +64,26 @@ const model = ref([
             // { label: 'File', icon: 'pi pi-fw pi-file', to: '/uikit/file' },
             // { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/charts' },
             // { label: 'Misc', icon: 'pi pi-fw pi-circle', to: '/uikit/misc' },
-        ]
+        ],
+        visible: true,
     },
 
 ]);
 
 const get_priority = async () => {
     // if (!store.priority) {
-        const res = await service.post('read/get_on_role', {});
-        if (res.message == 'success') {
-            store.role = res.data[0].role_id
-            sessionStorage.setItem('priority', JSON.stringify(res.data))
-            for (let i = 0; i < model.value.length; i++) {
-                const model_ = model.value[i];
-                model.value[model_] = model_.items.map((e) => {
-                    console.log(e.flag = res.data.filter(x => x.priority_id == e.priority_id)[0]?.can_read ?? 1);
-                })
-            }
+    const res = await service.post('read/get_on_role', {});
+    if (res.message == 'success') {
+        store.role = res.data[0].role_id
+        sessionStorage.setItem('priority', JSON.stringify(res.data))
+        for (let i = 0; i < model.value.length; i++) {
+            const model_ = model.value[i];
+            model.value[model_] = model_.items.map((e) => {
+                console.log(e.flag = res.data.filter(x => x.priority_id == e.priority_id)[0]?.can_read ?? 1);
+            })
         }
+        model.value[1].visible = res.data[0].role_id == 1 ? true : false;
+    }
     // // }
     // for (let i = 0; i < model.value.length; i++) {
     //     const model_ = model.value[i];

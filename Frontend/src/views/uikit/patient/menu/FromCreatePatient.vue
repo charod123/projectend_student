@@ -411,7 +411,7 @@ const onFileUpload = async (event) => {
                     </div>
 
                 </div>
-                <div v-if="$route.path !== '/edit/patient'" class="grid formgrid mt-5">
+                <!-- <div v-if="$route.path !== '/edit/patient'" class="grid formgrid mt-5">
                     <div class="col-12 mb-2 lg:col-4 lg:mb-0">
                         <span class="p-float-label">
                             <InputText id="inputheignt" disabled type="number" v-model="postal_code"
@@ -422,7 +422,7 @@ const onFileUpload = async (event) => {
                             v-if="store.submitted && !postal_code">กรุณาเลือกข้อมูล.</small>
 
                     </div>
-                </div>
+                </div> -->
 
             </div>
 

@@ -8,7 +8,7 @@ const get_on_role = async ({ }, { email, role }) => {
   try {
     const priority = await knex('priority_config')
       .join('priority', 'priority.priority_id', '=', 'priority_config.priority_id')
-      .select('*')
+      .select('priority.priority_id','priority_config.can_delete','priority_config.can_read','priority_config.can_export','priority_config.can_write','priority_config.role_id')
       .where('priority.del_flag', '=', '1')
       .andWhere('priority_config.role_id', '=', role);
 
