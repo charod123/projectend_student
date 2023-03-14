@@ -29,15 +29,15 @@ const router = createRouter({
                 },
                 {
                     path: '/admin/user',
-                    component: () => import('@/views/uikit/Menu.vue'),
+                    component: () => import('@/views/pages/user_dashboard/MainRoute-Dashboard.vue'),
                     children: [
                         {
                             path: '/admin/user/dashboard',
-                            component: () => import('@/views/uikit/menu/PersonalDemo.vue')
+                            component: () => import('@/views/pages/user_dashboard/menu/Dashboard.vue')
                         },
                         {
                             path: '/admin/user/dashboard_Analysis',
-                            component: () => import('@/views/uikit/menu/SeatDemo.vue')
+                            component: () => import('@/views/pages/user_dashboard/menu/Dashboard-Analysis.vue')
                         },
                         
                     ]

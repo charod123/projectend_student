@@ -2,9 +2,9 @@
 import { onMounted, reactive, ref, watch, onBeforeMount } from 'vue';
 import ProductService from '@/service/ProductService';
 import { useLayout } from '@/layout/composables/layout';
-import Service from '../service/api';
+import Service from '../../../../service/api';
 import moment from 'moment';
-import { useStore } from '../store';
+import { useStore } from '../../../../store';
 
 const { isDarkTheme, contextPath } = useLayout();
 const { layoutConfig } = useLayout();
