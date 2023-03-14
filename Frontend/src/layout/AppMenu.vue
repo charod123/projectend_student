@@ -12,7 +12,7 @@ const model = ref([
     {
         label: 'ระบบเฝ้าระวังฉุกเฉิน',
         items: [
-            { label: 'หน้าสรุปรายงาน', icon: 'pi pi-fw pi-id-card', to: '/dashboard', flag: 0, priority_id: 1 },
+            { label: 'หน้าสรุปรายงาน', icon: 'pi pi-fw pi-id-card', to: '/admin/user', flag: 0, priority_id: 1 },
             { label: 'หน้าหลัก', icon: 'pi pi-fw pi-id-card', to: '/mainstram', flag: 0, priority_id: 1 },
             { label: 'จัดการข้อมูล', icon: 'pi pi-fw pi-id-card', to: '/main/patient/datapatients', flag: 0, priority_id: 16 },
             { label: 'ตั้งค่า', icon: 'pi pi-fw pi-id-card', to: '/main/config/priority', flag: 0, priority_id: 2 },

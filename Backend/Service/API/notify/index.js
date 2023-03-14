@@ -45,7 +45,7 @@ const get_notify = async ({ limit }, { email, role, subdistrict_id, division_id 
       .innerJoin('user_master AS um', 'um.email', 'pm.user_id')
       .innerJoin('user_profile AS up', 'up.user_pro_id', 'pm.user_pro_id')
     let countQuery = knex('notification AS p_')
-      .count('p_.ni_id')
+      .count('p_.ni_id as count')
       .innerJoin('device_master AS dm', 'p_.device_ip', 'dm.device_ip')
       .innerJoin('patient_master AS pm', 'pm.pat_id', 'dm.pat_id')
       .innerJoin('user_master AS um', 'um.email', 'pm.user_id')

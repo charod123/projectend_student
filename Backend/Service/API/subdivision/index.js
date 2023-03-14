@@ -1,7 +1,8 @@
 const config = require("../../../config/config");
 const pgcon = require("../../../pgConnection/pgCon");
 const pgcon_knex = require("../../../pgConnection/pgCon_for_kenx");
-const moment = require('moment')
+const moment = require('moment');
+const { get_id } = require("../get-id");
 const pg = config.connectionString_pg();
 const get_subdivison = async ({ }, { email, role, subdistrict_id, division_id }) => {
     try {
@@ -28,7 +29,7 @@ const get_subdivison = async ({ }, { email, role, subdistrict_id, division_id })
         return { code: true, status: 400, message: error.message, data: [] };
     }
 }
-const insert_subdivison = async ({ subdivision_name, division_id }, { email, role }) => {
+const insert_subdivison = async ({ subdivision_name }, { division_id, email, role }) => {
     try {
         if (!(+role == 1 || +role == 2)) {
             return { code: true, status: 400, message: "คุณไม่มีสิทธิ์เข้าถึงข้อมูลนี้", data: [] };
@@ -36,20 +37,20 @@ const insert_subdivison = async ({ subdivision_name, division_id }, { email, rol
         if (!subdivision_name || !division_id) {
             return { code: true, status: 400, message: "ข้อมูลไม่ครบถ้วน", data: [] };
         }
-        const get_maxid_subdivision = await pg('subdivision_master').max('subdivision_id')
+        const get_maxid_subdivision = await get_id({ table: 'subdivision_master', filed: 'subdivision_id' })
         const table = 'subdivision_master'
         const script = {
-            subdivision_id: get_maxid_subdivision[0].max + 1,
+            subdivision_id: get_maxid_subdivision.data,
             subdivision_name: subdivision_name,
             create_by: email,
             create_date: moment().format("YYYY-MM-DD HH:mm:ss"),
-            update_date: moment().format("YYYY-MM-DD HH:mm:ss"),
+            update_date: null,
             del_flag: '1',
             division_id: division_id
         }
-        const r1 = await pgcon_knex.insert(table, script, pg)
-        if (r1.rowaction == 0) {
-            return { code: true, status: 400, message: r1.message, data: [] };
+        const r1 = await pg(table).insert(script)
+        if (!r1) {
+            return { code: true, status: 400, message: r1, data: [] };
         }
 
         return { code: false, status: 200, message: "success", data: r1 };

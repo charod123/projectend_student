@@ -133,11 +133,10 @@ async function schema() {
       return ms.schema.createTable('main_menu', function (t) {
         t.integer('main_menu_id').primary();
         t.string('main_menu_name', 255).notNullable();
-        t.integer('subdivision_id').notNullable();
         t.timestamp('create_date').defaultTo(ms.fn.now()).notNullable();
         t.timestamp('update_date').defaultTo(ms.fn.now());
         t.string('del_flag', 1).notNullable();
-
+        t.integer('division_id');
       });
     }
   });
@@ -335,7 +334,7 @@ async function schema() {
     }
   });
   // const inset = await ms('districts').insert({ dis_id: 171, code: 017, dis_name_in_thai: 'เขต ห้วยขวาง', province_id: 1 })
- 
+
 }
 schema()
 

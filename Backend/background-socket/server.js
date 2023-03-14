@@ -155,7 +155,7 @@ const sendLINE_Notify = async (data) => {
 const insert_notifications = async (data) => {
   const device = data.device
   const notify = data.notify
-  const get_maxid = await pg('notification').max('ni_id')
+  const get_maxid = await pg('notification').max('ni_id as max')
   const insert_noti = await pg('notification').insert({
     ni_id: get_maxid[0].max + 1,
     detail_deliver: '',

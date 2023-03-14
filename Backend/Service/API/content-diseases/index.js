@@ -1,13 +1,14 @@
 const { execute, get } = require("../../../pgconnection/pgCon");
 const { connectionString, connectionString_pg } = require("../../../config/config");
 const moment = require('moment');
+const { get_id } = require("../get-id");
 const pg = connectionString_pg();
 const get_content_on_show = async ({ }, { email, role, subdistrict_id, user_id, division_id }) => {
     try {
         const result = await pg.select('*').from('main_menu as mm')
-        .innerJoin('division_master AS dm', 'dm.division_id', 'mm.division_id')
-        .where('dm.subdistrict_id', '=', `${subdistrict_id}`)
-        .andWhere('mm.del_flag', '=', '1');
+            .innerJoin('division_master AS dm', 'dm.division_id', 'mm.division_id')
+            .where('dm.subdistrict_id', '=', `${subdistrict_id}`)
+            .andWhere('mm.del_flag', '=', '1');
         if (!result) {
             return { code: true, status: 400, message: result, data: [] };
         }
@@ -27,7 +28,7 @@ const get_content_on_show = async ({ }, { email, role, subdistrict_id, user_id, 
 const get_content = async ({ }, { email, role, subdistrict_id, user_id, division_id }) => {
     try {
         if (+role == 2 || +role == 1) {
-            const result = await pg.select('*')
+            const result = await pg.select( 'm.main_menu_name', 'cd.*')
                 .from('main_menu as m')
                 .join('content_diseases as cd', 'cd.main_menu_id', '=', 'm.main_menu_id')
                 .join('division_master as dm', 'dm.division_id', '=', 'cd.division_id')
@@ -49,13 +50,15 @@ const get_content = async ({ }, { email, role, subdistrict_id, user_id, division
 const create_content = async ({ detail_on_edit, detail_on_show, sub_menu_name, main_menu_id }, { email, role, division_id }) => {
     try {
         if (+role === 2 || +role === 1) {
-            if (!(detail_on_edit || detail_on_show || division_id || sub_menu_name || main_menu_id)) {
+            if ((!detail_on_edit || !detail_on_show || !division_id || !sub_menu_name || !main_menu_id)) {
                 return { code: true, status: 400, message: "ข้อมูลไม่ครบถ้วน", data: [] };
             }
+            const id = await get_id({ table: 'content_diseases', filed: 'content_id' })
             const pat_master = await pg('content_diseases').insert({
+                content_id: id.data,
                 detail_on_edit,
                 detail_on_show,
-                create_date: pg.fn.now(),
+                create_date: moment().format("YYYY-MM-DD HH:mm:ss"),
                 division_id,
                 del_flag: '1',
                 sub_menu_name,
@@ -82,7 +85,7 @@ const update_content = async ({ content_id, detail_on_edit, detail_on_show, sub_
             const pat_master = await pg('content_diseases').update({
                 detail_on_edit,
                 detail_on_show,
-                create_date: pg.fn.now(),
+                create_date: moment().format("YYYY-MM-DD HH:mm:ss"),
                 division_id,
                 del_flag: '1',
                 sub_menu_name,
@@ -108,7 +111,7 @@ const update_main_menu = async ({ main_menu_id, main_menu_name }, { email, role,
             const result = await pg('main_menu')
                 .update({
                     main_menu_name: main_menu_name,
-                    update_date: pg.fn.now()
+                    update_date: moment().format("YYYY-MM-DD HH:mm:ss")
                 }).where({ main_menu_id: main_menu_id })
 
             if (!result) {
@@ -131,7 +134,7 @@ const create_main_menu = async ({ main_menu_id, main_menu_name }, { email, role,
                 .insert({
                     main_menu_id: main_menu_id,
                     main_menu_name: main_menu_name,
-                    create_date: pg.fn.now(),
+                    create_date: moment().format("YYYY-MM-DD HH:mm:ss"),
                     del_flag: '1',
                     division_id: division_id
                 })

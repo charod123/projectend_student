@@ -42,7 +42,7 @@ const get = async () => {
     }
 
     console.log(store.content_data);
-    if (store.content_data) {
+    if (store.content_data.sub_menu_name) {
         // data.value.main_menu_id = store.content_data?.main_menu_id
         edit.value = true;
         header.value = 'แก้ไขเนื้อหาโรคที่มักพบบ่อย'

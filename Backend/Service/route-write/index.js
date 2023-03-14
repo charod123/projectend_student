@@ -11,6 +11,7 @@ const { update_token_line } = require('../API/token-line');
 const { insert_user_admin, delete_user_admin, update_user_admin } = require('../API/Admin/user');
 const { delete_user, update_user } = require('../API/login & Register/user');
 const { insert_task, delete_file, update_task, delete_task, update_status_task, update_end_task } = require('../API/task');
+const { delete_task_type, insert_task_type, update_task_type } = require('../API/task_type');
 
 
 const resourceMethods = {
@@ -44,7 +45,10 @@ const resourceMethods = {
   update_task,
   delete_task,
   update_status_task,
-  update_end_task
+  update_end_task,
+  delete_task_type,
+  insert_task_type,
+  update_task_type
 };
 
 dynamicWriteRouter.post("/:resource", async (req, res) => {

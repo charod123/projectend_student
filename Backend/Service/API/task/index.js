@@ -36,7 +36,7 @@ const get_task = async ({ }, { email, role, subdivision_id, division_id }) => {
         if (role == 3) {
             return { code: true, status: 400, message: "คุณไม่มีสิทธิ์เข้าถึงข้อมูลนี้", data: [] };
         }
-        let sql = pg.select('task.*','tt.task_type_id','tt.task_type_name').from('task').innerJoin('task_type as tt', 'tt.task_type_id', 'task.task_type_id')
+        let sql = pg.select('task.*', 'tt.task_type_id', 'tt.task_type_name').from('task').innerJoin('task_type as tt', 'tt.task_type_id', 'task.task_type_id')
             .where({ subdivision_id: subdivision_id })
 
 
@@ -313,4 +313,6 @@ const delete_file = async ({ task_id, file_name }, { email, role }) => {
         return { code: true, status: 400, message: error.message, data: [] };
     }
 }
+
+
 module.exports = { get_task, insert_task, update_task, delete_task, get_type_task, delete_file, update_status_task, update_end_task, get_user_in_subdivision }

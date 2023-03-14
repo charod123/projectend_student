@@ -4,8 +4,9 @@ import Service from '../../../../service/api';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode } from 'primevue/api';
+import { useStore } from '../../../../store';
 import moment from 'moment';
-
+const store = useStore();
 const toast = useToast();
 const confirm = useConfirm();
 const filters1 = ref(null);
@@ -23,11 +24,15 @@ const headeronview = ref('รายละเอียดงาน');
 const data = ref({
     task_id: 99999,
     task_type_id: 1,
+    task_type_name: '',
     files: []
 
 })
+const disabled_on_edit = ref();
+const sigup_popup = ref();
 const users = ref();
 const select_user = ref();
+const op = ref();
 const subdivision = ref();
 const task = ref();
 const task_backup = ref();
@@ -186,6 +191,10 @@ const getmax_id = async () => {
     if (res.message == 'success') {
         data.value.task_id = res.data
     }
+    const task_type = await service.post('/get_id', { table: 'task_type', filed: 'task_type_id' });
+    if (task_type.message == 'success') {
+        data.value.task_type_id = task_type.data
+    }
 }
 
 onMounted(() => {
@@ -236,12 +245,35 @@ const confirm3 = (event, { task_id }) => {
         }
     });
 }
+const confirm4 = (event, { task_type_id }) => {
+    confirm.require({
+        target: event.currentTarget,
+        message: 'คุณต้องการยกเลิกแผนงานนี้ใช่หรือไม่?',
+        icon: 'pi pi-info-circle',
+        acceptClass: 'p-button-danger',
+        accept: async () => {
+            const res = await service.post('/write/delete_task_type', { task_type_id: task_type_id });
+            if (res.message == 'success') {
+                get();
+                return toast.add({ severity: 'success', summary: 'ลบข้อมูลสำเร็จ', life: 2000 });
+            }
+            return toast.add({ severity: 'error', summary: res.message, life: 3000 });
+
+        },
+        reject: () => {
+            toast.add({ severity: 'warn', summary: 'ยกเลิก', life: 2000 });
+        }
+    });
+}
 watch(task_type_id, () => {
     task.value = task_backup.value.filter(x => x.task_type_id == task_type_id.value);
 })
 onBeforeMount(() => {
     initFilters1();
 });
+const toggle = (event) => {
+    op.value.toggle(event);
+};
 const filter_on_btn = (status) => {
     task.value = task_backup.value.filter(x => x.status == status);
 }
@@ -273,6 +305,27 @@ const delete_file = async (data, m) => {
     }
     return toast.add({ severity: 'error', summary: res.message, life: 3000 });
 
+}
+const create_main = () => {
+    getmax_id();
+    data.value.task_type_id = ''
+    data.value.task_type_name = ''
+    sigup_popup.value = true;
+}
+const edit_task_type = (data_) => {
+    data.value.task_type_id = data_.task_type_id;
+    data.value.task_type_name = data_.task_type_name;
+    disabled_on_edit.value = true;
+    sigup_popup.value = true;
+}
+const create_task_type = async (url) => {
+    const res3 = await service.post(`/write/${url}`, { task_type_id: data.value.task_type_id, task_type_name: data.value.task_type_name });
+    if (res3.message == 'success') {
+        sigup_popup.value = false;
+        get();
+        return toast.add({ severity: 'success', summary: res3.message, life: 2000 });
+    }
+    return toast.add({ severity: 'error', summary: res3.message, life: 2000 });
 }
 </script>
 <template>
@@ -306,6 +359,20 @@ const delete_file = async (data, m) => {
             </div>
 
         </div>
+        <Dialog style="font-family: Kanit;" :header="`${disabled_on_edit ? 'แก้ไขข้อมูลประเภท' : 'เพิ่มข้อมูลประเภท'}`"
+            v-model:visible="sigup_popup" :breakpoints="{ '960px': '75vw', '640px': '90vw' }" :style="{ width: '20vw' }"
+            :position="'right'" :modal="true">
+            <div class="grid p-fluid">
+                <div class="col-12">
+                    <InputText v-model="data.task_type_name" placeholder="ชื่อเมณูหลัก" />
+                </div>
+            </div>
+            <template #footer>
+                <Button label="บันทึก" icon="pi pi-check"
+                    @click="create_task_type(`${disabled_on_edit ? 'update_task_type' : 'insert_task_type'}`)" autofocus />
+            </template>
+        </Dialog>
+
         <DataTable :value="task" v-model:expandedRows="expandedRows" dataKey="id" style="font-family: Kanit;"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5, 10, 25]" :filters="filters1" v-model:filters="filters1"
@@ -329,14 +396,42 @@ const delete_file = async (data, m) => {
 
                     <div class="sm:col-12 md:col-12 lx:col-4 lg:col-4">
                         <div class="flex justify-content-end">
-                            <Button style="font-family: Kanit;" class="w-10rem p-button-success" icon="pi pi-plus"
-                                label="เปิดงานใหม่" @click="visibleFull = true" />
+                            <div>
+                                <Button v-if="store.role == 1" style="font-family: Kanit;"
+                                    class="w-15rem p-button-success mr-4" icon="pi pi-plus" label="จัดการข้อมูลประเภทงาน"
+                                    @click="toggle" />
+                                <Button style="font-family: Kanit;" class="w-10rem p-button-success" icon="pi pi-plus"
+                                    label="เปิดงานใหม่" @click="visibleFull = true" />
+                            </div>
                         </div>
                     </div>
                 </div>
 
 
             </template>
+            <OverlayPanel ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px"
+                :breakpoints="{ '960px': '75vw' }">
+                <DataTable :value="task_type" v-model:selection="selectedProduct" selectionMode="single" :paginator="true"
+                    :rows="4" responsiveLayout="scroll">
+                    <template #header>
+                        <div class="flex justify-content-between">
+                            <h1></h1>
+                            <Button icon="pi pi-plus" class="p-button-rounded p-button-success mr-2 mb-2"
+                                @click="create_main" />
+                        </div>
+
+                    </template>
+                    <Column field="task_type_name" header="ชื่อประเภทงาน" sortable style="width: 50%"></Column>
+                    <Column style="width: 40%">
+                        <template #body="{ data }">
+                            <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
+                                @click="edit_task_type(data)" />
+                            <Button icon="pi pi-trash" class="p-button-rounded p-button-danger mr-2 mb-2"
+                                @click="confirm4($event, data)" />
+                        </template>
+                    </Column>
+                </DataTable>
+            </OverlayPanel>
             <template #empty> ไม่มีข้อมูล</template>
             <template #loading> Loading customers data. Please wait. </template>
             <template #paginatorstart>
@@ -402,8 +497,8 @@ const delete_file = async (data, m) => {
                         :value="data.status == 1 ? 'งานเปิด' : data.status == 2 ? 'งานที่รอดำเนินการตรวจสอบ' : data.status == 0 ? 'งานที่ยกเลิก' : data.status == 8 ? 'กำลังดำเนินการ' : data.status == 4 ? 'งานสาย' : 'งานที่ปิด'"
                         :severity="data.status == 1 ? 'info' : data.status == 2 ? 'warning' : data.status == 0 ? 'danger' : data.status == 8 ? 'help' : data.status == 4 ? 'danger' : 'secondary'" />
 
-                </template>
-            </Column>
+            </template>
+        </Column>
 
 
             <Column header="Tools" style="min-width: 15rem">
@@ -455,9 +550,9 @@ const delete_file = async (data, m) => {
                                     </div>
 
                                     <div class="pb-3 flex gap-3">
-                                    <div>
-                                        <p class="text-xl">เลือกประเภทงาน:</p>
-                                        <Dropdown v-model="m.task_type_id" :options="task_type"
+                                        <div>
+                                            <p class="text-xl">เลือกประเภทงาน:</p>
+                                            <Dropdown v-model="m.task_type_id" :options="task_type"
                                                 optionLabel="task_type_name" optionValue="task_type_id"
                                                 placeholder="เลือกประเภท" id="withoutgrouping" class="w-full md:w-20rem" />
                                         </div>
@@ -528,9 +623,9 @@ const delete_file = async (data, m) => {
                                                             <Button @click="chooseCallback()" icon="pi pi-cloud-upload"
                                                                 class="p-button-rounded p-button-info p-button-outlined mr-2 mb-2 w-3rem"></Button>
                                                             <!-- <Button @click="uploadEvent(uploadCallback)"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    icon="pi pi-cloud-upload"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    :disabled="!files || files.length === 0"></Button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            icon="pi pi-cloud-upload"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            :disabled="!files || files.length === 0"></Button> -->
                                                             <Button @click="clearCallback()" icon="pi pi-times"
                                                                 class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2 w-3rem"
                                                                 :disabled="!files || files.length === 0"></Button>
@@ -732,9 +827,9 @@ const delete_file = async (data, m) => {
                                                     <Button @click="chooseCallback()" icon="pi pi-cloud-upload"
                                                         class="p-button-rounded p-button-info p-button-outlined mr-2 mb-2 w-3rem"></Button>
                                                     <!-- <Button @click="uploadEvent(uploadCallback)"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    icon="pi pi-cloud-upload"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    :disabled="!files || files.length === 0"></Button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            icon="pi pi-cloud-upload"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            :disabled="!files || files.length === 0"></Button> -->
                                                     <Button @click="clearCallback()" icon="pi pi-times"
                                                         class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2 w-3rem"
                                                         :disabled="!files || files.length === 0"></Button>

@@ -27,6 +27,21 @@ const router = createRouter({
                     path: '/admin/dashboard_task',
                     component: () => import('@/views/pages/Admin/Dashboard_Task/Dashboard_Task.vue')
                 },
+                {
+                    path: '/admin/user',
+                    component: () => import('@/views/uikit/Menu.vue'),
+                    children: [
+                        {
+                            path: '/admin/user/dashboard',
+                            component: () => import('@/views/uikit/menu/PersonalDemo.vue')
+                        },
+                        {
+                            path: '/admin/user/dashboard_Analysis',
+                            component: () => import('@/views/uikit/menu/SeatDemo.vue')
+                        },
+                        
+                    ]
+                },
             ]
         },
         {
