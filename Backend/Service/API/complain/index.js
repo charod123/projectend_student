@@ -1,4 +1,4 @@
-const { execute, get } = require("../../../pgconnection/pgCon");
+// const { execute, get } = require("../../../pgconnection/pgCon");
 const { connectionString, connectionString_pg } = require("../../../config/config");
 const moment = require('moment');
 const { readfile_ } = require("../../readfile");

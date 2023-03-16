@@ -1,11 +1,11 @@
-const pgcon = require("../../../pgconnection/pgCon");
-const pgcon_pg = require("../../../pgconnection/pgCon_for_kenx");
+// const pgcon = require("../../../pgconnection/pgCon");
+// const pgcon_pg = require("../../../pgconnection/pgCon_for_kenx");
 const config = require("../../../config/config");
-const nodemailer = require("nodemailer");
+// const nodemailer = require("nodemailer");
 const moment = require('moment')
 const bcrypt = require('bcryptjs')
 const pg = config.connectionString_pg();
-const { get_id } = require('../get-id')
+// const { get_id } = require('../get-id')
 const register = async (data) => {
     const {
         user_pro_id,

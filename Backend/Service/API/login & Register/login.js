@@ -1,4 +1,4 @@
-const pgcon = require("../../../pgconnection/pgCon");
+// const pgcon = require("../../../pgconnection/pgCon");
 const config = require("../../../config/config");
 const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken");

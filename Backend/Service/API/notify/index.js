@@ -1,5 +1,5 @@
 const config = require("../../../config/config");
-const pgcon = require("../../../pgConnection/pgCon");
+// const pgcon = require("../../../pgConnection/pgCon");
 const moment = require("moment");
 const { readfile_ } = require("../../readfile");
 moment.locale("th");
@@ -7,37 +7,6 @@ const knex = config.connectionString_pg();
 const get_notify = async ({ limit }, { email, role, subdistrict_id, division_id }) => {
   console.log(email, role);
   try {
-    // // let sql = `
-    // // SELECT p_.*,dm.*,pm.*,up.* FROM notification AS  p_
-    // // INNER JOIN device_master AS dm ON p_.device_ip = dm.device_ip
-    // // INNER JOIN patient_master AS pm ON pm.pat_id = dm.pat_id
-    // // INNER JOIN user_master AS um ON um.email = pm.user_id
-    // // INNER JOIN user_profile AS up ON up.user_pro_id = pm.user_pro_id
-    // // WHERE  p_.del_flag = '1'  AND dm.del_flag = '1'
-    // //  `
-    // // let sql_count = `
-    // //  SELECT COUNT(p_.ni_id) FROM notification AS  p_
-    // //  INNER JOIN device_master AS dm ON p_.device_ip = dm.device_ip
-    // //  INNER JOIN patient_master AS pm ON pm.pat_id = dm.pat_id
-    // //  INNER JOIN user_master AS um ON um.email = pm.user_id
-    // //  INNER JOIN user_profile AS up ON up.user_pro_id = pm.user_pro_id
-    // //  WHERE  p_.del_flag = '1'  AND dm.del_flag = '1'
-    // //   `
-    // // if (!(+role == 1 || +role == 2)) {
-    // //   sql += `AND um.email='${email}'  ORDER BY p_.time_event DESC limit ${!limit ? 200 : limit}`
-    // //   sql_count += `AND um.email='${email}'  `
-    // // }
-    // // if ((+role == 1 || +role == 2)) {
-    // //   sql += ` AND um.subdistrict_id='${subdistrict_id}' ORDER BY p_.time_event DESC limit ${!limit ? 200 : limit}`
-    // //   sql_count += ` AND um.subdistrict_id='${subdistrict_id}'  `
-
-    // // }
-    // // const pat_master = await pgcon.get(sql, config.connectionString());
-    // // const select_count = await pgcon.get(sql_count, config.connectionString());
-    // if (pat_master.code || select_count.code) {
-    //   return { code: true, status: 400, message: pat_master.message || select_count.message, data: [] };
-    // }\
-
     let query = knex('notification AS p_')
       .select('p_.*', 'dm.*', 'pm.*', 'up.*')
       .innerJoin('device_master AS dm', 'p_.device_ip', 'dm.device_ip')

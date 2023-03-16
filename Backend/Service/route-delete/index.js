@@ -1,9 +1,9 @@
 const express = require("express");
 const dynamicDeleteRouter = express.Router();
-const shell = require('shelljs')
-const path = require("path");
-const util = require("util");
-const multer = require("multer");
+// const shell = require('shelljs')
+// const path = require("path");
+// const util = require("util");
+// const multer = require("multer");
 
 const resourceMethods = {
 

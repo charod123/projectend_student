@@ -1,5 +1,5 @@
 const config = require("../../../../config/config");
-const pgcon = require("../../../../pgConnection/pgCon");
+// const pgcon = require("../../../../pgConnection/pgCon");
 const moment = require("moment");
 const { readfile_ } = require("../../../readfile");
 moment.locale("th");

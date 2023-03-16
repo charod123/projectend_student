@@ -1,7 +1,7 @@
 const config = require("../../../config/config");
-const pgcon = require("../../../pgConnection/pgCon");
+// const pgcon = require("../../../pgConnection/pgCon");
 const moment = require("moment");
-const { readfile_ } = require("../../readfile");
+// const { readfile_ } = require("../../readfile");
 moment.locale("th");
 const knex = config.connectionString_pg();
 const get_on_role = async ({ }, { email, role }) => {

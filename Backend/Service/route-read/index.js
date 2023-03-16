@@ -14,7 +14,6 @@ const { get_user_admin, get_count_on_subdivision } = require('../API/Admin/user'
 const { get_count_user_devive } = require('../API/login & Register/user');
 const { get_type_task, get_task, get_user_in_subdivision } = require('../API/task');
 const { get_dashboard_task } = require('../API/Reports/Tasks');
-const { delete_task_type, insert_task_type, update_task_type } = require('../API/task_type');
 
 const resourceMethods = {
   get_patient_all: get_patient_all,

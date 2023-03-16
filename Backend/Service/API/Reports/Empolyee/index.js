@@ -1,7 +1,7 @@
 const config = require("../../../../config/config");
-const pgcon = require("../../../../pgConnection/pgCon");
+// const pgcon = require("../../../../pgConnection/pgCon");
 const moment = require("moment");
-const { readfile_ } = require("../../../readfile");
+// const { readfile_ } = require("../../../readfile");
 moment.locale("th");
 const pg = config.connectionString_pg();
 const get_dashboard_task = async ({ start_date, end_date }, { email, role, subdistrict_id, division_id, subdivision_id }) => {

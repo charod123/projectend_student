@@ -1,4 +1,4 @@
-const pgcon = require("../../../pgconnection/pgCon");
+// const pgcon = require("../../../pgconnection/pgCon");
 const config = require("../../../config/config");
 const moment = require('moment')
 const pg = config.connectionString_pg();

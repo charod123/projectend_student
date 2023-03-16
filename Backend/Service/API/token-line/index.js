@@ -1,4 +1,4 @@
-const pgcon = require("../../../pgconnection/pgCon");
+// const pgcon = require("../../../pgconnection/pgCon");
 const config = require("../../../config/config");
 const pg = config.connectionString_pg();
 const update_token_line = async ({ token }, { email, role }) => {

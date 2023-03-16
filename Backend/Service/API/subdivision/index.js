@@ -1,6 +1,6 @@
 const config = require("../../../config/config");
-const pgcon = require("../../../pgConnection/pgCon");
-const pgcon_knex = require("../../../pgConnection/pgCon_for_kenx");
+// const pgcon = require("../../../pgConnection/pgCon");
+// const pgcon_knex = require("../../../pgConnection/pgCon_for_kenx");
 const moment = require('moment');
 const { get_id } = require("../get-id");
 const pg = config.connectionString_pg();

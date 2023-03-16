@@ -1,5 +1,5 @@
 const config = require("../../../config/config");
-const pgcon = require("../../../pgConnection/pgCon");
+// const pgcon = require("../../../config/pgCon");
 const moment = require('moment')
 const pg = config.connectionString_pg();
 const get_divison = async ({ }, { email, role, subdistrict_id, division_id }) => {

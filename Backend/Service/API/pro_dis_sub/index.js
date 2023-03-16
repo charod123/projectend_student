@@ -1,6 +1,6 @@
 const config = require("../../../config/config");
-const pgcon = require("../../../pgConnection/pgCon");
-const moment = require('moment')
+// const pgcon = require("../../../pgConnection/pgCon");
+// const moment = require('moment')
 const pg = config.connectionString_pg();
 const get_province = async () => {
     try {

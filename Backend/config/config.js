@@ -46,28 +46,30 @@ const connectionDB_mssql = knex({
 
 
 
-const connectionDB_sqlite = knex({
-    client: 'sqlite3', // or 'better-sqlite3'
-    connection: {
-        filename: "C:/Program Files/DB Browser for SQLite/projectend_.db"
-    }
-});
+// const connectionDB_sqlite = knex({
+//     client: 'sqlite3', // or 'better-sqlite3'
+//     connection: {
+//         filename: "C:/Program Files/DB Browser for SQLite/projectend_.db"
+//     }
+// });
 
-
+// '3048'
 exports.secret = 'worldisfullofdevelopers'
+// const ip = 'http://202.149.117.35:'
 const ip = 'http://localhost:'
+const ip_produntion = 'ws://202.149.117.35:3000'
 exports.ip_getimg = ip + '3010/'
-exports.port_websocket = '3048'
-exports.send_background_notify = 'ws://localhost:3048'
+exports.port_websocket = '3000'
+exports.send_background_notify = 'ws://202.149.117.35:3000'
 exports.connectionString = () => {
     return connectionDB;
 };
 exports.connectionString_pg = () => {
-    return connectionDB_mssql;
+    return connectionDB_pg;
 };
-exports.connectionString_sqlite = () => {
-    return connectionDB_sqlite;
-};
+// exports.connectionString_sqlite = () => {
+//     return connectionDB_sqlite;
+// };
 exports.connectionString_mssql = () => {
     return connectionDB_mssql;
 };

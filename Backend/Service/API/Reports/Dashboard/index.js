@@ -1,6 +1,6 @@
 const config = require("../../../../config/config");
-const pgcon = require("../../../../pgConnection/pgCon");
-const pgcon_knex = require("../../../../pgConnection/pgCon_for_kenx");
+// const pgcon = require("../../../../pgConnection/pgCon");
+// const pgcon_knex = require("../../../../pgConnection/pgCon_for_kenx");
 const moment = require('moment')
 const pg = config.connectionString_pg();
 const get_dashboard_count_time = async ({ start_date, end_date }, { email, role, subdistrict_id, division_id }) => {

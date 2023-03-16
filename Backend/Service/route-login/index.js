@@ -1,10 +1,10 @@
 const express = require("express");
 const dynamicLoginRouter = express.Router();
-const shell = require('shelljs')
-const path = require("path");
-const util = require("util");
-const maxSize = 5000 * 5000;
-const multer = require("multer");
+// const shell = require('shelljs')
+// const path = require("path");
+// const util = require("util");
+// const maxSize = 5000 * 5000;
+// const multer = require("multer");
 const { register } = require('../API/login & Register/register');
 const { Login } = require('../API/login & Register/login');
 const { get_district, get_province, get_subdistrict, get_pro_dis_sub_by_id } = require('../API/pro_dis_sub');

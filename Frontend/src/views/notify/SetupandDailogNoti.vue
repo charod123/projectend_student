@@ -110,7 +110,8 @@ const continue_ = async () => {
     getMap();
 }
 onBeforeMount(() => {
-    socket.value = new WebSocket('ws://localhost:3048');
+    const port = config.backend_url_socket
+    socket.value = new WebSocket(port);
 
 })
 const get_subdivision = async () => {

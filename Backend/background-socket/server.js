@@ -2,7 +2,7 @@ const express = require('express');
 const config = require('../config/config')
 const port_websocket = config.port_websocket;
 const app = express();
-const pgcon = require("../pgConnection/pgCon");
+// const pgcon = require("../pgConnection/pgCon");
 const CLIENTS = []
 const connectedClients = {}
 const moment = require('moment')
@@ -63,7 +63,7 @@ const getData = (data) => {
 const getData_in_database = async (data) => {
   try {
     if (data.data) {
-      const get_maxid_pro_file = await pg.select('device_ip','pat_id').from('device_master').where({ device_ip: data.data.IMEI, del_flag: '1' });
+      const get_maxid_pro_file = await pg.select('device_ip', 'pat_id').from('device_master').where({ device_ip: data.data.IMEI, del_flag: '1' });
       // const get_maxid_pro_file = await pgcon.get(`SELECT device_ip,pat_id FROM device_master WHERE device_ip = '${data.data.IMEI}' AND del_flag = '1'`, config.connectionString());
       if (!get_maxid_pro_file) {
         return { code: true, status: 400, message: get_maxid_pro_file, data: [] };
@@ -80,7 +80,7 @@ const getDataAll = async (id, notify) => {
   if (!get_device) {
     return { code: true, status: 400, message: get_device, data: [] };
   }
-  const get_pat = await pg.select('patient_master.*', 'user_profile.*', 'subdistricts.sub_name_in_thai', 'provinces.pro_name_in_thai', 'districts.dis_name_in_thai','division_master.division_id',
+  const get_pat = await pg.select('patient_master.*', 'user_profile.*', 'subdistricts.sub_name_in_thai', 'provinces.pro_name_in_thai', 'districts.dis_name_in_thai', 'division_master.division_id',
     'user_master.email', 'user_master.line_token').from('patient_master')
     .innerJoin('user_profile', 'patient_master.user_pro_id', '=', 'user_profile.user_pro_id')
     .innerJoin('subdistricts', 'subdistricts.sub_id', '=', 'patient_master.subdistrict_id')
@@ -113,41 +113,83 @@ const getDataAll = async (id, notify) => {
 const sendLINE_Notify = async (data) => {
   const insert = await insert_notifications(data)
   if (insert.code != true) {
-    const notify = data.notify
-    const usertry = data.usertry
-    const tag_p_uty = await Promise.all(usertry.map((e) => `<p>ชื่อ ${e.fristname + ' ' + e.lastname} เบอร์โทร ${e.phone}</p>\n`))
-    if (!data.pat[0].line_token) {
-      const data_ = { ...data, ni_id: insert.data, not_token_line: true }
-      console.log(data_);
-      return getData(data_);
-    } else {
-      const data_ = { ...data, ni_id: insert.data, not_token_line: false }
-      console.log(data_);
-      getData(data_);
-      const lineNotify = require("line-notify-nodejs")(data.pat[0].line_token);
-      const template = `<div style="width: 500px;">
-  <p>มีการกดปุ่มเมื่อ ${moment(notify.date).format("LLLL")}</p>
-  <p>ชื่อผู้ป่วย ${data.pat[0].fristname + ' ' + data.pat[0].lastname} เพศ ${data.pat[0].gender}</p>
-  <p>ญาติที่สามารถติดต่อได้</p>
-  ${tag_p_uty}
-     </div>`
-        ;
-      const message = template.replace(/<[^>]+>/g, '');
+    try {
+      const notify = data.notify
+      const usertry = data.usertry
+      const tag_p_uty = await Promise.all(usertry.map((e) => `<p>ชื่อ ${e.fristname + ' ' + e.lastname} เบอร์โทร ${e.phone}</p>\n`))
+      const get_division = await pg('user_master as um')
+        .innerJoin('employee as e', 'e.user_id', 'um.user_id')
+        .innerJoin('subdivision_master as sm', 'sm.subdivision_id', 'e.subdivision_id')
+        .innerJoin('division_master as dm', 'dm.division_id', 'sm.division_id')
+        .where({ 'dm.subdistrict_id': data.pat[0].subdistrict_id })
+        .select('um.line_token')
+      if (!data.pat[0].line_token && !get_division.length > 0) {
+        try {
+          const data_ = { ...data, ni_id: insert.data, not_token_line: true }
+          console.log(data_);
+          return getData(data_);
+        } catch (error) {
+          return error.message
+        }
 
-      lineNotify.notify({
-        message: message,
-        stickerPackageId: 446,
-        stickerId: 2024,
-      })
-        .then(() => {
-          console.log(
-            "send LINE notify completed! if"
-          );
-        })
-        .catch(() => {
-          console.log("ส่งข้อมูลผิดพลาด");
-        });
+      } else {
+        try {
+          const template = `<div style="width: 500px;">
+      <p>มีการกดปุ่มเมื่อ ${moment(notify.date).format("LLLL")}</p>
+      <p>ชื่อผู้ป่วย ${data.pat[0].fristname + ' ' + data.pat[0].lastname} เพศ ${data.pat[0].gender}</p>
+      <p>ญาติที่สามารถติดต่อได้</p>
+      ${tag_p_uty}
+         </div>`
+            ;
+          const message = template.replace(/<[^>]+>/g, '');
+          if (data.pat[0].line_token) {
+            const data_ = { ...data, ni_id: insert.data, not_token_line: false }
+            console.log(data_);
+            getData(data_);
+            const lineNotify = require("line-notify-nodejs")(data.pat[0].line_token);
+
+            lineNotify.notify({
+              message: message,
+              stickerPackageId: 446,
+              stickerId: 2024,
+            })
+              .then(() => {
+                console.log(
+                  "send LINE notify completed! if"
+                );
+              })
+              .catch(() => {
+                console.log("ส่งข้อมูลผิดพลาด");
+              });
+          }
+
+          for (let i = 0; i < get_division.length; i++) {
+            const line_divi = get_division[i];
+            const lineNotify_division = require("line-notify-nodejs")(line_divi.line_token);
+            lineNotify_division.notify({
+              message: message,
+              stickerPackageId: 446,
+              stickerId: 2024,
+            })
+              .then(() => {
+                console.log(
+                  "send LINE notify completed! if"
+                );
+              })
+              .catch(() => {
+                console.log("ส่งข้อมูลผิดพลาด");
+              });
+          }
+        } catch (error) {
+          return error.message
+
+        }
+
+      }
+    } catch (error) {
+      return error.message
     }
+
 
   }
 

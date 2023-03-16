@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const moment = require("moment");
-const port_service = process.env.PORT || 3002;
+const port_service = process.env.PORT || 3001;
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
@@ -148,13 +148,13 @@ http.createServer((req, res) => {
       res.end(content);
     });
   });
-}).listen(3010);
+}).listen(3003);
 
 app.listeners(server_notify)
 app.listeners(server_socket)
-app.use("/read", tokencheck, dynamicGetRouter);
-app.use("/delete", tokencheck, dynamicDeleteRouter);
-app.use("/write", tokencheck, dynamicWriteRouter);
+app.use("/read", dynamicGetRouter);
+app.use("/delete", dynamicDeleteRouter);
+app.use("/write", dynamicWriteRouter);
 app.use("", dynamicLoginRouter);
 app.use("/upload", dynamicUploadRouter);
 

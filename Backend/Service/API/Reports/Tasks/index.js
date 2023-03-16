@@ -1,5 +1,5 @@
 const config = require("../../../../config/config");
-const pgcon = require("../../../../pgConnection/pgCon");
+// const pgcon = require("../../../../pgConnection/pgCon");
 const moment = require("moment");
 const { readfile_ } = require("../../../readfile");
 moment.locale("th");
@@ -105,7 +105,9 @@ const get_dashboard_task = async ({ start_date, end_date }, { email, role, subdi
         return { code: true, status: 400, message: error.message, data: [] };
     }
 };
+const get_task_on_type = async ({ start_date, end_date, task_type_id }, { email, role, subdistrict_id, division_id, subdivision_id }) => {
 
+}
 module.exports = {
     get_dashboard_task,
 
