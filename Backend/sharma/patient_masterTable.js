@@ -1,5 +1,5 @@
 const config = require('../config/config')
-const ms = config.connectionString_mssql();
+const ms = config.connectionString_pg();
 
 async function schema() {
   const user_profile = await ms.schema.hasTable('user_profile').then(function (exists) {

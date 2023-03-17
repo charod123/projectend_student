@@ -8,6 +8,7 @@ import config from '@/service/config';
 import { useRouter } from 'vue-router';
 import Service from '../../../service/api';
 import { useStore } from '../../../store';
+import axios from 'axios';
 const service = new Service();
 const route = useRouter();
 const toast = useToast();

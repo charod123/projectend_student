@@ -82,7 +82,7 @@ const get_priority = async () => {
                 console.log(e.flag = res.data.filter(x => x.priority_id == e.priority_id)[0]?.can_read ?? 1);
             })
         }
-        model.value[1].visible = res.data[0].role_id == 1 ? true : false;
+        model.value[1].visible = res.data[0].role_id != 3 ? true : false;
     }
     // // }
     // for (let i = 0; i < model.value.length; i++) {

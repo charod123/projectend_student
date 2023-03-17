@@ -9,7 +9,7 @@ const store = useStore();
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const router = useRouter();
-const img_user = JSON.parse(localStorage.getItem("details")).img_path;
+const img_user = JSON.parse(localStorage.getItem("details"))?.img_path;
 const displayConfirmation = ref(false);
 onMounted(() => {
     bindOutsideClickListener();

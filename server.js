@@ -1,25 +1,24 @@
-const express = require('express')
-,http = require('http')
-,path = require('path')
-,cors = require('cors')
-,LIMIT = '100mb'
-, compression = require('compression')
-const app = express()
-//cors
-app.use(cors())
-app.use(express.json({ limit: LIMIT }))
-app.use(express.urlencoded({ limit: LIMIT, extended: true }))
-app.use(compression())
+const express = require('express');
+const http = require('http');
+const path = require('path');
+const cors = require('cors');
+const LIMIT = '100mb';
+const compression = require('compression');
 
-app.use(express.static(path.join(__dirname,'dist')))
+const app = express();
 
-app.get('*',(req, res) =>{
-    res.sendFile(path.join(__dirname,'./dist/index.html'))
-})
+app.use(cors());
+app.use(express.json({ limit: LIMIT }));
+app.use(express.urlencoded({ limit: LIMIT, extended: true }));
+app.use(compression());
 
+app.use(express.static(path.join(__dirname, 'dist')));
 
-const port = process.env.PORT || '3002'
-app.set('port', port)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/dist/index.html'));
+});
 
-const server = http.createServer(app)
-server.listen(port, () => console.log('Running port' + port))
+const port = process.env.PORT || 3002;
+
+const server = http.createServer(app);
+server.listen(port, () => console.log(`Running on port ${port}`));

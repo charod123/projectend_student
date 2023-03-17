@@ -25,7 +25,7 @@ const link_share_location = ref('');
 const toast = useToast();
 const subdivision = ref(null);
 const show_btn_next = ref(false);
-const audio = ref(new Audio('http://localhost:3010/resources/assets/X2Download.app.mp3'))
+const audio = ref(new Audio(`${config.backend_url_img}/resources/assets/X2Download.app.mp3`))
 
 const data = ref({
     agency_that_forwards: '',

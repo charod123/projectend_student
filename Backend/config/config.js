@@ -39,11 +39,22 @@ const connectionDB_mssql = knex({
         database: 'projectend_', // replace with the actual database name
         user: 'charod', // replace with the actual Windows user name
         password: 'charod',
-      // replace with the actual Windows user password
+        // replace with the actual Windows user password
     }
 });
 
 
+const connectionDB_pg_bang = knex({
+    client: 'pg',
+    connection: {
+        host: 'bangsaothong.dtc.co.th', // replace with the actual server name
+        post: 5432, // replace with the actual database name
+        database: 'm0010_sos_p', // replace with the actual database name
+        user: 'postgres', // replace with the actual Windows user name
+        password: '!DTC@network01',
+        // replace with the actual Windows user password
+    }
+});
 
 
 // const connectionDB_sqlite = knex({
@@ -55,17 +66,18 @@ const connectionDB_mssql = knex({
 
 // '3048'
 exports.secret = 'worldisfullofdevelopers'
-// const ip = 'http://202.149.117.35:'
-const ip = 'http://localhost:'
+const ip = 'http://202.149.117.35:'
+// const ip = 'http://localhost:'
 const ip_produntion = 'ws://202.149.117.35:3000'
-exports.ip_getimg = ip + '3010/'
+exports.ip_getimg = ip + '3003/'
 exports.port_websocket = '3000'
 exports.send_background_notify = 'ws://202.149.117.35:3000'
+// exports.send_background_notify = 'ws://localhost:3000'
 exports.connectionString = () => {
     return connectionDB;
 };
 exports.connectionString_pg = () => {
-    return connectionDB_pg;
+    return connectionDB_pg_bang;
 };
 // exports.connectionString_sqlite = () => {
 //     return connectionDB_sqlite;

@@ -167,56 +167,56 @@ const router = createRouter({
                         }
                     ]
                 },
-                // {
-                //     path: '/uikit/message',
-                //     name: 'message',
-                //     component: () => import('@/views/uikit/Messages.vue')
-                // },
-                // {
-                //     path: '/uikit/file',
-                //     name: 'file',
-                //     component: () => import('@/views/uikit/File.vue')
-                // },
-                // {
-                //     path: '/uikit/charts',
-                //     name: 'charts',
-                //     component: () => import('@/views/uikit/Chart.vue')
-                // },
-                // {
-                //     path: '/uikit/misc',
-                //     name: 'misc',
-                //     component: () => import('@/views/uikit/Misc.vue')
-                // },
-                // // {
-                // //     path: '/blocks',
-                // //     name: 'blocks',
-                // //     component: () => import('@/views/utilities/Blocks.vue')
-                // // },
-                // {
-                //     path: '/utilities/icons',
-                //     name: 'icons',
-                //     component: () => import('@/views/utilities/Icons.vue')
-                // },
-                // {
-                //     path: '/pages/timeline',
-                //     name: 'timeline',
-                //     component: () => import('@/views/pages/Timeline.vue')
-                // },
-                // {
-                //     path: '/pages/empty',
-                //     name: 'empty',
-                //     component: () => import('@/views/pages/Empty.vue')
-                // },
-                // {
-                //     path: '/pages/crud',
-                //     name: 'crud',
-                //     component: () => import('@/views/pages/Crud.vue')
-                // },
-                // {
-                //     path: '/documentation',
-                //     name: 'documentation',
-                //     component: () => import('@/views/utilities/Documentation.vue')
-                // }
+                {
+                    path: '/uikit/message',
+                    name: 'message',
+                    component: () => import('@/views/uikit/Messages.vue')
+                },
+                {
+                    path: '/uikit/file',
+                    name: 'file',
+                    component: () => import('@/views/uikit/File.vue')
+                },
+                {
+                    path: '/uikit/charts',
+                    name: 'charts',
+                    component: () => import('@/views/uikit/Chart.vue')
+                },
+                {
+                    path: '/uikit/misc',
+                    name: 'misc',
+                    component: () => import('@/views/uikit/Misc.vue')
+                },
+                {
+                    path: '/blocks',
+                    name: 'blocks',
+                    component: () => import('@/views/utilities/Blocks.vue')
+                },
+                {
+                    path: '/utilities/icons',
+                    name: 'icons',
+                    component: () => import('@/views/utilities/Icons.vue')
+                },
+                {
+                    path: '/pages/timeline',
+                    name: 'timeline',
+                    component: () => import('@/views/pages/Timeline.vue')
+                },
+                {
+                    path: '/pages/empty',
+                    name: 'empty',
+                    component: () => import('@/views/pages/Empty.vue')
+                },
+                {
+                    path: '/pages/crud',
+                    name: 'crud',
+                    component: () => import('@/views/pages/Crud.vue')
+                },
+                {
+                    path: '/documentation',
+                    name: 'documentation',
+                    component: () => import('@/views/utilities/Documentation.vue')
+                }
 
             ]
         },
@@ -355,21 +355,21 @@ const router = createRouter({
 
     ]
 });
-// router.beforeEach((to, from, next) => {
-//     const auth = JSON.parse(localStorage.getItem('details'))?.token;
-//     if (auth) {
-//         if (to.path === '/') {
-//             return next({ path: '/mainstram' });
-//         } else {
-//             return next();
-//         }
-//     } else {
-//         if (to.path === '/') {
-//             return next();
-//         } else {
-//             return next({ name: 'login' });
-//         }
-//     }
-// });
+router.beforeEach((to, from, next) => {
+    const auth = JSON.parse(localStorage.getItem('details'))?.token;
+    if (auth) {
+        if (to.path === '/') {
+            return next({ path: '/mainstram' });
+        } else {
+            return next();
+        }
+    } else {
+        if (to.path === '/') {
+            return next();
+        } else {
+            return next({ name: 'login' });
+        }
+    }
+});
 
 export default router;

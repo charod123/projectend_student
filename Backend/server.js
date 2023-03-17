@@ -99,6 +99,7 @@ http.createServer((req, res) => {
       case ".jfif":
       case ".gif":
       case ".jpg":
+      case ".svg":
         contentType = "image/png";
         break;
       case ".docx":
@@ -129,7 +130,7 @@ http.createServer((req, res) => {
     // Setting the headers
     console.log(String(ext.toLowerCase()));
     if (
-      [".png", ".jpg", ".jpeg", ".jfif", ".gif", ".json"].includes(ext.toLowerCase())
+      [".png", ".jpg", ".jpeg", ".jfif", ".gif", ".json", ".svg"].includes(ext.toLowerCase())
     ) {
       res.writeHead(200, {
         "Content-Type": contentType,
@@ -152,9 +153,9 @@ http.createServer((req, res) => {
 
 app.listeners(server_notify)
 app.listeners(server_socket)
-app.use("/read", dynamicGetRouter);
-app.use("/delete", dynamicDeleteRouter);
-app.use("/write", dynamicWriteRouter);
+app.use("/read", tokencheck, dynamicGetRouter);
+app.use("/delete", tokencheck, dynamicDeleteRouter);
+app.use("/write", tokencheck, dynamicWriteRouter);
 app.use("", dynamicLoginRouter);
 app.use("/upload", dynamicUploadRouter);
 
