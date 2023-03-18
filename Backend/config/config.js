@@ -43,6 +43,17 @@ const connectionDB_mssql = knex({
     }
 });
 
+const connectionDB_mssql_M = knex({
+    client: 'mssql',
+    connection: {
+        server: '10.103.0.16', // replace with the actual server name
+        post: 1433, // replace with the actual database name
+        database: '61123250102', // replace with the actual database name
+        user: 'student', // replace with the actual Windows user name
+        password: 'Cs@2700',
+      
+    }
+});
 
 const connectionDB_pg_bang = knex({
     client: 'pg',
@@ -66,13 +77,15 @@ const connectionDB_pg_bang = knex({
 
 // '3048'
 exports.secret = 'worldisfullofdevelopers'
-const ip = 'http://202.149.117.35:'
-// const ip = 'http://localhost:'
+// const ip = 'http://10.103.0.16/cs61/61123250102/backend:'
+// const ip = 'http://202.149.117.35:'
+const ip = 'http://localhost:'
 const ip_produntion = 'ws://202.149.117.35:3000'
 exports.ip_getimg = ip + '3003/'
 exports.port_websocket = '3000'
-exports.send_background_notify = 'ws://202.149.117.35:3000'
-// exports.send_background_notify = 'ws://localhost:3000'
+// exports.send_background_notify = 'ws://10.103.0.16/cs61/61123250102/backend:3000'
+// exports.send_background_notify = 'ws://202.149.117.35:3000'
+exports.send_background_notify = 'ws://localhost:3000'
 exports.connectionString = () => {
     return connectionDB;
 };
@@ -85,3 +98,4 @@ exports.connectionString_pg = () => {
 exports.connectionString_mssql = () => {
     return connectionDB_mssql;
 };
+

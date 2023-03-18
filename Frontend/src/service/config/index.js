@@ -1,7 +1,7 @@
-// const url = 'http://localhost'
-// const ur_socket = 'ws://localhost'
-const url = 'http://202.149.117.35'
-const ur_socket = 'ws://202.149.117.35'
+const url = 'http://localhost'
+const ur_socket = 'ws://localhost'
+// const url = 'http://202.149.117.35'
+// const ur_socket = 'ws://202.149.117.35'
 
 // const port = '3002'
 const port = '3001'
