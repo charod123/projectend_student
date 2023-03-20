@@ -345,9 +345,9 @@ const create_task_type = async (url) => {
                 <Button style="font-family: Kanit;" icon="pi pi-tag" label="งานที่รอดำเนินการตรวจสอบ"
                     class="w-20rem p-button-warning" raised @click="filter_on_btn(2)" />
                 <Button style="font-family: Kanit;" icon="pi pi-tag" label="งานยกเลิก" class="w-15rem p-button-danger"
-                    @click="filter_on_btn(4)" />
-                <Button style="font-family: Kanit;" icon="pi pi-tag" label="งานสาย" class="w-15rem p-button-danger"
                     @click="filter_on_btn(0)" />
+                <Button style="font-family: Kanit;" icon="pi pi-tag" label="งานสาย" class="w-15rem p-button-danger"
+                    @click="filter_on_btn(4)" />
                 <Button style="font-family: Kanit;" icon="pi pi-tag" label="งานปิด" class="w-15rem p-button-secondary"
                     @click="filter_on_btn(3)" />
 

@@ -154,11 +154,11 @@ const initFilters1 = () => {
                 <Button style="width: auto" label="เพิ่มผหน่วยงาน" icon="pi pi-plus" @click="create_subdivision"
                     class="p-button-success m-2" />
             </div>
-            <DataTable v-if="!loading" :value="customer1" :paginator="true" class="p-datatable-gridlines mt-5 text-xl"
+            <DataTable v-if="!loading" :value="customer1" :paginator="true" class="p-datatable-gridlines mt-5 text-xl" style="font-family: Kanit;"
                 :rows="10" dataKey="subdivision_id" :rowHover="true" v-model:filters="filters1" sortMode="single"
                 sortField="subdivision_id" :sortOrder="1" filterDisplay="menu" :loading="loading1" :filters="filters1"
                 responsiveLayout="scroll" :globalFilterFields="['subdivision_id', 'division_name', 'subdivision_name']"
-                style="font-family: Kanit;">
+               >
                 <template #header>
                     <div class="flex justify-content-between flex-column sm:flex-row">
                         <span class="p-input-icon-left mb-2">

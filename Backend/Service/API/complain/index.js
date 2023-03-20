@@ -13,7 +13,7 @@ const get_complain = async ({ }, { email, role, subdistrict_id }) => {
             .select('pm.pat_id', pg.raw("concat(up.fristname,' ',up.lastname) as full_name"), 'c_.*')
             .leftJoin('patient_master as pm', 'pm.pat_id', 'c_.pat_id')
             .leftJoin('user_profile as up', 'up.user_pro_id', 'pm.user_pro_id')
-            .innerJoin('device_master as dm', 'dm.device_ip', 'c_.device_id')
+            .leftJoin('device_master as dm', 'dm.device_ip', 'c_.device_id')
             .where('c_.del_flag', '1');
 
         if (+role === 3) {

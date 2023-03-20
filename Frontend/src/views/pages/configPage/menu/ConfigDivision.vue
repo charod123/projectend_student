@@ -7,7 +7,7 @@ import { useToast } from 'primevue/usetoast';
 import moment from 'moment';
 import L from 'leaflet';
 import Service from '../../../../service/api';
-import config from '@/service/config';
+import config from '../../../../service/config';
 const service = new Service();
 
 const confirm = useConfirm();
@@ -29,7 +29,7 @@ const getMarker = (data) => {
     map_.value.setView([data.lat, data.long], 7);
     console.log(data);
     const myIcon = L.icon({
-        iconUrl: 'http://localhost:3010/resources/assets/mian-icon/default/icon-map/Pin_alt.png',
+        iconUrl: `${config.backend_url_img}/resources/assets/mian-icon/default/icon-map/Pin_alt.png`,
         iconSize: [30, 30],
         iconAnchor: [22, 94],
         popupAnchor: [-3, -76],
@@ -181,15 +181,14 @@ const save = async (data) => {
         <div class="col-12">
             <div id="map"></div>
             <DataTable v-if="!loading" :value="customer1" :paginator="true" class="p-datatable-gridlines mt-5 text-xl"
-                :rows="10" dataKey="division_name" :rowHover="true" v-model:filters="filters1" sortMode="single"
-                sortField="division_name" :sortOrder="1" filterDisplay="menu" :loading="loading1" :filters="filters1"
-                responsiveLayout="scroll" :globalFilterFields="['division_name']">
+                style="font-family: Kanit;" :rows="10" dataKey="division_name" :rowHover="true" v-model:filters="filters1"
+                sortMode="single" sortField="division_name" :sortOrder="1" filterDisplay="menu" :loading="loading1"
+                :filters="filters1" responsiveLayout="scroll" :globalFilterFields="['division_name']">
                 <template #header>
                     <div class="flex justify-content-between flex-column sm:flex-row">
                         <span class="p-input-icon-left mb-2">
                             <i class="pi pi-search" />
-                            <InputText v-model="filters1['global'].value" placeholder="Keyword Search"
-                                style="width: 25%" />
+                            <InputText v-model="filters1['global'].value" placeholder="Keyword Search" style="width: 25%" />
                         </span>
                     </div>
                 </template>
@@ -199,7 +198,7 @@ const save = async (data) => {
                     <template #body="{ data }">
                         {{ data.division_name }}
                     </template>
-                  
+
                 </Column>
 
                 <Column field="lat" header="ละติจูด" style="min-width: 12rem" sortable>
@@ -207,14 +206,14 @@ const save = async (data) => {
                         {{ data.lat }}
 
                     </template>
-                   
+
                 </Column>
                 <Column field="long" header="ลองจิจูด" style="min-width: 12rem" sortable>
                     <template #body="{ data }">
                         {{ data.long }}
 
                     </template>
-                  
+
                 </Column>
 
                 <Column field="verified" dataType="boolean" bodyClass="text-center" style="min-width: 8rem">
@@ -274,7 +273,7 @@ const save = async (data) => {
             <Dialog v-model:visible="divisionDialog" :style="{ width: '450px' }" header="แก้ไขข้อมูล" :modal="true"
                 class="p-fluid">
                 <!-- <img :src="contextPath + 'demo/images/product/' + product.image" :alt="product.image"
-                    v-if="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" /> -->
+                        v-if="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" /> -->
                 <div class="field">
                     <label for="name">ชื่อหน่วยงาน</label>
                     <InputText id="name" v-model.trim="division.division_name" required="true" autofocus

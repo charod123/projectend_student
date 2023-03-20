@@ -103,7 +103,7 @@ const initFilters1 = () => {
 <template>
     <div class="grid">
         <div class="col-12">
-            <DataTable v-if="!loading" :value="customer1" :paginator="true" class="p-datatable-gridlines mt-5 text-xl"
+            <DataTable v-if="!loading" :value="customer1" :paginator="true" class="p-datatable-gridlines mt-5 text-xl" style="font-family: Kanit;"
                 :rows="10" dataKey="role_id" :rowHover="true" v-model:filters="filters1" sortMode="single"
                 sortField="role_id" :sortOrder="1" filterDisplay="menu" :loading="loading1" :filters="filters1"
                 responsiveLayout="scroll" :globalFilterFields="['role_id', 'priority_name']">

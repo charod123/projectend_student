@@ -12,7 +12,7 @@ const model = ref([
     {
         label: 'ระบบเฝ้าระวังฉุกเฉิน',
         items: [
-            { label: 'หน้าสรุปรายงาน', icon: 'pi pi-fw pi-id-card', to: '/admin/user/dashboard', flag: 0, priority_id: 1 },
+            { label: 'หน้าสรุปข้อมูล', icon: 'pi pi-fw pi-id-card', to: '/admin/user/dashboard', flag: 0, priority_id: 1 },
             { label: 'หน้าหลัก', icon: 'pi pi-fw pi-id-card', to: '/mainstram', flag: 0, priority_id: 1 },
             { label: 'จัดการข้อมูล', icon: 'pi pi-fw pi-id-card', to: '/main/patient/datapatients', flag: 0, priority_id: 16 },
             { label: 'ตั้งค่า', icon: 'pi pi-fw pi-id-card', to: '/main/config/priority', flag: 0, priority_id: 2 },
@@ -20,7 +20,7 @@ const model = ref([
             { label: 'ประวัติการแจ้งเตือนทั้งหมด', icon: 'pi pi-fw pi-id-card', to: '/main/recoad_notification', flag: 0, priority_id: 8 },
             { label: 'การใช้งานระบบ', icon: 'pi pi-fw pi-id-card', to: '/main/complain/details', flag: 0, priority_id: 6 },
             { label: 'โรคที่มักพบบ่อย', icon: 'pi pi-fw pi-id-card', to: '/landing', flag: 1 },
-            { label: 'รายงาน', icon: 'pi pi-fw pi-id-card', to: '/register_linenotify', flag: 1 },
+            { label: 'รายงาน', icon: 'pi pi-fw pi-id-card',to: '', command: () => store.show_daiolg_reprot = true , flag: 1 },
 
             // { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/uikit/formlayout' },
             // { label: 'Input', icon: 'pi pi-fw pi-check-square', to: '/uikit/input' },

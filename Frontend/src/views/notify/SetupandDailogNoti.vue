@@ -105,7 +105,7 @@ const getMap = () => {
 
 const continue_ = async () => {
     visibleFull.value = true
-    StopSound();
+    // StopSound();
     await nextTick();
     getMap();
 }
@@ -122,22 +122,23 @@ const get_subdivision = async () => {
     }
 }
 
-const StopSound = () => {
-    const audio = new Audio('http://localhost:3010/resources/assets/X2Download.app.mp3');
-    audio.pause();
-}
+// const StopSound = () => {
+//     const audio = new Audio('http://localhost:3010/resources/assets/X2Download.app.mp3');
+//     audio.pause();
+// }
 onMounted(() => {
     // getMap();
     socket.value.onopen = () => {
         console.log('WebSocket connected')
     }
     socket.value.onmessage = async (event) => {
+        console.log(event);
         if (!JSON.parse(event.data).status && JSON.parse(event.data) != 'connection') {
             message.value = JSON.parse(event.data);
             console.log(message.value);
             if (message.value.pat && iduser?.email == message.value.pat[0]?.user_id || message.value.pat[0]?.division_id == iduser?.division_id) {
                 show_btn_next.value = store.priority.filter(x => x.priority_id == 8)[0].can_write == 1 ? true : false;
-
+                message.value.pat[0].disease = JSON.parse(message.value.pat[0].disease)
                 await get_subdivision();
                 if (!message.value.not_token_line) {
                     displayConfirmation.value = true;
@@ -174,16 +175,17 @@ const categories_ = ref([
     { name: 'ตำรวจ', key: 'P' },
     { name: 'อื่นๆ', key: 'M' }
 ]);
-const save = async (data, message) => {
-    console.log(message);
+const save = async (data, message_) => {
+    console.log(message_);
     debugger
     const pay = {
-        ni_id: message.ni_id[0].ni_id,
+        ni_id: message_.ni_id[0].ni_id,
         detail_deliver: data.agency_that_forwards,
         detail_patient: data.detail_patient,
         lavel: data.select_lavel,
         agency_more: data.select_more,
-        internal_division: data.select_more_agnecy
+        internal_division: data.select_more_agnecy,
+        pat_data: message.value
 
     }
     const res = await service.post('/write/performance_record_notify', pay);

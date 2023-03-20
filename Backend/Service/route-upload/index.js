@@ -27,45 +27,29 @@ const resourceMethods = {
 
 const storage = multer.diskStorage({
   destination: async function (req, file, cb) {
-    // if (!req.body.id) {
-    //   const path_ = { filed: req.body.filed, table: req.body.table }
-    //   const id = await getid(path_);
-    //   const path_read = path.join(__dirname, "../../" + req.body.full_path + '/' + `${req.body.folder_name}-${id + 1}`)
-    //  
-    //   shell.mkdir('-p', path_read)
-    //   cb(null, path_read + '/');
-    // } else {
+    console.log(file);
     const path_read = path.join(__dirname, "../../" + req.body.full_path + '/' + `${req.body.id}`)
-    if (req.body.full_path != 'resources/assets/task-file') {
-      fs.readdir(path_read, (err, files) => {
-        if (err) {
-          return console.error(`Error reading folder: ${err}`);
-        }
+    fs.readdir(path_read, (err, files) => {
+      if (err) {
+        return console.error(`Error reading folder: ${err}`);
+      }
 
-        for (const file of files) {
+      let deletedFile = false;
+      for (const file of files) {
+        if (!deletedFile) {
           fs.unlink(path.join(path_read, file), (unlinkErr) => {
             if (unlinkErr) {
-
               return console.error(`Error deleting file: ${unlinkErr}`);
+            } else {
+              deletedFile = true;
+              console.log('Successfully deleted an existing file');
             }
           });
         }
-
-        fs.rmdir(path_read, (rmdirErr) => {
-          if (rmdirErr) {
-            console.error(`Error removing folder: ${rmdirErr}`);
-          } else {
-            console.log(`Successfully removed folder: ${folder}`);
-          }
-        });
-      });
-    }
-
+      }
+    });
     shell.mkdir('-p', path_read)
     cb(null, path_read + '/');
-    // }
-
-
   },
   filename: function (req, file, cb) {
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));

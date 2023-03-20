@@ -14,6 +14,7 @@ const { get_user_admin, get_count_on_subdivision } = require('../API/Admin/user'
 const { get_count_user_devive } = require('../API/login & Register/user');
 const { get_type_task, get_task, get_user_in_subdivision } = require('../API/task');
 const { get_dashboard_task } = require('../API/Reports/Tasks');
+const { get_dashboard_count_time } = require('../API/Reports/Dashboard');
 
 const resourceMethods = {
   get_patient_all: get_patient_all,
@@ -40,7 +41,7 @@ const resourceMethods = {
   get_task,
   get_user_in_subdivision,
   get_dashboard_task,
- 
+  get_dashboard_count_time
 
 };
 

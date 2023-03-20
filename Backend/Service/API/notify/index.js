@@ -2,6 +2,7 @@ const config = require("../../../config/config");
 // const pgcon = require("../../../pgConnection/pgCon");
 const moment = require("moment");
 const { readfile_ } = require("../../readfile");
+const { get_id } = require("../get-id");
 moment.locale("th");
 const knex = config.connectionString_pg();
 const get_notify = async ({ limit }, { email, role, subdistrict_id, division_id }) => {
@@ -65,7 +66,7 @@ const get_notify = async ({ limit }, { email, role, subdistrict_id, division_id 
     return { code: true, status: 400, message: error.message, data: [] };
   }
 };
-const performance_record_notify = async ({ detail_deliver, detail_patient, ni_id, lavel, agency_more, internal_division }, { email, role }) => {
+const performance_record_notify = async ({ detail_deliver, detail_patient, ni_id, lavel, agency_more, internal_division, pat_data }, { email, role, subdistrict_id, subdivision_id, division_id }) => {
   console.log(email, role);
   try {
     // if (+role == 2) {
@@ -84,6 +85,48 @@ const performance_record_notify = async ({ detail_deliver, detail_patient, ni_id
       })
       .where('del_flag', '1')
       .andWhere('ni_id', ni_id);
+    let insert_task = knex.select('subdivision_id', 'subdivision_name').from('subdivision_master')
+    for (let i = 0; i < internal_division.length; i++) {
+      const ind = internal_division[i];
+      if (i == 0) {
+        insert_task = insert_task.where('subdivision_name', 'like', `%${ind}%`)
+      }
+      if (i > 0) {
+        insert_task = insert_task.orWhere('subdivision_name', 'like', `%${ind}%`);
+      }
+
+    }
+    const select_sub = await insert_task
+    for (let q = 0; q < select_sub.length; q++) {
+      const sub = select_sub[q];
+      const id_max = await get_id({ filed: 'task_id', table: 'task' })
+      const insert_task_ = await knex('task').insert({
+        task_id: id_max.data,
+        task_title: 'งานระบบเฝ้าระวังฉุกงาน',
+        task_detail: lavel,
+        start_date: moment().format("YYYY-MM-DD HH:mm:ss"),
+        end_date: moment().add(1, 'day').format("YYYY-MM-DD HH:mm:ss"),
+        opener_task: 'system',
+        status: '1',
+        file_path: 'resources/assets/task-file',
+        task_type_id: '1',
+        create_date: moment().format("YYYY-MM-DD HH:mm:ss"),
+        del_flag: '1',
+        subdivision_id: sub.subdivision_id,
+        user_id: 'system',
+        remark: `
+        <p>link ที่อยู่ของผู้ป่วย ${`https://www.google.com/maps/place/${pat_data.device[0].latitude},${pat_data.device[0].longgitude}`}</p>
+        <p>link ชื่อ-นามสกุล ${`${pat_data.pat[0].fristname}  ${pat_data.pat[0].lastname}`} เพศ ${pat_data.pat[0].gender}</p>
+        `,
+        real_work: '8',
+        person_responsible: sub.subdivision_name
+
+      })
+      if (!insert_task_) {
+        return { code: true, status: 400, message: insert_task_, data: [] };
+
+      }
+    }
 
     if (result === 0) {
       return { code: true, status: 400, message: 'Update failed', data: [] };

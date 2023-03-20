@@ -37,22 +37,32 @@ const get_task = async ({ }, { email, role, subdivision_id, division_id }) => {
             return { code: true, status: 400, message: "คุณไม่มีสิทธิ์เข้าถึงข้อมูลนี้", data: [] };
         }
         let sql = pg.select('task.*', 'tt.task_type_id', 'tt.task_type_name').from('task').innerJoin('task_type as tt', 'tt.task_type_id', 'task.task_type_id')
-            .where({ subdivision_id: subdivision_id })
+
 
 
         if (role == 1) {
+            sql = sql.where({ subdivision_id: subdivision_id })
             // sql = sql.andWhere('status', '=', '2')
             // sql = sql.orWhere('status', '=', '3')
             sql = sql.orderBy('task.start_date', 'desc');
         }
         if (role == 2) {
+            sql = sql.where({ subdivision_id: subdivision_id })
             sql = sql.andWhere({ 'task.task_type_id': '1' })
-            sql = sql.orWhere({ 'task.opener_task': email })
-            sql = sql.orWhere({ 'task.person_responsible': email })
+            sql = sql.orWhere((builder) => {
+                builder.orWhere({ 'task.opener_task': email })
+                    .orWhere({ 'task.person_responsible': email })
+            })
             sql = sql.orderBy('task.start_date', 'desc');
         }
         const insert_task = await sql
-
+        // ('task')
+        //     .where((builder) => {
+        //         builder.where({ 'task.task_type_id': '1' })
+        //             .orWhere({ 'task.opener_task': email })
+        //             .orWhere({ 'task.person_responsible': email })
+        //     })
+        //     .orderBy('task.start_date', 'desc');
 
         const data_ = await insert_task.map(async (e) => {
             const file = await readfile_({ id: `tsk-${e.task_id}`, full_path: e.file_path }).then((e) => e).catch((err) => err);

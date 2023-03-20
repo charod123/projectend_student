@@ -158,6 +158,8 @@ async function schema() {
         t.string('lavel', 20)
         t.text('agency_more')
         t.string('ping_gsm', 3)
+        t.text('internal_division')
+        
       });
     }
   });

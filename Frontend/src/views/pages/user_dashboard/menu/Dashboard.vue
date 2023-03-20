@@ -41,7 +41,7 @@ const items = ref([
 ]);
 const date = ref({
     date_start: moment().format('YYYY-MM-DD'),
-    date_end: moment().add(2,'day').format('YYYY-MM-DD'),
+    date_end: moment().add(2, 'day').format('YYYY-MM-DD'),
 })
 
 const lineOptions = ref(null);
@@ -141,20 +141,15 @@ const setColorOptions = () => {
 const setChart = async () => {
     await get();
     barData.value = {
-        labels: ['งานเปิด', 'งานที่รอดำเนินการ', 'งานปิด', 'งานยกเลิก', 'งานสาย'],
+        labels: ['00.01 - 04.00', '04.01 - 08.00', '08.01 - 12.00', '12.01 - 16.00', '16.01 - 20.00', '20.00 - 00.00'],
         datasets: [
             {
                 label: 'ค่าเฉลี่ย',
-                backgroundColor: [documentStyle.getPropertyValue('--primary-500'), documentStyle.getPropertyValue('--orange-500'), documentStyle.getPropertyValue('--surface-500'), documentStyle.getPropertyValue('--red-500'), documentStyle.getPropertyValue('--red-500')],
+                backgroundColor: [documentStyle.getPropertyValue('--primary-500')],
                 borderColor: documentStyle.getPropertyValue('--primary-500'),
-                data: [count_task.value?.task.open_task, count_task.value?.task.pending_task, count_task.value?.task.success_task, count_task.value?.task.cancel_task, count_task.value?.task.late_task]
-            },
-            {
-                label: 'งานทั้งหมด',
-                backgroundColor: documentStyle.getPropertyValue('--primary-200'),
-                borderColor: documentStyle.getPropertyValue('--primary-200'),
-                data: [count_task.value?.task.all_task, count_task.value?.task.all_task, count_task.value?.task.all_task, count_task.value?.task.all_task, count_task.value?.task.all_task]
+                data: [count_task.value[0]?.time_00_04, count_task.value[0]?.time_04_08, count_task.value[0]?.time_08_12, count_task.value[0]?.time_12_16, count_task.value[0]?.time_16_20, count_task.value[0]?.time_20_00]
             }
+
         ]
     };
     barOptions.value = {
@@ -195,8 +190,8 @@ const setChart = async () => {
         datasets: [
             {
                 data: pie_value_task_type.value,
-                backgroundColor: [documentStyle.getPropertyValue('--red-500'),documentStyle.getPropertyValue('--indigo-500'), documentStyle.getPropertyValue('--purple-500'), documentStyle.getPropertyValue('--teal-500')],
-                hoverBackgroundColor: [documentStyle.getPropertyValue('--red-500'),documentStyle.getPropertyValue('--indigo-400'), documentStyle.getPropertyValue('--purple-400'), documentStyle.getPropertyValue('--teal-400')]
+                backgroundColor: [documentStyle.getPropertyValue('--red-500'), documentStyle.getPropertyValue('--indigo-500'), documentStyle.getPropertyValue('--purple-500'), documentStyle.getPropertyValue('--teal-500')],
+                hoverBackgroundColor: [documentStyle.getPropertyValue('--red-500'), documentStyle.getPropertyValue('--indigo-400'), documentStyle.getPropertyValue('--purple-400'), documentStyle.getPropertyValue('--teal-400')]
             }
         ]
     };
@@ -356,11 +351,11 @@ watch(
 const get = async () => {
     date.value.date_start = moment(date.value.date_start).format("YYYY-MM-DD")
     date.value.date_end = moment(date.value.date_end).format("YYYY-MM-DD")
-    const res = await service.post('/read/get_dashboard_task', { start_date: date.value.date_start, end_date: date.value.date_end });
+    const res = await service.post('/read/get_dashboard_count_time', { start_date: date.value.date_start, end_date: date.value.date_end });
     if (res.message == 'success') {
         count_task.value = res.data;
         console.log(count_task.value);
-        pie_value_task_type.value = res.data.task_type.map(e => e.count_task_type);
+        // pie_value_task_type.value = res.data.task_type.map(e => e.count_task_type);
     }
 
     const sub = await service.post('/read/get_subdivison', {});
@@ -376,10 +371,10 @@ const get = async () => {
 </script>
 
 <template>
-    <div class="grid">
-        <div class="col-12 flex justify-content-center">
+    <div class="grid p-3">
+        <div class="col-12 flex justify-content-center" v-if="store.role != 3">
             <h1>เทศบาล {{ subdivision?.division_name }} &nbsp;&nbsp; หน่วยงาน {{ subdivision?.subdivision_name }}</h1>
-
+            {{ count_task }}
         </div>
         <div class="col-12 card">
             <div class="flex justify-content-between align-items-end">
@@ -415,7 +410,7 @@ const get = async () => {
                     </div>
                 </div>
                 <!-- <span class="text-green-500 font-medium">24 new </span>
-                                <span class="text-500">since last visit</span> -->
+                                        <span class="text-500">since last visit</span> -->
             </div>
         </div>
         <div :class="`col-12 lg:col-6 xl:col-${store.role == 1 ? '2' : '3'}`">
@@ -423,8 +418,8 @@ const get = async () => {
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <span class="block text-500 font-medium mb-3">งานทั้งหมด </span>
-                        <div class="text-900 font-medium text-xl">{{ count_task?.task.all_task ? count_task?.task.all_task :
-                            0 }}</div>
+                        <!-- <div class="text-900 font-medium text-xl">{{ count_task?.task.all_task ? count_task?.task.all_task :
+                            0 }}</div> -->
                     </div>
                     <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
                         style="width: 2.5rem; height: 2.5rem">
@@ -432,7 +427,7 @@ const get = async () => {
                     </div>
                 </div>
                 <!-- <span class="text-green-500 font-medium">24 new </span>
-                                <span class="text-500">since last visit</span> -->
+                                        <span class="text-500">since last visit</span> -->
             </div>
         </div>
 
@@ -441,10 +436,10 @@ const get = async () => {
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <span class="block text-500 font-medium mb-3">งานค้าง </span>
-                        <div class="text-900 font-medium text-xl">
+                        <!-- <div class="text-900 font-medium text-xl">
                             {{ count_task?.task.open_task ? parseInt(count_task?.task.open_task) +
                                 parseInt(count_task?.task.late_task) +
-                                parseInt(count_task?.task.action_task) : 0 }}</div>
+                                parseInt(count_task?.task.action_task) : 0 }}</div> -->
                     </div>
                     <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
                         style="width: 2.5rem; height: 2.5rem">
@@ -452,7 +447,7 @@ const get = async () => {
                     </div>
                 </div>
                 <!-- <span class="text-green-500 font-medium">24 new </span>
-                                <span class="text-500">since last visit</span> -->
+                                        <span class="text-500">since last visit</span> -->
             </div>
         </div>
         <div :class="`col-12 lg:col-6 xl:col-3`">
@@ -460,9 +455,9 @@ const get = async () => {
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <span class="block text-500 font-medium mb-3">งานที่รอดำเนินการตรวจสอบ</span>
-                        <div class="text-900 font-medium text-xl">{{ count_task?.task.pending_task ?
+                        <!-- <div class="text-900 font-medium text-xl">{{ count_task?.task.pending_task ?
                             count_task?.task.pending_task : 0 }}
-                        </div>
+                        </div> -->
                     </div>
                     <div class="flex align-items-center justify-content-center bg-orange-100 border-round"
                         style="width: 2.5rem; height: 2.5rem">
@@ -470,7 +465,7 @@ const get = async () => {
                     </div>
                 </div>
                 <!-- <span class="text-green-500 font-medium">%52+ </span>
-                                <span class="text-500">since last week</span> -->
+                                        <span class="text-500">since last week</span> -->
             </div>
         </div>
         <div :class="`col-12 lg:col-6 xl:col-3`">
@@ -478,9 +473,9 @@ const get = async () => {
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <span class="block text-500 font-medium mb-3">งานที่ปิด</span>
-                        <div class="text-900 font-medium text-xl">{{ count_task?.task.success_task ?
+                        <!-- <div class="text-900 font-medium text-xl">{{ count_task?.task.success_task ?
                             count_task?.task.success_task : 0 }}
-                        </div>
+                        </div> -->
                     </div>
                     <div class="flex align-items-center justify-content-center bg-cyan-100 border-round"
                         style="width: 2.5rem; height: 2.5rem">
@@ -488,7 +483,7 @@ const get = async () => {
                     </div>
                 </div>
                 <!-- <span class="text-green-500 font-medium">520 </span>
-                                <span class="text-500">newly registered</span> -->
+                                        <span class="text-500">newly registered</span> -->
             </div>
         </div>
 
@@ -514,33 +509,33 @@ const get = async () => {
 
 
         <!-- <div class="col-12 xl:col-6">
-                            <div class="card">
-                                <h5>Recent Sales</h5>
-                                <DataTable :value="products" :rows="5" :paginator="true" responsiveLayout="scroll">
-                                    <Column style="width: 15%">
-                                        <template #header> Image </template>
-                                        <template #body="slotProps">
-                                            <img :src="contextPath + 'demo/images/product/' + slotProps.data.image"
-                                                :alt="slotProps.data.image" width="50" class="shadow-2" />
-                                        </template>
-                                    </Column>
-                                    <Column field="name" header="Name" :sortable="true" style="width: 35%"></Column>
-                                    <Column field="price" header="Price" :sortable="true" style="width: 35%">
-                                        <template #body="slotProps">
-                                            {{ formatCurrency(slotProps.data.price) }}
-                                        </template>
-                                    </Column>
-                                    <Column style="width: 15%">
-                                        <template #header> View </template>
-                                        <template #body>
-                                            <Button icon="pi pi-search" type="button" class="p-button-text"></Button>
-                                        </template>
-                                    </Column>
-                                </DataTable>
+                                    <div class="card">
+                                        <h5>Recent Sales</h5>
+                                        <DataTable :value="products" :rows="5" :paginator="true" responsiveLayout="scroll">
+                                            <Column style="width: 15%">
+                                                <template #header> Image </template>
+                                                <template #body="slotProps">
+                                                    <img :src="contextPath + 'demo/images/product/' + slotProps.data.image"
+                                                        :alt="slotProps.data.image" width="50" class="shadow-2" />
+                                                </template>
+                                            </Column>
+                                            <Column field="name" header="Name" :sortable="true" style="width: 35%"></Column>
+                                            <Column field="price" header="Price" :sortable="true" style="width: 35%">
+                                                <template #body="slotProps">
+                                                    {{ formatCurrency(slotProps.data.price) }}
+                                                </template>
+                                            </Column>
+                                            <Column style="width: 15%">
+                                                <template #header> View </template>
+                                                <template #body>
+                                                    <Button icon="pi pi-search" type="button" class="p-button-text"></Button>
+                                                </template>
+                                            </Column>
+                                        </DataTable>
 
-                            </div>
+                                    </div>
 
-                        </div> -->
+                                </div> -->
     </div>
 </template>
 <style scoped>

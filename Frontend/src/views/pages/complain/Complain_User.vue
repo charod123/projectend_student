@@ -75,7 +75,7 @@ const create_complain = async (data) => {
 }
 watch(dropdownValue_pat, (newValue) => {
     console.log(newValue);
-    device.value = main_data.value.filter(e => e.pat_id == newValue)[0]?.device
+    device.value = main_data.value?.filter(e => e.pat_id == newValue)[0]?.device
     console.log(device.value);
 })
 const get_data_pat_device = async () => {
@@ -95,10 +95,10 @@ const get_data_pat_device = async () => {
     if (get_count_title.code) {
         toast.add({ severity: 'error', summary: get_count_title.message, life: 2000 });
     }
-    count_title.value.count_all = get_count_title.data[0].total;
-    count_title.value.count_colse = get_count_title.data[0].cp3;
-    count_title.value.count_process = get_count_title.data[0].cp2;
-    count_title.value.count_start = get_count_title.data[0].cp1;
+    count_title.value.count_all = get_count_title.data[0]?.total ?? 0;
+    count_title.value.count_colse = get_count_title.data[0]?.cp3 ?? 0;
+    count_title.value.count_process = get_count_title.data[0]?.cp2 ?? 0;
+    count_title.value.count_start = get_count_title.data[0]?.cp1 ?? 0;
 
 }
 watch(store.opendialog, (newValue) => {
@@ -283,7 +283,7 @@ const openpopup = () => {
                     </Editor>
 
                     <!-- <Editor v-if="!loading" v-model="content" apiKey="uomi65v16zevnt069dsx2hjwbed3dbdofksts9tixcty1fqw"
-                                                                                                                                                                                                                                                                                                                                                                                            :init="tinymceSettings" :readonly="true" /> -->
+                                                                                                                                                                                                                                                                                                                                                                                                :init="tinymceSettings" :readonly="true" /> -->
 
 
 

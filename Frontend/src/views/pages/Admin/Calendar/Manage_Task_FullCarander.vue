@@ -251,7 +251,7 @@ const save_end_task = async (data) => {
                                     <Column field="end_date" header="เหลือ (วัน)">
                                         <template #body="{ data }">
                                             {{ $moment(data.end_date).diff(moment(data.start_date), 'days')
-                                           }}
+                                            }}
                                         </template>
                                     </Column>
                                     <Column field="real_work" header="ชั่วโมงทำงานจริง">
@@ -264,12 +264,12 @@ const save_end_task = async (data) => {
                                                     :severity="data.status == 1 ? 'info' : data.status == 8 ? 'help' : data.status == 3 ? 'secondary' : data.status == 0 ? 'danger' : 'warning'"
                                                     rounded :disabled="data.status == 2" @click="update_task(data)" />
                                             </div>
-                                            <div v-if="showbtn && data.status == 2">
+                                            <div v-if="showbtn && (data.status == 2 || data.status == 4)">
                                                 <Button :label="data.status == 3 ? 'งานปิดแล้ว' : 'ปิดงาน'"
                                                     :severity="'secondary'" rounded @click="update_task(data)"
                                                     :disabled="data.status == 3" />
                                             </div>
-                                            <div v-if="showbtn && data.status != 2">
+                                            <div v-if="showbtn && (data.status != 2 && data.status != 4)">
                                                 <Button
                                                     :label="data.status == 1 ? 'รับงาน' : data.status == 8 ? 'ส่งงาน' : data.status == 3 ? 'ปิดงานแล้ว' : data.status == 0 ? 'งานยกเลิก' : 'รอดำเนินการตรวจสอบ'"
                                                     :severity="data.status == 1 ? 'info' : data.status == 8 ? 'help' : data.status == 3 ? 'secondary' : data.status == 0 ? 'danger' : 'warning'"

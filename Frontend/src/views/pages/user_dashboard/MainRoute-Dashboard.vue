@@ -3,7 +3,7 @@ import { ref } from 'vue';
 const prority = JSON.parse(sessionStorage.getItem('priority'))
 const nestedRouteItems = ref([
     {
-        label: 'รายงานสรุป',
+        label: 'รายงานสรุปข้อมูลผู้ป่วย',
         to: '/admin/user/dashboard',
         visible: true
     },

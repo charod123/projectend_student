@@ -119,10 +119,11 @@ const delete_divison = async ({ division_id }, { email, role }) => {
         if (+role !== 1) {
             return { code: true, status: 400, message: "คุณไม่มีสิทธิ์เข้าถึงข้อมูลนี้", data: [] };
         }
-        const sql = `UPDATE  division_master SET del_flag ='0',update_date = now() WHERE division_id = '${division_id}'`
-        const insert_divison = await pgcon.execute(sql, config.connectionString());
-        if (insert_divison.code) {
-            return { code: true, status: 400, message: insert_divison.message, data: [] };
+        // const sql = `UPDATE  division_master SET del_flag ='0',update_date = now() WHERE division_id = '${division_id}'`
+        const insert_divison = pg('division_master').update({ del_flag: '0', update_date: pg.fn.now() }).where({ division_id: division_id })
+        // const insert_divison = await pgcon.execute(sql, config.connectionString());
+        if (!insert_divison) {
+            return { code: true, status: 400, message: insert_divison, data: [] };
         }
         return { code: false, status: 200, message: "success", data: insert_divison };
 
