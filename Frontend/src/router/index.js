@@ -17,14 +17,17 @@ const router = createRouter({
             children: [
                 {
                     path: '/admin/fullcalendar',
+                    meta: { priority: 10 },
                     component: () => import('@/views/pages/Admin/Calendar/Manage_Task_FullCarander.vue')
                 },
                 {
                     path: '/admin/manage_task',
+                    meta: { priority: 10 },
                     component: () => import('@/views/pages/Admin/Manage-Task/Manage_Task_Table.vue')
                 },
                 {
                     path: '/admin/dashboard_task',
+                    meta: { priority: 10 },
                     component: () => import('@/views/pages/Admin/Dashboard_Task/Dashboard_Task.vue')
                 },
                 {
@@ -33,10 +36,12 @@ const router = createRouter({
                     children: [
                         {
                             path: '/admin/user/dashboard',
+                            meta: { priority: 10 },
                             component: () => import('@/views/pages/user_dashboard/menu/Dashboard.vue')
                         },
                         {
                             path: '/admin/user/dashboard_Analysis',
+                            meta: { priority: 10 },
                             component: () => import('@/views/pages/user_dashboard/menu/Dashboard-Analysis.vue')
                         },
 
@@ -133,6 +138,7 @@ const router = createRouter({
                 // },
                 {
                     path: '/create/patient',
+                    meta: { priority: 10 },
                     component: () => import('@/views/uikit/patient/FromPatient.vue'),
                     children: [
                         {
@@ -151,6 +157,7 @@ const router = createRouter({
                 },
                 {
                     path: '/edit/patient',
+                    meta: { priority: 10 },
                     component: () => import('@/views/uikit/patient/FromPatient.vue'),
                     children: [
                         {
@@ -231,22 +238,27 @@ const router = createRouter({
                     children: [
                         {
                             path: '/main/patient/datapatients',
+                            meta: { priority: 10 },
                             component: () => import('@/views/pages/main/menu/DataTablePatient.vue')
                         },
                         {
                             path: '/main/patient/analysis',
+                            meta: { priority: 10 },
                             component: () => import('@/views/pages/main/menu/AnalysisOfDisease.vue')
                         },
                         {
                             path: '/main/patient/content_diseases',
+                            meta: { priority: 10 },
                             component: () => import('@/views/pages/main/menu/Manage_Content_Diseases.vue')
                         },
                         {
                             path: '/main/patient/manage_user_admin',
+                            meta: { priority: 10 },
                             component: () => import('@/views/pages/main/menu/Manage_user_Admin.vue')
                         },
                         {
                             path: '/main/patient/manage_user_basic',
+                            meta: { priority: 10 },
                             component: () => import('@/views/pages/main/menu/Manage_user_basic.vue')
                         },
 
@@ -255,6 +267,7 @@ const router = createRouter({
                 {
                     path: '/main/patient/content_diseases/create',
                     name: 'create_content',
+                    meta: { priority: 10 },
                     component: () => import('@/views/pages/main/menu/Create_Content_Diseases.vue')
                 },
                 {

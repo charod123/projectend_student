@@ -1,7 +1,8 @@
-const url = 'http://localhost'
-const ur_socket = 'ws://localhost'
-// const url = 'http://202.149.117.35'
-// const ur_socket = 'ws://202.149.117.35'
+// const url = 'http://localhost'
+// const ur_socket = 'ws://localhost'
+let chk = true
+const url = chk == true ? 'http://202.149.117.35' : 'http://localhost'
+const ur_socket = chk == true ? 'ws://202.149.117.35' : 'ws://localhost'
 
 // const port = '3002'
 const port = '3001'
