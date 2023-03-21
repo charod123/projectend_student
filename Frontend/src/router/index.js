@@ -39,7 +39,7 @@ const router = createRouter({
                             path: '/admin/user/dashboard_Analysis',
                             component: () => import('@/views/pages/user_dashboard/menu/Dashboard-Analysis.vue')
                         },
-                        
+
                     ]
                 },
             ]
@@ -263,14 +263,17 @@ const router = createRouter({
                     children: [
                         {
                             path: '/main/config/priority',
+                            meta: { priority: 10 },
                             component: () => import('@/views/pages/configPage/menu/ConfigPriority.vue')
                         },
                         {
                             path: '/main/config/subdivision',
+                            meta: { priority: 10 },
                             component: () => import('@/views/pages/configPage/menu/ConfigSubDivision.vue')
                         },
                         {
                             path: '/main/config/division',
+                            meta: { priority: 10 },
                             component: () => import('@/views/pages/configPage/menu/ConfigDivision.vue')
                         },
 
@@ -332,6 +335,7 @@ const router = createRouter({
                 {
                     path: '/mainstram',
                     name: 'mainstram',
+                    meta: { priority: 10 },
                     component: () => import('@/views/pages/main/DashboradPatient.vue')
                 },
                 {

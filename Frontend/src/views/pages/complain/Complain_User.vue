@@ -11,6 +11,7 @@ const file = ref(null);
 const img = ref(null);
 const show_btn_create = store.priority?.filter(x => x.priority_id == 18)[0].can_read == 1 ? true : false
 const data_create_complain = ref({
+    cp_id: null,
     dropdownValue_device: null,
     dropdownValue_type: null,
     cp_title: null,
@@ -44,6 +45,34 @@ const type = ref([
 const handleFileUpload = (event) => {
     file.value = event.files;
 };
+const edit_complain = async (data) => {
+    const res = await service.post('/write/update_complain', {
+        cp_id: data_create_complain.value.cp_id,
+        cp_type_id: data.dropdownValue_type,
+        cp_title: data.cp_title,
+        cp_detail: data.content,
+        cp_tel: data.phone,
+        pat_id: dropdownValue_pat.value ?? '',
+        device_id: data.dropdownValue_device ?? ''
+    });
+    if (file.value) {
+        const formData = new FormData();
+        formData.append('full_path', 'resources/assets/complain-img');
+        formData.append('id', `cp-${data_create_complain.value.cp_id}`);
+        for (let i = 0; i < file.value.length; i++) {
+            formData.append('file', file.value[i])
+        }
+        const res_img = await service.post('/upload/upload-file-over-one', formData, {});
+        if (res_img.message == 'success') {
+            toast.add({ severity: 'success', summary: 'เพิ่มเรื่องร้องเรียนสำเร็จ', detail: res.message, life: 1500 });
+        }
+    }
+    if (res.message == 'success') {
+        toast.add({ severity: 'success', summary: 'เพิ่มเรื่องร้องเรียนสำเร็จ', detail: res.message, life: 1500 });
+        store.opendialog = !store.opendialog
+    }
+
+}
 const create_complain = async (data) => {
     debugger
     console.log(data);
@@ -107,7 +136,8 @@ watch(store.opendialog, (newValue) => {
 
 onUpdated(() => {
     console.log(store.data);
-    if (store.data) {
+    if (store.data.cp_id != data_create_complain.value.cp_id) {
+        data_create_complain.value.cp_id = store.data?.cp_id
         data_create_complain.value.content = store.data?.cp_detail
         data_create_complain.value.cp_title = store.data?.cp_title
         dropdownValue_pat.value = store.data?.pat_id
@@ -225,8 +255,9 @@ const openpopup = () => {
                 <router-view />
             </div>
         </div>
-        <Dialog header="เพิ่มร้องร้องเรียน" v-model:visible="store.opendialog" :breakpoints="{ '1080px': '75vw' }"
-            :style="{ width: '45vw' }" :modal="true" style="font-family:Kanit">
+        <Dialog :header="`${data_create_complain.cp_title ? 'แก้ไขร้องร้องเรียน' : 'เพิ่มร้องร้องเรียน'}`"
+            v-model:visible="store.opendialog" :breakpoints="{ '1080px': '75vw' }" :style="{ width: '45vw' }" :modal="true"
+            style="font-family:Kanit">
             <div class="grid p-fluid">
                 <div class="col-12 md:col-12">
                     <h5>ประเภทเรื่องร้องเรียน</h5>
@@ -283,15 +314,16 @@ const openpopup = () => {
                     </Editor>
 
                     <!-- <Editor v-if="!loading" v-model="content" apiKey="uomi65v16zevnt069dsx2hjwbed3dbdofksts9tixcty1fqw"
-                                                                                                                                                                                                                                                                                                                                                                                                            :init="tinymceSettings" :readonly="true" /> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            :init="tinymceSettings" :readonly="true" /> -->
 
 
 
                 </div>
             </div>
             <template #footer>
-                <Button label="บันทึก" @click="create_complain(data_create_complain)" icon="pi pi-check"
-                    class="p-button-outlined" />
+                <Button label="บันทึก"
+                    @click="data_create_complain.cp_title ? edit_complain(data_create_complain) : create_complain(data_create_complain)"
+                    icon="pi pi-check" class="p-button-outlined" />
             </template>
         </Dialog>
     </div>

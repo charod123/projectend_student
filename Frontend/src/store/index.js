@@ -17,6 +17,7 @@ export const useStore = defineStore({
   }),
   actions: {
     setAddData(data) {
+      this.data = {};
       this.data = data;
     },
     async get_complain() {

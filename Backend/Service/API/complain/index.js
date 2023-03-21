@@ -126,6 +126,36 @@ const create_complain = async ({ cp_type_id, cp_title, cp_detail, cp_tel, pat_id
         return { code: true, status: 400, message: error.message, data: [] };
     }
 }
+const update_complain = async ({ cp_id, cp_type_id, cp_title, cp_detail, cp_tel, pat_id, img_path, device_id }, { user_id, email, role }) => {
+    console.log(pat_id);
+    try {
+        if (+role === 3) {
+            if (!cp_id || !cp_type_id || !cp_title || !cp_detail || !cp_tel) {
+                return { code: true, status: 400, message: "ข้อมูลไม่ครบถ้วน", data: [] };
+            }
+            const pat_master = await pg('complain').update({
+                cp_type_id: cp_type_id,
+                cp_title: cp_title,
+                cp_detail: cp_detail,
+                cp_tel: cp_tel,
+                cp_update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                pat_id: !pat_id ? null : pat_id,
+                user_id: email,
+                cp_detail_after: '',
+                device_id: !device_id ? null : device_id
+            }).where({ cp_id: cp_id })
+
+            if (!pat_master) {
+                return { code: true, status: 400, message: pat_master, data: [] };
+            }
+
+            return { code: false, status: 200, message: "success", data: pat_master };
+
+        }
+    } catch (error) {
+        return { code: true, status: 400, message: error.message, data: [] };
+    }
+}
 const update_status_complain = async ({ cp_id, cp_detail_after, cp_status }, { email, role }) => {
     console.log(email);
     try {
@@ -242,5 +272,6 @@ module.exports = {
     update_status_complain,
     get_type_complain,
     delete_complain,
-    get_count_title
+    get_count_title,
+    update_complain
 }

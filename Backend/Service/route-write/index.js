@@ -2,7 +2,7 @@ const express = require("express");
 const dynamicWriteRouter = express.Router();
 const { add_patient, update_patient, delete_patient } = require('../API/patients');
 const { insert_subdivison, update_subdivison, delete_subdivison } = require('../API/subdivision');
-const { create_complain, update_status_complain, delete_complain } = require('../API/complain');
+const { create_complain, update_status_complain, delete_complain, update_complain } = require('../API/complain');
 const { delete_divison, insert_divison, update_divison } = require('../API/division');
 const { update_priority } = require('../API/priority');
 const { performance_record_notify } = require('../API/notify');
@@ -48,7 +48,8 @@ const resourceMethods = {
   update_end_task,
   delete_task_type,
   insert_task_type,
-  update_task_type
+  update_task_type,
+  update_complain
 };
 
 dynamicWriteRouter.post("/:resource", async (req, res) => {

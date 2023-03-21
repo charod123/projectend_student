@@ -4,7 +4,7 @@ import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode } from 'primevue/api';
 import Service from '../../../../service/api';
-import { useStore } from '@/store';
+import { useStore } from '../../../../store';
 const store = useStore();
 const filters1 = ref(null);
 const confirm = useConfirm();
@@ -15,8 +15,18 @@ const dt = ref();
 const cp_detail_after = ref();
 const opendialog = ref(false);
 const data_on_save = ref();
-const exportCSV = () => {
-    dt.value.exportCSV();
+const showreport = ref(false);
+const data_on_report = ref({
+    select_type_report: '',
+    select_type_complain: '',
+
+}
+)
+const exportCSV = async () => {
+
+    console.log(data_on_report.value);
+    const res = await service.post('/read/get_on_report', {});
+    console.log(res);
 };
 
 const tinymceSettings = {
@@ -44,7 +54,24 @@ const type = ref([
     {
         complain_type_id: 3,
         complain_type_name: 'อื่นๆ'
+    },
+    {
+        complain_type_id: 4,
+        complain_type_name: 'ทั้งหมด'
     }
+]
+)
+
+const type_report = ref([
+    {
+        report_type_id: 1,
+        report_type_name: 'excel'
+    },
+    {
+        report_type_id: 2,
+        report_type_name: 'print pdf'
+    },
+
 ]
 )
 store.$subscribe((mutation) => {
@@ -90,6 +117,7 @@ const viewcomplain = async () => {
 
 }
 const editcomplain = async (data) => {
+    store.data = null;
     store.setAddData(data)
     store.opendialog = !store.opendialog
 }
@@ -149,7 +177,8 @@ const save = async (data) => {
                         <InputText v-model="filters1['global'].value" placeholder="Keyword Search" style="width: 100%" />
                     </span>
                     <div>
-                        <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
+                        <Button style="font-family: Kanit;" icon="pi pi-external-link" label="ออกรายงาน"
+                            @click="showreport = true;" />
                     </div>
                 </div>
             </template>
@@ -217,15 +246,16 @@ const save = async (data) => {
 
                 <template #body="{ data }">
                     <div v-if="store.role == 3">
-                        <Button icon="pi pi-search" class="p-button-rounded p-button-info mr-2 mb-2"
-                            @click="viewcomplain(data)" />
+                        <!-- <Button icon="pi pi-search" class="p-button-rounded p-button-info mr-2 mb-2"
+                            @click="viewcomplain(data)" /> -->
                         <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
                             @click="editcomplain(data)" />
                         <Button icon="pi pi-trash" class="p-button-rounded p-button-danger mr-2 mb-2"
                             @click="confirm2($event, data)" />
                     </div>
                     <div v-if="store.role == 1 || store.role == 2">
-                        <Button style="font-family: Kanit;" :label="data.cp_status == 1 ? 'รับงาน' : data.cp_status == 2 ?'ปิดงาน':'ดูรายละเอียด'"
+                        <Button style="font-family: Kanit;"
+                            :label="data.cp_status == 1 ? 'รับงาน' : data.cp_status == 2 ? 'ปิดงาน' : 'ดูรายละเอียด'"
                             :class="data.cp_status == 1 ? 'p-button-outlined p-button-secondary' : data.cp_status == 2 ? 'p-button-outlined p-button-success' : 'p-button-rounded p-button-help'"
                             @click="update_status_complain(data)" />
                     </div>
@@ -252,6 +282,24 @@ const save = async (data) => {
             </div>
             <template #footer>
                 <Button label="บันทึก" @click="save(data_on_save)" icon="pi pi-check" class="p-button-outlined" />
+            </template>
+        </Dialog>
+        <Dialog header="เลือกรูปแบบรายงาน" v-model:visible="showreport" :breakpoints="{ '1080px': '75vw' }"
+            :style="{ width: '45vw' }" :modal="true" style="font-family:Kanit">
+            <div class="grid p-fluid">
+                <div class="col-12 md:col-12">
+                    <h5>เลือกประเภทร้องเรียน</h5>
+                    <Dropdown v-model="data_on_report.select_type_complain" :options="type" optionLabel="complain_type_name"
+                        optionValue="complain_type_id" placeholder="เลือกประเภทร้องเรียน" />
+                </div>
+                <div class="col-12 md:col-12">
+                    <h5>เลือกประเภทรายงาน</h5>
+                    <Dropdown v-model="data_on_report.select_type_report" :options="type_report"
+                        optionLabel="report_type_name" optionValue="report_type_id" placeholder="เลือกประเภทรายงาน" />
+                </div>
+            </div>
+            <template #footer>
+                <Button label="บันทึก" @click="exportCSV()" icon="pi pi-check" class="p-button-outlined" />
             </template>
         </Dialog>
     </div>

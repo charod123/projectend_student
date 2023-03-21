@@ -29,25 +29,25 @@ const storage = multer.diskStorage({
   destination: async function (req, file, cb) {
     console.log(file);
     const path_read = path.join(__dirname, "../../" + req.body.full_path + '/' + `${req.body.id}`)
-    fs.readdir(path_read, (err, files) => {
-      if (err) {
-        return console.error(`Error reading folder: ${err}`);
-      }
+    // fs.readdir(path_read, (err, files) => {
+    //   if (err) {
+    //     return console.error(`Error reading folder: ${err}`);
+    //   }
 
-      let deletedFile = false;
-      for (const file of files) {
-        if (!deletedFile) {
-          fs.unlink(path.join(path_read, file), (unlinkErr) => {
-            if (unlinkErr) {
-              return console.error(`Error deleting file: ${unlinkErr}`);
-            } else {
-              deletedFile = true;
-              console.log('Successfully deleted an existing file');
-            }
-          });
-        }
-      }
-    });
+    //   let deletedFile = false;
+    //   for (const file of files) {
+    //     if (!deletedFile) {
+    //       fs.unlink(path.join(path_read, file), (unlinkErr) => {
+    //         if (unlinkErr) {
+    //           return console.error(`Error deleting file: ${unlinkErr}`);
+    //         } else {
+    //           deletedFile = true;
+    //           console.log('Successfully deleted an existing file');
+    //         }
+    //       });
+    //     }
+    //   }
+    // });
     shell.mkdir('-p', path_read)
     cb(null, path_read + '/');
   },
