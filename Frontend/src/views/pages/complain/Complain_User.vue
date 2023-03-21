@@ -114,7 +114,7 @@ onUpdated(() => {
         data_create_complain.value.dropdownValue_device = store.data?.device_ip
         data_create_complain.value.dropdownValue_type = store.data?.cp_type_id;
         data_create_complain.value.phone = store.data?.cp_tel
-        img.value = store.data?.img_path
+        img.value = typeof store.data?.img_path == "string" ? [store.data?.img_path] : store.data?.img_path
     }
 
 })
@@ -283,7 +283,7 @@ const openpopup = () => {
                     </Editor>
 
                     <!-- <Editor v-if="!loading" v-model="content" apiKey="uomi65v16zevnt069dsx2hjwbed3dbdofksts9tixcty1fqw"
-                                                                                                                                                                                                                                                                                                                                                                                                :init="tinymceSettings" :readonly="true" /> -->
+                                                                                                                                                                                                                                                                                                                                                                                                            :init="tinymceSettings" :readonly="true" /> -->
 
 
 

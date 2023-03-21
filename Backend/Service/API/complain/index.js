@@ -14,14 +14,18 @@ const get_complain = async ({ }, { email, role, subdistrict_id }) => {
             .leftJoin('patient_master as pm', 'pm.pat_id', 'c_.pat_id')
             .leftJoin('user_profile as up', 'up.user_pro_id', 'pm.user_pro_id')
             .leftJoin('device_master as dm', 'dm.device_ip', 'c_.device_id')
-            .where('c_.del_flag', '1');
+
 
         if (+role === 3) {
+            sql.where('c_.del_flag', '1');
             sql.andWhere('c_.user_id', email);
         }
 
         if (+role == 1 || +role == 2) {
-            sql.andWhere('pm.subdistrict_id', subdistrict_id);
+            sql.leftJoin('user_master as um', 'um.email', 'c_.user_id')
+            sql.where('c_.del_flag', '1');
+            sql.andWhere('um.role_id', '3');
+            sql.andWhere('um.subdistrict_id', subdistrict_id);
         }
 
         const pat_master = await sql;
@@ -200,21 +204,24 @@ const get_count_title = async ({ }, { email, role, subdistrict_id }) => {
     try {
         let query = pg
             .select([
-                pg.raw("CASE WHEN c.cp_status = '1' THEN COUNT(c.cp_id) ELSE 0 END AS cp1"),
-                pg.raw("CASE WHEN c.cp_status = '2' THEN COUNT(c.cp_id) ELSE 0 END AS cp2"),
-                pg.raw("CASE WHEN c.cp_status = '3' THEN COUNT(c.cp_id) ELSE 0 END AS cp3"),
+                pg.raw(`SUM(CASE WHEN c.cp_status = '1' THEN 1 ELSE 0 END) as cp1`),
+                pg.raw(`SUM(CASE WHEN c.cp_status = '2' THEN 1 ELSE 0 END) as cp2`),
+                pg.raw(`SUM(CASE WHEN c.cp_status = '3' THEN 1 ELSE 0 END) as cp3`),
                 pg.raw("COUNT(c.cp_id) AS total")
             ])
             .from('complain as c')
             .leftJoin('patient_master', 'patient_master.pat_id', '=', 'c.pat_id')
-            .where('c.del_flag', '=', '1')
 
         if (+role === 3) {
-            query = query.andWhere('c.user_id', '=', email).groupBy('c.cp_status');
+            query.where('c.del_flag', '=', '1')
+            query.andWhere('c.user_id', '=', email)
         }
 
         if (+role == 1 || +role == 2) {
-            query = query.andWhere('patient_master.subdistrict_id', '=', subdistrict_id).groupBy('c.cp_status');
+            query.leftJoin('user_master as um', 'um.email', 'c.user_id')
+            query.where('c.del_flag', '1');
+            query.andWhere('um.role_id', '3');
+            query.andWhere('um.subdistrict_id', subdistrict_id)
         }
 
         const get_status = await query;

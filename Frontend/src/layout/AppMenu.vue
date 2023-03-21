@@ -20,7 +20,7 @@ const model = ref([
             { label: 'ประวัติการแจ้งเตือนทั้งหมด', icon: 'pi pi-fw pi-id-card', to: '/main/recoad_notification', flag: 0, priority_id: 8 },
             { label: 'การใช้งานระบบ', icon: 'pi pi-fw pi-id-card', to: '/main/complain/details', flag: 0, priority_id: 6 },
             { label: 'โรคที่มักพบบ่อย', icon: 'pi pi-fw pi-id-card', to: '/landing', flag: 1 },
-            { label: 'รายงาน', icon: 'pi pi-fw pi-id-card',to: '', command: () => store.show_daiolg_reprot = true , flag: 1 },
+            // { label: 'รายงาน', icon: 'pi pi-fw pi-id-card',to: '', command: () => store.show_daiolg_reprot = true , flag: 1 },
 
             // { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/uikit/formlayout' },
             // { label: 'Input', icon: 'pi pi-fw pi-check-square', to: '/uikit/input' },
