@@ -2,8 +2,12 @@
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import CustomerService from '@/service/CustomerService';
 import ProductService from '@/service/ProductService';
-import { ref, onMounted, onBeforeMount } from 'vue';
+import { ref, onMounted, onBeforeMount, nextTick } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
+import config from '@/service/config';
+import moment from 'moment';
+import L from 'leaflet';
+import { useToast } from 'primevue/usetoast';
 import Service from '../../../service/api';
 const service = new Service()
 const { contextPath } = useLayout();
@@ -14,11 +18,45 @@ const customer3 = ref(null);
 const filters1 = ref(null);
 const loading1 = ref(null);
 const loading2 = ref(null);
+const toast = useToast();
 const idFrozen = ref(false);
 const products = ref(null);
+const visibleFull = ref(false);
+const marker = ref([]);
+const map_ = ref(null);
 const expandedRows = ref([]);
 const displayConfirmation = ref(false);
+const message = ref();
+const pin_icon = ref(null);
 const datadialog = ref(null);
+const subdivision = ref();
+const mapContainer = ref(null);
+const edit_data = ref();
+const data = ref({
+    agency_that_forwards: '',
+    detail_patient: '',
+    select_more_agnecy: '',
+    select_more: '',
+    select_lavel: ''
+})
+const categories_ = ref([
+    { name: 'โรงพยาบาล', key: 'H' },
+    { name: 'กู้ภัย', key: 'R' },
+    { name: 'ตำรวจ', key: 'P' },
+    { name: 'อื่นๆ', key: 'M' }
+]);
+const categories = ref([
+    { name: 'เร่งด่วน', key: 'A' },
+    { name: 'ปานกลาง', key: 'M' },
+]);
+const selectedCategory = ref(categories.value[1].name);
+const get_subdivision = async () => {
+    const res = await service.post('/read/get_subdivison', {});
+    if (res.message == 'success') {
+        subdivision.value = res.data;
+        console.log(subdivision.value);
+    }
+}
 const statuses = ref(['unqualified', 'qualified', 'new', 'negotiation', 'renewal', 'proposal']);
 const representatives = ref([
     { name: 'Amy Elsner', image: 'amyelsner.png' },
@@ -44,6 +82,7 @@ const get_data_notification = async () => {
 }
 onMounted(() => {
     get_data_notification();
+    get_subdivision();
 })
 onBeforeMount(() => {
     initFilters1();
@@ -72,6 +111,74 @@ const formatDate = (value) => {
         year: 'numeric'
     });
 };
+const getMarker = (data) => {
+    console.log(data);
+    map_.value.setView([data.device[0].latitude, data.device[0].longgitude], 15);
+    console.log(data);
+    const myIcon = L.icon({
+        iconUrl: `${config.backend_url_img}/resources/assets/mian-icon/default/icon-map/alert.gif`,
+        iconSize: [80, 80],
+        iconAnchor: [22, 94],
+        popupAnchor: [18, -76],
+        shadowSize: [68, 95],
+        shadowAnchor: [22, 94],
+    });
+
+    const map = map_.value;
+    let marker_ = L.marker([data.device[0].latitude, data.device[0].longgitude], {
+        icon: myIcon,
+    }).addTo(map)
+        .bindPopup(`<div class="grid p-fluid" style="font-size:1.2rem;color:var(--text-color);width:20rem;">
+    <div class="col-12 md:col-12">
+    <div><span>ชื่อ-นามสกุล</span> ${data.pat[0].fristname + " " + data.pat[0].lastname} อายุ ${moment(new Date()).format("YYYY") - moment(data.pat[0].patient_birthday).format("YYYY")}<br>
+    
+    </div>
+     </div>
+    </div>
+    `);
+    marker_.on("mouseover", (e) => {
+        marker_.openPopup();
+    });
+    marker_.on('click', () => {
+        map.flyTo(marker_.getLatLng(), 18, { animate: true, duration: 1.5 });
+        link_share_location.value = `https://www.google.com/maps/place/${data.device[0].latitude},${data.device[0].longgitude}`
+        navigator.clipboard.writeText(link_share_location.value);
+        toast.add({ severity: 'success', summary: 'Copy ลิงค์แชร์ตำแหน่งผู้ป่วยเรียบร้อย', detail: 'คุณสามารถนำลิงค์ที่ได้งานได้เลย เช่น วางบน Bowser จะนำคุณไปยัง GoogleMap', life: 5000 });
+    });
+    marker.value.push(marker_);
+    //link share google map// https://www.google.com/maps/place/[latitude],[longitude]
+}
+const getMap = () => {
+    var LeafIcon = L.Icon.extend({
+        options: {
+            iconSize: [26, 26],
+            shadowSize: [16, 16],
+        },
+    });
+    const map = L.map(mapContainer.value, {
+        center: [message.value.device[0]?.latitude, message.value.device[0]?.longgitude],
+        zoom: 7,
+        maxZoom: 20,
+        layers: [L.tileLayer(`https://www.deemap.com/DeeMap/gwc/service/tms/1.0.0/DeeMap2_THA_Map_No_POI@EPSG%3A900913@png8/{z}/{x}/{-y}.png8`)],
+        zoomControl: false,
+    })
+
+    pin_icon.value = new LeafIcon({
+        iconUrl: 'http://localhost:3010/resources/assets/mian-icon/default/icon-map/Pin_alt.png',
+        popupAnchor: [0, -5],
+    });
+
+
+    L.control
+        .zoom({
+            position: `bottomright`,
+        })
+        .addTo(map);
+    marker.value = [];
+    map_.value = map;
+    getMarker(message.value);
+
+}
 const calculateCustomerTotal = (name) => {
     let total = 0;
     if (customer3.value) {
@@ -86,79 +193,118 @@ const calculateCustomerTotal = (name) => {
 };
 const openviewdetailnoti = async (e, data) => {
     console.log(data);
+    data.agency_more = JSON.parse(data.agency_more)
     datadialog.value = { ...data }
     displayConfirmation.value = true;
+}
+const edit = async (data_) => {
+    console.log(data_);
+    edit_data.value = { ...data_ }
+    const res = await service.post('/read/getData_notify', { device_ip: data_.device_ip, pat_id: data_.pat_id });
+    if (res.message == 'success') {
+        message.value = res.data;
+        visibleFull.value = true;
+        await nextTick();
+        getMap();
+        message.value.pat[0].disease = JSON.parse(message.value.pat[0].disease)
+        data.value.detail_patient = data_.detail_patient
+        data.value.select_lavel = data_.lavel
+        data.value.select_more = JSON.parse(data_.agency_more)
+        data.value.select_more_agnecy = JSON.parse(data_.internal_division)
+        data.value.agency_that_forwards = data_.detail_deliver
+    }
+}
+const save = async (data, message_) => {
+    console.log(edit_data.value);
+    debugger
+    const pay = {
+        ni_id: edit_data.value.ni_id,
+        detail_deliver: data.agency_that_forwards,
+        detail_patient: data.detail_patient,
+        lavel: data.select_lavel,
+        agency_more: data.select_more,
+        internal_division: data.select_more_agnecy,
+        pat_data: message.value
+
+    }
+    const res = await service.post('/write/performance_record_notify', pay);
+    if (res.message == 'success') {
+        toast.add({ severity: 'success', summary: 'บันทึกสำเร็จ', life: 2000 });
+        displayConfirmation.value = false;
+        visibleFull.value = false;
+    }
 }
 </script>
 
 <template>
     <div class="grid">
-    <div class="col-12">
-        <div class="card">
-            <h3>ประวัติการแจ้งเตือนทั้งหมด</h3>
-            <DataTable :value="customer1" :paginator="true" class="p-datatable-gridlines text-xl" :rows="6" ref="dt"
-                dataKey="ni_id" :rowHover="true" v-model:filters="filters1" filterDisplay="menu" :loading="loading1"
-                style="font-family:Kanit" :filters="filters1" responsiveLayout="scroll"
-                :globalFilterFields="['ni_id', 'fristname', 'gender', 'birthday', 'device_ip']">
-                <template #header>
-                    <div class="flex justify-content-between flex-column sm:flex-row">
-                        <span class="p-input-icon-left mb-2">
-                            <i class="pi pi-search" />
-                            <InputText v-model="filters1['global'].value" placeholder="Keyword Search"
+        <div class="col-12">
+            <div class="card">
+                <h3>ประวัติการแจ้งเตือนทั้งหมด</h3>
+                <DataTable :value="customer1" :paginator="true" class="p-datatable-gridlines text-xl" :rows="6" ref="dt"
+                    dataKey="ni_id" :rowHover="true" v-model:filters="filters1" filterDisplay="menu" :loading="loading1"
+                    style="font-family:Kanit" :filters="filters1" responsiveLayout="scroll"
+                    :globalFilterFields="['ni_id', 'fristname', 'gender', 'birthday', 'device_ip']">
+                    <template #header>
+                        <div class="flex justify-content-between flex-column sm:flex-row">
+                            <span class="p-input-icon-left mb-2">
+                                <i class="pi pi-search" />
+                                <InputText v-model="filters1['global'].value" placeholder="Keyword Search"
                                     style="width: 100%" />
                             </span>
-                        <div>
-                            <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
-                        </div>
+                            <div>
+                                <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
+                            </div>
 
-                    </div>
-                </template>
-                <template #empty> No customers found. </template>
-                <template #loading> Loading customers data. Please wait. </template>
-                <Column field="ni_id" header="#" style="min-width: 2rem" :sortable="true">
-                    <template #body="{ data }">
-                        {{ data.ni_id }}
+                        </div>
                     </template>
-                    <template #filter="{ filterModel }">
-                        <InputText type="text" v-model="filterModel.value" class="p-column-filter"
-                            placeholder="Search by name" />
-                    </template>
-                </Column>
-                <Column header="รูปประจำตัว" style="min-width: 10rem">
-                    <template #body="{ data }">
-                        <img :src="`${data.img_path}`" :alt="data.img_path" class="shadow-2" width="100" />
-                    </template>
-                </Column>
-                <Column field="fristname" header="ชื่อจริง-นามสกุล" style="min-width: 12rem" :sortable="true">
-                    <template #body="{ data }">
-                        {{ data.fristname + " " + data.lastname }}
-                    </template>
-                </Column>
-                <Column field="gender"  header="เพศ" style="min-width: 5rem" :sortable="true">
-                    <template #body="{ data }">
-                        {{ data.gender }}
-                    </template>
-                </Column>
-                <Column field="birthday" header="อายุ" style="min-width: 5rem" :sortable="true">
-                    <template #body="{ data }">
-                        {{ data.birthday }}
-                    </template>
-                </Column>
-                <Column field="device_ip" header="IP อุปกรณ์" style="min-width: 12rem" :sortable="true">
-                    <template #body="{ data }">
-                        {{ data.device_ip }}
-                    </template>
-                </Column>
-                <Column field="time_event_table" header="เวลาที่เกิดแจ้งเตือน" dataType="date" style="min-width: 19rem" :sortable="true">
-                    <template #body="{ data }">
-                        {{ data.time_event_table }}
-                    </template>
-                </Column>
-                <Column field="detail_patient" header="สถานะการดำเนินการ" style="min-width: 15rem" :sortable="true">
-                    <template #body="{ data }">
-                        <span :class="`customer-badge status-${!data.detail_patient ? 'unqualified' : 'qualified'}`">{{
-                            !data.detail_patient ? 'ไม่มีการดำเนินการจากเจ้าหน้าที่' :
-                            data.detail_patient }}</span>
+                    <template #empty> No customers found. </template>
+                    <template #loading> Loading customers data. Please wait. </template>
+                    <Column field="ni_id" header="#" style="min-width: 2rem" :sortable="true">
+                        <template #body="{ data }">
+                            {{ data.ni_id }}
+                        </template>
+                        <template #filter="{ filterModel }">
+                            <InputText type="text" v-model="filterModel.value" class="p-column-filter"
+                                placeholder="Search by name" />
+                        </template>
+                    </Column>
+                    <Column header="รูปประจำตัว" style="min-width: 10rem">
+                        <template #body="{ data }">
+                            <img :src="`${data.img_path}`" :alt="data.img_path" class="shadow-2" width="100" />
+                        </template>
+                    </Column>
+                    <Column field="fristname" header="ชื่อจริง-นามสกุล" style="min-width: 12rem" :sortable="true">
+                        <template #body="{ data }">
+                            {{ data.fristname + " " + data.lastname }}
+                        </template>
+                    </Column>
+                    <Column field="gender" header="เพศ" style="min-width: 5rem" :sortable="true">
+                        <template #body="{ data }">
+                            {{ data.gender }}
+                        </template>
+                    </Column>
+                    <Column field="birthday" header="อายุ" style="min-width: 5rem" :sortable="true">
+                        <template #body="{ data }">
+                            {{ data.birthday }}
+                        </template>
+                    </Column>
+                    <Column field="device_ip" header="IP อุปกรณ์" style="min-width: 12rem" :sortable="true">
+                        <template #body="{ data }">
+                            {{ data.device_ip }}
+                        </template>
+                    </Column>
+                    <Column field="time_event_table" header="เวลาที่เกิดแจ้งเตือน" dataType="date" style="min-width: 19rem"
+                        :sortable="true">
+                        <template #body="{ data }">
+                            {{ data.time_event_table }}
+                        </template>
+                    </Column>
+                    <Column field="detail_patient" header="สถานะการดำเนินการ" style="min-width: 15rem" :sortable="true">
+                        <template #body="{ data }">
+                            <span :class="`customer-badge status-${!data.detail_patient ? 'unqualified' : 'qualified'}`">{{
+                                !data.detail_patient ? 'ไม่มีการดำเนินการจากเจ้าหน้าที่' :
+                                data.detail_patient }}</span>
 
                         </template>
                     </Column>
@@ -167,91 +313,11 @@ const openviewdetailnoti = async (e, data) => {
                             <Button icon="pi pi-search" class="p-button-rounded p-button-info mr-2 mb-2"
                                 @click="openviewdetailnoti($event, data)" />
                             <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
-                                @click="editDivision(data)" />
+                                @click="edit(data)" />
 
                         </template>
                     </Column>
-                    <!-- <Column header="Agent" filterField="representative" :showFilterMatchModes="false"
-                                                                                            :filterMenuStyle="{ width: '14rem' }" style="min-width: 14rem">
-                                                                                            <template #body="{ data }">
-                                                                                                <img :alt="data.representative.name"
-                                                                                                    :src="contextPath + 'demo/images/avatar/' + data.representative.image" width="32"
-                                                                                                    style="vertical-align: middle" />
 
-                                                                                                <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{
-                                                                                                    data.representative.name
-                                                                                                }}</span>
-                                                                                            </template>
-                                                                                            <template #filter="{ filterModel }">
-                                                                                                <div class="mb-3 text-bold">Agent Picker</div>
-                                                                                                <MultiSelect v-model="filterModel.value" :options="representatives" optionLabel="name"
-                                                                                                    placeholder="Any" class="p-column-filter">
-                                                                                                    <template #option="slotProps">
-                                                                                                        <div class="p-multiselect-representative-option">
-                                                                                                            <img :alt="slotProps.option.name"
-                                                                                                                :src="contextPath + 'demo/images/avatar/' + slotProps.option.image"
-                                                                                                                width="32" style="vertical-align: middle" />
-                                                                                                            <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{
-                                                                                                                slotProps.option.name
-                                                                                                            }}</span>
-                                                                                                        </div>
-                                                                                                    </template>
-                                                                                                </MultiSelect>
-                                                                                            </template>
-                                                                                        </Column> -->
-
-                    <!-- <Column header="Balance" filterField="balance" dataType="numeric" style="min-width: 10rem">
-                                                                                            <template #body="{ data }">
-                                                                                                {{ formatCurrency(data.balance) }}
-                                                                                            </template>
-                                                                                            <template #filter="{ filterModel }">
-                                                                                                <InputNumber v-model="filterModel.value" mode="currency" currency="USD" locale="en-US" />
-                                                                                            </template>
-                                                                                        </Column>
-                                                                                        <Column field="status" header="Status" :filterMenuStyle="{ width: '14rem' }"
-                                                                                            style="min-width: 12rem">
-                                                                                            <template #body="{ data }">
-                                                                                                <span :class="'customer-badge status-' + data.status">{{ data.status }}</span>
-                                                                                            </template>
-                                                                                            <template #filter="{ filterModel }">
-                                                                                                <Dropdown v-model="filterModel.value" :options="statuses" placeholder="Any"
-                                                                                                    class="p-column-filter" :showClear="true">
-                                                                                                    <template #value="slotProps">
-                                                                                                        <span :class="'customer-badge status-' + slotProps.value" v-if="slotProps.value">{{
-                                                                                                            slotProps.value
-                                                                                                        }}</span>
-                                                                                                        <span v-else>{{ slotProps.placeholder }}</span>
-                                                                                                    </template>
-                                                                                                    <template #option="slotProps">
-                                                                                                        <span :class="'customer-badge status-' + slotProps.option">{{
-                                                                                                            slotProps.option
-                                                                                                        }}</span>
-                                                                                                    </template>
-                                                                                                </Dropdown>
-                                                                                            </template>
-                                                                                        </Column>
-                                                                                        <Column field="activity" header="Activity" :showFilterMatchModes="false" style="min-width: 12rem">
-                                                                                            <template #body="{ data }">
-                                                                                                <ProgressBar :value="data.activity" :showValue="false" style="height: 0.5rem"></ProgressBar>
-                                                                                            </template>
-                                                                                            <template #filter="{ filterModel }">
-                                                                                                <Slider v-model="filterModel.value" :range="true" class="m-3"></Slider>
-                                                                                                <div class="flex align-items-center justify-content-between px-2">
-                                                                                                    <span>{{ filterModel.value ? filterModel.value[0] : 0 }}</span>
-                                                                                                    <span>{{ filterModel.value ? filterModel.value[1] : 100 }}</span>
-                                                                                                </div>
-                                                                                            </template>
-                                                                                        </Column>
-                                                                                        <Column field="verified" header="Verified" dataType="boolean" bodyClass="text-center"
-                                                                                            style="min-width: 8rem">
-                                                                                            <template #body="{ data }">
-                                                                                                <i class="pi"
-                                                                                                    :class="{ 'text-green-500 pi-check-circle': data.verified, 'text-pink-500 pi-times-circle': !data.verified }"></i>
-                                                                                            </template>
-                                                                                            <template #filter="{ filterModel }">
-                                                                                                <TriStateCheckbox v-model="filterModel.value" />
-                                                                                            </template>
-                                                                                        </Column> -->
                 </DataTable>
 
                 <Dialog header="Dialog" v-model:visible="displayConfirmation" :breakpoints="{ '960px': '75vw' }"
@@ -292,6 +358,92 @@ const openviewdetailnoti = async (e, data) => {
 
 
                 </Dialog>
+                <Sidebar v-model:visible="visibleFull" :baseZIndex="10000" position="full">
+                    <div class="grid">
+                        <div class="col-3" style="outline;:1px solid red">
+                            <div class="flex align-items-center justify-content-center">
+                                <img :src="message.pat[0].img_path" alt="" height="150">
+                            </div>
+                            <div class="col-12 mt-8 mb-8 p-2 md:p-8"
+                                style="border-radius: 20px; background: linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, #efe1af 0%, #c3dcfa 100%);font-family: Kanit;">
+                                <!-- <div class="flex flex-column justify-content-center align-items-center px-3 py-3 md:py-0"> -->
+                                <h3 class="text-gray-1000 mb-2 text-4xl">รายละเอียดผู้ป่วย</h3>
+                                <p class="text-gray-900 sm:line-height-2 md:line-height-4 text-2xl mt-4"
+                                    style="max-width: 800px">
+                                    ชื่อ-นามสกุล {{ message.pat[0].fristname + ' ' + message.pat[0].lastname }}
+                                </p>
+                                <h3 class="text-gray-1000 mb-2 text-3xl">ที่อยุ่</h3>
+                                <p class="text-gray-900 sm:line-height-2 md:line-height-4 text-2xl mt-4"
+                                    style="max-width: 800px">
+                                    บ้านเลขที่ {{ message.pat[0].member }} ถนน {{ message.pat[0].road }} ซอย {{
+                                        message.pat[0].alley
+                                    }}
+                                    อ.{{ message.pat[0].dis_name_in_thai }}
+                                    ต.{{ message.pat[0].sub_name_in_thai }} จ.{{ message.pat[0].pro_name_in_thai }} {{
+                                        message.pat[0].postal_code }}
+                                </p>
+                                <h3 class="text-gray-1000 mb-2 text-3xl">โรค</h3>
+                                <ul class="list-decimal">
+                                    <li class="text-2xl" v-for="item in message.pat[0].disease" :key="item">
+                                        {{ item.cd_name }}
+                                    </li>
+                                </ul>
+                                <h3 class="text-gray-1000 mb-2 text-3xl">อุปกรณ์</h3>
+                                <ul class="list-decimal">
+                                    <li class="text-2xl" v-for="item in message.device" :key="item">
+                                        IP@ {{ item.device_ip }} ชื่ออุปกณ์ {{ item.device_name }} ประเภท ปุ่ม
+                                    </li>
+                                </ul>
+                                <!-- <img src="/demo/images/landing/peak-logo.svg" class="mt-4" alt="Company logo" /> -->
+
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                        <div class="col-6" style="outline;:1px solid red">
+                            <div style="overflow: hidden;" id="map_" ref="mapContainer"></div>
+                        </div>
+                        <div class="col-3" style="outline;:1px solid red">
+
+                            <div>
+                                <h3 class="text-gray-1000 mb-2 text-3xl">ระดับการแจ้งเตือน</h3>
+                                <div class="grid mt-4">
+                                    <div v-for="category of categories" :key="category.key" class="field-radiobutton col-6">
+                                        <RadioButton :inputId="category.key" name="category" :value="category.name"
+                                            v-model="data.select_lavel" :disabled="category.key === 'P'" />
+                                        <label :for="category.key">{{ category.name }}</label>
+                                    </div>
+
+                                </div>
+                                <h3 class="text-gray-1000 mb-2 text-3xl">ส่งต่อเรื่องไปยังหน่วยงานภายใน</h3>
+                                <div class="grid mt-4">
+                                    <div v-for="sub of subdivision" :key="sub" class="field-checkbox col-6">
+                                        <Checkbox :inputId="sub.subdivision_id" name="category"
+                                            :value="sub.subdivision_name" v-model="data.select_more_agnecy" />
+                                        <label :for="sub.subdivision_id">{{ sub.subdivision_name }}</label>
+                                    </div>
+                                </div>
+                                <h3 class="text-gray-1000 mb-2 text-3xl">ส่งต่อเรื่องไปยังหน่วยงานภายนอก</h3>
+                                <div class="grid mt-4">
+                                    <div v-for="category of categories_" :key="category.key" class="field-checkbox col-6">
+                                        <Checkbox :inputId="category.key" name="category" :value="category.name"
+                                            v-model="data.select_more" />
+                                        <label :for="category.key">{{ category.name }}</label>
+                                    </div>
+                                </div>
+                                <h3 class="text-gray-1000 mb-4 text-3xl">รายละเอียดหลังติดต่อกับผู้แลติดผู้ป่วย</h3>
+                                <Textarea v-model="data.detail_patient" rows="5" cols="65" />
+                                <h3 class="text-gray-1000 mb-4 text-3xl">รายละเอียดการส่งต่อไปยังหน่วยงานอื่นๆ</h3>
+                                <Textarea v-model="data.agency_that_forwards" rows="5" cols="65" />
+                                <br>
+                                <br>
+                                <div class="flex justify-content-end">
+                                    <Button class="p-button-success p-3" @click="save(data, message)">บันทึก</Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </Sidebar>
+                <Toast />
             </div>
         </div>
 
@@ -307,5 +459,19 @@ const openviewdetailnoti = async (e, data) => {
 
 ::v-deep(.p-datatable-scrollable .p-frozen-column) {
     font-weight: bold;
+}
+
+#map {
+    width: 100%;
+    height: 400px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+#map_ {
+    width: 100%;
+    height: 90vh;
+    border-radius: 10px;
+    margin-top: 15px;
 }
 </style>

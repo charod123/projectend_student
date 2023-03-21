@@ -9,7 +9,7 @@ const toast = new useToast();
 const service = new Service();
 const file = ref(null);
 const img = ref(null);
-const show_btn_create = store.priority.filter(x => x.priority_id == 18)[0].can_read == 1 ? true : false
+const show_btn_create = store.priority?.filter(x => x.priority_id == 18)[0].can_read == 1 ? true : false
 const data_create_complain = ref({
     dropdownValue_device: null,
     dropdownValue_type: null,

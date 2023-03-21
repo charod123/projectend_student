@@ -138,8 +138,43 @@ const performance_record_notify = async ({ detail_deliver, detail_patient, ni_id
     return { code: true, status: 400, message: error.message, data: [] };
   }
 };
+const getData_notify = async ({ device_ip, pat_id }, { email, role, subdistrict_id, subdivision_id, division_id }) => {
+  const get_device = await knex.select('*').from('device_master').where({ device_ip: device_ip, del_flag: '1' });
+  if (!get_device) {
+    return { code: true, status: 400, message: get_device, data: [] };
+  }
+  const get_pat = await knex.select('patient_master.*', 'user_profile.*', 'subdistricts.sub_name_in_thai', 'provinces.pro_name_in_thai', 'districts.dis_name_in_thai', 'division_master.division_id',
+    'user_master.email', 'user_master.line_token').from('patient_master')
+    .innerJoin('user_profile', 'patient_master.user_pro_id', '=', 'user_profile.user_pro_id')
+    .innerJoin('subdistricts', 'subdistricts.sub_id', '=', 'patient_master.subdistrict_id')
+    .innerJoin('provinces', 'provinces.pro_id', '=', 'patient_master.province_id')
+    .innerJoin('districts', 'districts.dis_id', '=', 'patient_master.district_id')
+    .innerJoin('division_master', 'division_master.subdistrict_id', '=', 'patient_master.subdistrict_id')
+    .innerJoin('user_master', 'user_master.email', '=', 'patient_master.user_id')
+    .where('patient_master.pat_id', '=', `${pat_id}`)
+    .andWhere(`patient_master.del_flag`, '=', '1')
+  if (!get_pat) {
+    return { code: true, status: 400, message: get_pat, data: [] };
+  }
+  const datapat = get_pat.map(async a => {
+    const img_pat = await readfile_({ id: `pat-${a.pat_id}`, full_path: a.img_path }).then((e) => e).catch(err => err);
+    a.img_path = img_pat
+    return a
+  })
 
+  const get_uty = await knex.select('*').from('usertry_master')
+    .innerJoin('user_profile', 'user_profile.user_pro_id', '=', 'usertry_master.user_pro_id')
+    .where('usertry_master.pat_id', '=', `${pat_id}`)
+    .andWhere(`usertry_master.del_flag`, '=', '1')
+
+  if (!get_pat) {
+    return { code: true, status: 400, message: get_pat, data: [] };
+  }
+  return { code: false, status: 200, message: "success", data: { device: get_device, pat: await Promise.all(datapat), usertry: get_uty } };
+
+}
 module.exports = {
   get_notify,
+  getData_notify,
   performance_record_notify
 };
