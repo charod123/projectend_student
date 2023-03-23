@@ -188,7 +188,7 @@ const reset = () => {
                         @click="showdetail_shell = true" />
                 </div>
 
-                <Button v-if="store.priority.filter(x => x.priority_id == 20)[0].can_write == 1 ? true : false"
+                <Button v-if="store.priority?.filter(x => x.priority_id == 20)[0].can_write == 1 ? true : false"
                     style="width: auto;font-family: Kanit;" label="เพิ่มผู้ป่วย" icon="pi pi-plus" @click="addpatient"
                     class="p-button-success m-2" />
             </div>

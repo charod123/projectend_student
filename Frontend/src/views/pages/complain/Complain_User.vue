@@ -251,11 +251,11 @@ const openpopup = () => {
         </div>
         <div class="col-12">
             <div class="card">
-                <TabMenu :model="nestedRouteItems" />
+                <TabMenu style="font-family: Kanit;" :model="nestedRouteItems" />
                 <router-view />
             </div>
         </div>
-        <Dialog :header="`${data_create_complain.cp_title ? 'แก้ไขร้องร้องเรียน' : 'เพิ่มร้องร้องเรียน'}`"
+        <Dialog :header="`${store.data.cp_id ? 'แก้ไขร้องร้องเรียน' : 'เพิ่มร้องร้องเรียน'}`"
             v-model:visible="store.opendialog" :breakpoints="{ '1080px': '75vw' }" :style="{ width: '45vw' }" :modal="true"
             style="font-family:Kanit">
             <div class="grid p-fluid">
@@ -322,7 +322,7 @@ const openpopup = () => {
             </div>
             <template #footer>
                 <Button label="บันทึก"
-                    @click="data_create_complain.cp_title ? edit_complain(data_create_complain) : create_complain(data_create_complain)"
+                    @click="store.data.cp_id ? edit_complain(data_create_complain) : create_complain(data_create_complain)"
                     icon="pi pi-check" class="p-button-outlined" />
             </template>
         </Dialog>

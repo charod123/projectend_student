@@ -174,7 +174,7 @@ onBeforeMount(() => {
                             label="เพิ่มโรคที่มักพบบ่อย"
                             @click="$router.push('/main/patient/content_diseases/create', { data_: data_on_table })" />
                         <Button style="font-family: Kanit;" class="w-12rem p-button-warning ml-2" icon="pi pi-spin pi-wrench"
-                            label="จัดการเมณูหลัก" @click="toggle" />
+                            label="จัดการเมนูหลัก" @click="toggle" />
 
                     </div>
                 </div>
@@ -191,7 +191,7 @@ onBeforeMount(() => {
                         </div>
 
                     </template>
-                    <Column field="main_menu_name" header="ชื่อเมณูหลัก" sortable style="width: 50%"></Column>
+                    <Column field="main_menu_name" header="ชื่อเมนูหลัก" sortable style="width: 50%"></Column>
                     <Column style="width: 40%">
                         <template #body="{ data }">
                             <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
@@ -215,12 +215,12 @@ onBeforeMount(() => {
                     {{ data.content_id }}
                 </template>
             </Column>
-            <Column field="sub_menu_name" header="ชื่อเมณูย่อย" style="min-width: 2rem" :sortable="true">
+            <Column field="sub_menu_name" header="ชื่อเมนูย่อย" style="min-width: 2rem" :sortable="true">
                 <template #body="{ data }">
                     {{ data.sub_menu_name }}
                 </template>
             </Column>
-            <Column field="main_menu_name" header="เมณูหลัก" style="min-width: 2rem" :sortable="true">
+            <Column field="main_menu_name" header="เมนูหลัก" style="min-width: 2rem" :sortable="true">
                 <template #body="{ data }">
                     {{ data.main_menu_name }}
                 </template>
@@ -248,12 +248,12 @@ onBeforeMount(() => {
 
         </DataTable>
         <ConfirmPopup></ConfirmPopup>
-        <Dialog style="font-family: Kanit;" :header="`${disabled_on_edit ? 'แก้เมณูหลัก' : 'เพิ่มเมณูหลัก'}`"
+        <Dialog style="font-family: Kanit;" :header="`${disabled_on_edit ? 'แก้เมนูหลัก' : 'เพิ่มเมนูหลัก'}`"
             v-model:visible="sigup_popup" :breakpoints="{ '960px': '75vw', '640px': '90vw' }" :style="{ width: '20vw' }"
             :position="'right'" :modal="true">
             <div class="grid p-fluid">
                 <div class="col-12">
-                    <InputText v-model="data.main_menu_name" placeholder="ชื่อเมณูหลัก" />
+                    <InputText v-model="data.main_menu_name" placeholder="ชื่อเมนูหลัก" />
                 </div>
             </div>
             <template #footer>

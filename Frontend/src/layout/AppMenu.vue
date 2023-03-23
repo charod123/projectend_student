@@ -15,7 +15,7 @@ const model = ref([
             { label: 'หน้าสรุปข้อมูล', icon: 'pi pi-fw pi-id-card', to: '/admin/user/dashboard', flag: 0, priority_id: 1 },
             { label: 'หน้าหลัก', icon: 'pi pi-fw pi-id-card', to: '/mainstram', flag: 0, priority_id: 1 },
             { label: 'จัดการข้อมูล', icon: 'pi pi-fw pi-id-card', to: '/main/patient/datapatients', flag: 0, priority_id: 16 },
-            { label: 'ตั้งค่า', icon: 'pi pi-fw pi-id-card', to: '/main/config/priority', flag: 0, priority_id: 2 },
+            { label: 'ตั้งค่า', icon: 'pi pi-fw pi-id-card', to: '/main/config/subdivision', flag: 0, priority_id: 2 },
             { label: 'วิธีการลงทะเบียน LINE Notify', icon: 'pi pi-fw pi-id-card', to: '/register_linenotify', flag: 1 },
             { label: 'ประวัติการแจ้งเตือนทั้งหมด', icon: 'pi pi-fw pi-id-card', to: '/main/recoad_notification', flag: 0, priority_id: 8 },
             { label: 'การใช้งานระบบ', icon: 'pi pi-fw pi-id-card', to: '/main/complain/details', flag: 0, priority_id: 6 },

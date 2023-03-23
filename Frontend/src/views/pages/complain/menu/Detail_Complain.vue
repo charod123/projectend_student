@@ -5,8 +5,10 @@ import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode } from 'primevue/api';
 import Service from '../../../../service/api';
 import { useStore } from '../../../../store';
+import { useRouter } from 'vue-router';
 const store = useStore();
 const filters1 = ref(null);
+const router = useRouter();
 const confirm = useConfirm();
 const toast = useToast();
 const complain = ref(null);
@@ -16,17 +18,37 @@ const cp_detail_after = ref();
 const opendialog = ref(false);
 const data_on_save = ref();
 const showreport = ref(false);
+const showdailog_detail_complain = ref(false);
 const data_on_report = ref({
     select_type_report: '',
     select_type_complain: '',
 
 }
 )
+const data_create_complain = ref()
 const exportCSV = async () => {
 
     console.log(data_on_report.value);
-    const res = await service.post('/read/get_on_report', {});
-    console.log(res);
+    const res = await service.post('/read/get_on_report', { select_type_complain: data_on_report.value.select_type_complain });
+    if (res.message == 'success') {
+        const data_report = res.data.map((e, i) => {
+            return {
+                'ลำดับ': i + 1,
+                'เรื่องร้องเรียน': e.cp_title,
+                'ประเภทเรื่องร้องเรียน': e.cp_type,
+                'เบอร์โทรติดต่อกลับ': e.cp_tel,
+                'สถานะ': e.cp_status == 1 ? 'แจ้งเรื่อง' : e.cp_status == 2 ? 'กำลังดำเนินการ' : e.cp_status == 3 ? 'ปิดงาน' : 'ยกเลิก',
+            }
+        })
+        store.data_report = { data: data_report, header: 'รายงานการแจ้งเรื่องร้องเรียน' }
+        if (data_report.length > 0 && data_on_report.value.select_type_report == 2) {
+            return router.push('/report_pdf')
+        }
+        if (data_report.length > 0 && data_on_report.value.select_type_report == 1) {
+            return router.push('/report_export')
+        }
+        return toast.add({ severity: 'warn', summary: 'ไม่มีข้อมูลที่คุณเลือก', life: 2000 });
+    }
 };
 
 const tinymceSettings = {
@@ -113,8 +135,9 @@ const initFilters1 = () => {
         cp_status: { value: null },
     };
 };
-const viewcomplain = async () => {
-
+const viewcomplain = async (data) => {
+    data_create_complain.value = data;
+    showdailog_detail_complain.value = true;
 }
 const editcomplain = async (data) => {
     store.data = null;
@@ -146,21 +169,30 @@ const confirm2 = (event, data) => {
     });
 }
 const update_status_complain = async (data) => {
+    console.log(data);
     if (data.cp_status == 2) {
         data_on_save.value = { ...data }
         return opendialog.value = true
     }
-    const res = await service.post('/write/update_status_complain', { cp_id: data.cp_id, cp_status: data.cp_status == 1 ? 2 : 3, cp_detail_after: cp_detail_after.value });
-    if (res.message == 'success') {
-        get();
-        toast.add({ severity: 'success', life: 2000 });
+    if (data.cp_status == 3) {
+        data_create_complain.value = data;
+        showdailog_detail_complain.value = true;
     }
+    if (data.cp_status == 1) {
+        const res = await service.post('/write/update_status_complain', { cp_id: data.cp_id, cp_status: data.cp_status == 1 ? 2 : 3, cp_detail_after: cp_detail_after.value });
+        if (res.message == 'success') {
+            get();
+            toast.add({ severity: 'success', life: 2000 });
+        }
+    }
+
 }
 const save = async (data) => {
     const res = await service.post('/write/update_status_complain', { cp_id: data.cp_id, cp_detail_after: cp_detail_after.value, cp_status: data.cp_status == 1 ? 2 : 3 });
     if (res.message == 'success') {
         get();
         toast.add({ severity: 'success', life: 2000 });
+        opendialog.value = false;
     }
 }
 </script>
@@ -246,8 +278,8 @@ const save = async (data) => {
 
                 <template #body="{ data }">
                     <div v-if="store.role == 3">
-                        <!-- <Button icon="pi pi-search" class="p-button-rounded p-button-info mr-2 mb-2"
-                            @click="viewcomplain(data)" /> -->
+                        <Button icon="pi pi-search" class="p-button-rounded p-button-info mr-2 mb-2"
+                            @click="viewcomplain(data)" />
                         <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
                             @click="editcomplain(data)" />
                         <Button icon="pi pi-trash" class="p-button-rounded p-button-danger mr-2 mb-2"
@@ -258,6 +290,9 @@ const save = async (data) => {
                             :label="data.cp_status == 1 ? 'รับงาน' : data.cp_status == 2 ? 'ปิดงาน' : 'ดูรายละเอียด'"
                             :class="data.cp_status == 1 ? 'p-button-outlined p-button-secondary' : data.cp_status == 2 ? 'p-button-outlined p-button-success' : 'p-button-rounded p-button-help'"
                             @click="update_status_complain(data)" />
+                        <Button v-if="data.cp_status == 1 || data.cp_status == 2" style="font-family: Kanit;"
+                            label="ดูรายละเอียด" :class="'p-button-outlined p-button-secondary ml-2'"
+                            @click="viewcomplain(data)" />
                     </div>
                 </template>
             </Column>
@@ -299,8 +334,74 @@ const save = async (data) => {
                 </div>
             </div>
             <template #footer>
-                <Button label="บันทึก" @click="exportCSV()" icon="pi pi-check" class="p-button-outlined" />
+                <Button label="ยืนยัน" @click="exportCSV()" icon="pi pi-check" class="p-button-outlined" />
             </template>
         </Dialog>
+        <!-- dรายละเอียดร้องเรียน -->
+        <Dialog :header="`รายละเอียดเรื่องร้องเรียน`" v-model:visible="showdailog_detail_complain"
+            :breakpoints="{ '1080px': '75vw' }" :style="{ width: '70vw' }" :modal="true" style="font-family:Kanit">
+            <div class="grid p-fluid">
+                <div class="col-12 md:col-12">
+                    <h5>ประเภทเรื่องร้องเรียน</h5>
+                    <div class="grid formgrid">
+                        <div class="col-12 mb-2 lg:col-12 lg:mb-0">
+                            <Dropdown v-model="data_create_complain.cp_type_id" :options="type"
+                                optionLabel="complain_type_name" optionValue="complain_type_id" placeholder="เลือกประเภท" />
+                        </div>
+                    </div>
+                    <h5>หัวข้อเรื่องร้องเรียน</h5>
+                    <div class="grid formgrid">
+                        <div class="col-12 mb-2 lg:col-12 lg:mb-0">
+                            <InputText type="text" placeholder="กรอกข้อมูล" v-model="data_create_complain.cp_title" />
+                        </div>
+                    </div>
+                    <div v-if="data_create_complain.cp_type_id == 2">
+
+                        <h5>ชื่อผู้ป่วย</h5>
+                        <div class="grid formgrid">
+                            <div class="col-12 mb-2 lg:col-12 lg:mb-0">
+                                <InputText type="number" placeholder="กรอกข้อมูล"
+                                    v-model="data_create_complain.full_name" />
+                            </div>
+                        </div>
+                        <h5>ip อุปการณ์</h5>
+                        <div class="grid formgrid">
+                            <div class="col-12 mb-2 lg:col-12 lg:mb-0">
+                                <InputText type="number" placeholder="กรอกข้อมูล"
+                                    v-model="data_create_complain.device_ip" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5>เบอร์โทรสำหรับติดต่อกลับ</h5>
+                    <div class="grid formgrid">
+                        <div class="col-12 mb-2 lg:col-12 lg:mb-0">
+                            <InputText type="number" placeholder="กรอกข้อมูล" v-model="data_create_complain.cp_tel">
+                            </InputText>
+                        </div>
+                    </div>
+                    <h5>รูปเพิ่มเติม</h5>
+
+                    <Image :src="data_create_complain.img_path"></Image>
+
+                    <div class="grid mt-2" v-if="store.data">
+                        <div class="col-12 mb-2 lg:col-3 lg:mb-0" v-for="item in img" :key="item">
+                            <Image :src="item" alt="Image Text" width="220" preview />
+                        </div>
+                    </div>
+                    <h5>รายละเอียดเรื่องที่แจ้ง</h5>
+                    <div v-html="data_create_complain.cp_detail" style="width: 50%;"></div>
+                    <h5 v-if="data_create_complain.cp_status == 3">รายละเอียดการดำเนินการ</h5>
+                    <div v-if="data_create_complain.cp_status == 3" v-html="data_create_complain.cp_detail_after"
+                        style="width: 50%;"></div>
+
+                </div>
+            </div>
+            <template #footer>
+
+            </template>
+        </Dialog>
+        <!-- dรายละเอียดร้องเรียน -->
+
     </div>
 </template>

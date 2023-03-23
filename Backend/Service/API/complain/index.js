@@ -10,7 +10,7 @@ const get_complain = async ({ }, { email, role, subdistrict_id }) => {
     try {
 
         let sql = pg('complain as c_')
-            .select('pm.pat_id', pg.raw("concat(up.fristname,' ',up.lastname) as full_name"), 'c_.*')
+            .select('pm.pat_id', pg.raw("concat(up.fristname,' ',up.lastname) as full_name"), 'c_.*','dm.*')
             .leftJoin('patient_master as pm', 'pm.pat_id', 'c_.pat_id')
             .leftJoin('user_profile as up', 'up.user_pro_id', 'pm.user_pro_id')
             .leftJoin('device_master as dm', 'dm.device_ip', 'c_.device_id')

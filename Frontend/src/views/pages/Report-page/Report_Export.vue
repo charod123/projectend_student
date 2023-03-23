@@ -1,36 +1,87 @@
-<script setup>
+<script setup >
 import { ref, onMounted } from 'vue';
+import XLSX from 'xlsx-js-style';
+import { useStore } from '../../../store';
+const store = useStore();
 onMounted(() => {
-    setTimeout(() => {
-        window.print();
-    }, 1000)
+    const wsxzz = XLSX.utils.json_to_sheet(store.data_report?.data);
+    for (var i in wsxzz) {
+        console.log(wsxzz[i]);
+        if (typeof wsxzz[i] != 'object') continue;
+        let cell = XLSX.utils.decode_cell(i);
+
+        wsxzz[i].s = {
+
+            // styling for all cells
+            font: {
+                name: 'Angsana New',
+                sz: "16"
+            },
+            alignment: {
+                vertical: 'center',
+                horizontal: 'center',
+                wrapText: '1', // any truthy value here
+            },
+            border: {
+                right: {
+                    style: 'thin',
+                    color: '000000',
+                },
+                left: {
+                    style: 'thin',
+                    color: '000000',
+                },
+                top: {
+                    style: 'thin',
+                    color: '000000',
+                },
+                bottom: {
+                    style: 'thin',
+                    color: '000000',
+
+                }
+
+            },
+        };
+
+        if (cell.c == 6) {
+            // first column
+            wsxzz[i].s.numFmt = 'DD-MM-YYYY'; // for dates
+            wsxzz[i].z = 'DD-MM-YYYY';
+        } else {
+            wsxzz[i].s.numFmt = '00'; // other numbers
+        }
+
+        if (cell.r == 0) {
+            // first row
+            wsxzz[i].s.border.bottom = {
+                // bottom border
+                style: 'thin',
+                color: '000000',
+            };
+        }
+
+        if (cell.r == 0) {
+            // every other row
+            wsxzz[i].s.fill = {
+                // background color
+                patternType: 'solid',
+                fgColor: { rgb: 'b2b2b2' },
+                bgColor: { rgb: 'b2b2b2' },
+            };
+        }
+    }
+    const wo = XLSX.utils.book_new();
+    wsxzz['!cols'] = [{ width: 10 }, { width: 20 }, { width: 30 }, { width: 30 }, { width: 30 }, { width: 50 }, { width: 30 }, { width: 30 }];
+    XLSX.utils.book_append_sheet(wo, wsxzz, 'Reports');
+    XLSX.writeFile(wo, 'inform_days.xlsx');
+    
 })
 </script>
 
 <template>
     <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
-        <div class="flex flex-column align-items-center justify-content-center">
-            <img src="/demo/images/error/logo-error.svg" alt="Sakai logo" class="mb-5 w-6rem flex-shrink-0" />
-            <div
-                style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, rgba(233, 30, 99, 0.4) 10%, rgba(33, 150, 243, 0) 30%)">
-                <div class="w-full surface-card py-8 px-5 sm:px-8 flex flex-column align-items-center"
-                    style="border-radius: 53px">
-                    <div class="grid flex flex-column align-items-center">
-                        <div class="flex justify-content-center align-items-center bg-pink-500 border-circle"
-                            style="height: 3.2rem; width: 3.2rem">
-                            <i class="pi pi-fw pi-exclamation-circle text-2xl text-white"></i>
-                        </div>
-                        <h1 class="text-900 font-bold text-5xl mb-2">Error Occured</h1>
-                        <span class="text-600 mb-5">Requested resource is not available.</span>
-                        <img src="/demo/images/error/asset-error.svg" alt="Error" class="mb-5" width="80%" />
-                        <div class="col-12 mt-5 text-center">
-                            <i class="pi pi-fw pi-arrow-left text-blue-500 mr-2" style="vertical-align: center"></i>
-                            <router-link to="/" class="text-blue-500">Go to Dashboard</router-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        loading..................
     </div>
 </template>
 <style scoped lang="scss">

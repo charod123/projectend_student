@@ -13,7 +13,8 @@ export const useStore = defineStore({
     role: null,
     priority: JSON.parse(sessionStorage.getItem('priority')),
     content_data: {},
-    show_daiolg_reprot: false
+    show_daiolg_reprot: false,
+    data_report: null
   }),
   actions: {
     setAddData(data) {
