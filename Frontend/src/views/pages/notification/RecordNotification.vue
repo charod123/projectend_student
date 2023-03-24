@@ -9,7 +9,9 @@ import moment from 'moment';
 import L from 'leaflet';
 import { useToast } from 'primevue/usetoast';
 import Service from '../../../service/api';
+import { useStore } from '../../../store';
 const service = new Service()
+const store = useStore();
 const { contextPath } = useLayout();
 const dt = ref()
 const customer1 = ref(null);
@@ -312,7 +314,7 @@ const save = async (data, message_) => {
                         <template #body="{ data }">
                             <Button icon="pi pi-search" class="p-button-rounded p-button-info mr-2 mb-2"
                                 @click="openviewdetailnoti($event, data)" />
-                            <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
+                            <Button v-if="store.priority?.filter(x => x.priority_id == 8)[0]?.can_write == 1 ? true : false" icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
                                 @click="edit(data)" />
 
                         </template>

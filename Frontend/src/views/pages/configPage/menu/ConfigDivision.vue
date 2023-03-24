@@ -8,8 +8,9 @@ import moment from 'moment';
 import L from 'leaflet';
 import Service from '../../../../service/api';
 import config from '../../../../service/config';
+import { useStore } from '../../../../store';
 const service = new Service();
-
+const store = useStore();
 const confirm = useConfirm();
 const customer1 = ref(null);
 const filters1 = ref(null);
@@ -215,17 +216,17 @@ const save = async (data) => {
                     </template>
 
                 </Column>
-
-                <Column field="verified" dataType="boolean" bodyClass="text-center" style="min-width: 8rem">
+                <Column v-if="store.priority?.filter(x => x.priority_id == 4)[0]?.can_write == 1 ? true : false" field="verified"
+                    dataType="boolean" bodyClass="text-center" style="min-width: 8rem">
                     <template #body="{ data }">
                         <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
                             @click="editDivision(data)" />
                         <Button icon="pi pi-trash" class="p-button-rounded p-button-danger mr-2 mb-2"
                             @click="confirm2($event, data)" />
                     </template>
-
                 </Column>
             </DataTable>
+
             <DataTable v-if="loading" :value="customer1" :paginator="true" class="p-datatable-gridlines mt-5" :rows="10"
                 dataKey="subdivision_id" :rowHover="true" v-model:filters="filters1" sortMode="single"
                 sortField="subdivision_id" :sortOrder="1" filterDisplay="menu" :loading="loading1" :filters="filters1"
@@ -273,7 +274,7 @@ const save = async (data) => {
             <Dialog v-model:visible="divisionDialog" :style="{ width: '450px' }" header="แก้ไขข้อมูล" :modal="true"
                 class="p-fluid">
                 <!-- <img :src="contextPath + 'demo/images/product/' + product.image" :alt="product.image"
-                        v-if="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" /> -->
+                                v-if="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" /> -->
                 <div class="field">
                     <label for="name">ชื่อหน่วยงาน</label>
                     <InputText id="name" v-model.trim="division.division_name" required="true" autofocus
