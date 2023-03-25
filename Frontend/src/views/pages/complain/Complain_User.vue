@@ -9,7 +9,7 @@ const toast = new useToast();
 const service = new Service();
 const file = ref(null);
 const img = ref(null);
-const show_btn_create = store.priority?.filter(x => x.priority_id == 18)[0].can_read == 1 ? true : false
+const show_btn_create = ref(false);
 const data_create_complain = ref({
     cp_id: null,
     dropdownValue_device: null,
@@ -95,6 +95,8 @@ const create_complain = async (data) => {
         }
         const res_img = await service.post('/upload/upload-file-over-one', formData, {});
         if (res_img.message == 'success') {
+            await store.get_complain();
+            store.opendialog = false;
             toast.add({ severity: 'success', summary: 'เพิ่มเรื่องร้องเรียนสำเร็จ', detail: res.message, life: 1500 });
         }
     }
@@ -135,8 +137,8 @@ watch(store.opendialog, (newValue) => {
 })
 
 onUpdated(() => {
-    console.log(store.data);
     if (store.data.cp_id != data_create_complain.value.cp_id) {
+        console.log(store.data);
         data_create_complain.value.cp_id = store.data?.cp_id
         data_create_complain.value.content = store.data?.cp_detail
         data_create_complain.value.cp_title = store.data?.cp_title
@@ -150,6 +152,7 @@ onUpdated(() => {
 })
 
 onMounted(async () => {
+    store.priority?.filter(x => x.priority_id == 18)[0].can_read == 1 ? show_btn_create.value = true : show_btn_create.value = false
     await get_data_pat_device();
 })
 const nestedRouteItems = ref([
@@ -314,7 +317,7 @@ const openpopup = () => {
                     </Editor>
 
                     <!-- <Editor v-if="!loading" v-model="content" apiKey="uomi65v16zevnt069dsx2hjwbed3dbdofksts9tixcty1fqw"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            :init="tinymceSettings" :readonly="true" /> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        :init="tinymceSettings" :readonly="true" /> -->
 
 
 

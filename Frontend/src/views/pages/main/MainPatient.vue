@@ -11,21 +11,21 @@ const nestedRouteItems = ref([
     {
         label: 'จัดการโรคที่มักพบบ่อย',
         to: '/main/patient/content_diseases',
-        visible: prority.filter(x => x.priority_id == 15)[0]?.can_read == 1 ? true : false ?? true
+        visible: prority?.filter(x => x.priority_id == 15)[0]?.can_read == 1 ? true : false ?? true
 
 
     },
     {
         label: 'จัดการข้อมูลพนักงาน',
         to: '/main/patient/manage_user_admin',
-        visible: prority.filter(x => x.priority_id == 7)[0]?.can_read == 1 ? true : false ?? true
+        visible: prority?.filter(x => x.priority_id == 7)[0]?.can_read == 1 ? true : false ?? true
 
 
     },
     {
         label: 'จัดการข้อมูลผู้ใช้งาน',
         to: '/main/patient/manage_user_basic',
-        visible: prority.filter(x => x.priority_id == 3)[0]?.can_read == 1 ? true : false ?? true
+        visible: prority?.filter(x => x.priority_id == 3)[0]?.can_read == 1 ? true : false ?? true
 
     },
 

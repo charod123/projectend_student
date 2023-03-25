@@ -17,7 +17,8 @@ onMounted(() => {
             </div>
             <br>
             <div class="col-12">
-                <DataTable :value="store.data_report?.data" showGridlines tableStyle="min-width: 50rem">
+                <DataTable :value="store.data_report?.data" showGridlines tableStyle="min-width: 50rem"
+                    style="font-family: Kanit;">
                     <Column field="ลำดับ" header="ลำดับ"></Column>
                     <Column field="เรื่องร้องเรียน" header="เรื่องร้องเรียน"></Column>
                     <Column field="ประเภทเรื่องร้องเรียน" header="ประเภทเรื่องร้องเรียน"></Column>
@@ -31,15 +32,27 @@ onMounted(() => {
 
     </div>
 </template>
-<style scoped lang="scss">
+<style scoped lang="css">
 .print_report {
     display: none
 }
+
+/* For non-scrollable DataTable */
+.p-datatable td,
+.p-datatable th {
+  border-color: #000;
+}
+
+/* For scrollable DataTable */
+.p-datatable-scrollable td,
+.p-datatable-scrollable th {
+  border-color: #000;
+}
+
 
 @media print {
     .print_report {
         display: grid
     }
 
-}
-</style>
+}</style>

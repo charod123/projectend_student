@@ -207,7 +207,7 @@ const test = (event) => {
                             <div class="text-900 font-bold text-4xl text-center mb-4">Pricing Plans</div>
                             <div class="flex align-items-center justify-content-center text-900"><span
                                     class="font-semibold mr-3">Monthly</span>
-                                                    <div class="p-inputswitch p-component">
+                                                        <div class="p-inputswitch p-component">
                                         <div class="p-hidden-accessible"><input type="checkbox" role="switch" class=""
                                                         aria-checked="false"></div><span class="p-inputswitch-slider"></span>
                                 </div><span class="ml-3">Yearly</span>
@@ -251,30 +251,30 @@ const test = (event) => {
                                         style="box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px inset; border-radius: 0px 0px 6px 6px;">
                                         <div class="text-bluegray-400 font-bold line-height-3 mb-4">Ullamco laboris nisi ut
                                             aliquip ex ea commodo consequat.</div>
-                                                            <ul class="list-none p-0 m-0 mb-5 text-bluegray-100">
-                                                                    <li class="flex align-items-center mb-3"><i
-                                                                                        class="pi pi-circle-fill mr-2 text-sm"></i><span>Arcu vitae
-                                                                                        elementum</span></li>
-                                                                                <li class="flex align-items-center mb-3"><i
-                                                                                        class="pi pi-circle-fill mr-2 text-sm"></i><span>Dui faucibus in
-                                                                                                ornare</span></li>
-                                                                                            <li class="flex align-items-center mb-3"><i
-                                                                                                                        class="pi pi-circle-fill mr-2 text-sm"></i><span>Morbi tincidunt
-                                                                                                                            augue</span></li>
-                                                                                                                        <li class="flex align-items-center"><i
-                                                                                                                                class="pi pi-circle-fill mr-2 text-sm"></i><span>Duis ultricies lacus
-                                                                                                                                    sed</span></li>
-                                                                                                                        </ul><button class="p-button p-component p-button-success w-full mt-auto"
-                                                                                                                            type="button" aria-label="Buy Now"><span
-                                                                                                                                class="p-button-label">Buy Now</span><span class="p-ink"
-                                                                                                                                role="presentation" aria-hidden="true"></span></button>
+                                                                <ul class="list-none p-0 m-0 mb-5 text-bluegray-100">
+                                                                        <li class="flex align-items-center mb-3"><i
+                                                                                            class="pi pi-circle-fill mr-2 text-sm"></i><span>Arcu vitae
+                                                                                            elementum</span></li>
+                                                                                    <li class="flex align-items-center mb-3"><i
+                                                                                            class="pi pi-circle-fill mr-2 text-sm"></i><span>Dui faucibus in
+                                                                                                    ornare</span></li>
+                                                                                                <li class="flex align-items-center mb-3"><i
+                                                                                                                            class="pi pi-circle-fill mr-2 text-sm"></i><span>Morbi tincidunt
+                                                                                                                                augue</span></li>
+                                                                                                                            <li class="flex align-items-center"><i
+                                                                                                                                    class="pi pi-circle-fill mr-2 text-sm"></i><span>Duis ultricies lacus
+                                                                                                                                        sed</span></li>
+                                                                                                                            </ul><button class="p-button p-component p-button-success w-full mt-auto"
+                                                                                                                                type="button" aria-label="Buy Now"><span
+                                                                                                                                    class="p-button-label">Buy Now</span><span class="p-ink"
+                                                                                                                                    role="presentation" aria-hidden="true"></span></button>
+                                                                                                                        </div>
                                                                                                                     </div>
-                                                                                                                </div>
-                                                                                                                <div class="mb-6 md:mb-0 flex flex-column flex-grow-1">
-                                                                                                                            <div class="bg-blue-800 text-center p-3" style="border-radius: 6px 6px 0px 0px;">
-                                                                                                                                <div class="text-2xl font-bold text-white mb-3">Enterprise</div>
-                                                                                                                                <div class="flex align-items-center justify-content-center"><span
-                                                                                                                                            class="font-bold text-white text-5xl mr-2">30$</span><span
+                                                                                                                    <div class="mb-6 md:mb-0 flex flex-column flex-grow-1">
+                                                                                                                                <div class="bg-blue-800 text-center p-3" style="border-radius: 6px 6px 0px 0px;">
+                                                                                                                                    <div class="text-2xl font-bold text-white mb-3">Enterprise</div>
+                                                                                                                                    <div class="flex align-items-center justify-content-center"><span
+                                                                                                                                                class="font-bold text-white text-5xl mr-2">30$</span><span
                                                                                                                                         class="text-2xl text-blue-400"> / month</span></div>
                                                                                                                             </div>
                                                                                                                                 <div class="bg-blue-900 p-4 flex flex-column flex-grow-1"
@@ -283,7 +283,7 @@ const test = (event) => {
                                                                                                                                 reprehenderit in voluptate velit.</div>
                                                                                                                             <ul class="list-none p-0 m-0 mb-5 text-blue-100">
                                                                                                                                 <li class="flex align-items-center mb-3"><i
-                                                                                                                                        class="pi pi-circle-fill mr-2 text-sm"></i><span>Arcu vitae
+                                                                                                                                            class="pi pi-circle-fill mr-2 text-sm"></i><span>Arcu vitae
                                                                                                                                         elementum</span></li>
                                                                                                                                 <li class="flex align-items-center mb-3"><i
                                                                                                                                         class="pi pi-circle-fill mr-2 text-sm"></i><span>Dui faucibus in
@@ -354,25 +354,21 @@ const test = (event) => {
                     <div class="grid">
                         <div class="col-12 md:col-6">
                             <div class="pr-0 md:pr-8">
-                                <div class="text-blue-500 font-bold text-5xl mb-5">Manage Your Corporation</div>
+                                <div class="text-blue-500 font-bold text-5xl mb-5">ข้อมูลผิดพลาดประการใดขออภัยมา ณ
+                                    ที่นี้</div>
                                 <div class="mb-5 border-blue-500 pl-3" style="border-left: 4px solid;"><span
-                                        class="text-white font-bold text-2xl">Simpler Interface</span>
-                                    <div class="text-gray-400 line-height-3 mt-3">Duis aute irure dolor in reprehenderit
-                                        in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</div>
+                                        class="text-white font-bold text-2xl">โรคที่พบบ่อย</span>
+                                    <div class="text-gray-400 line-height-3 mt-3"> โรคที่มักพบบ่อย:
+                                        <strong>โรคหัวใจและหลอดเลือด</strong>, <strong>โรคเบาหวาน</strong>,
+                                        <strong>โรคความดันโลหิตสูง</strong>, <strong>โรคมะเร็ง</strong>, และอื่นๆ.</div>
                                 </div>
-                                <div class="mb-5"><span class="text-gray-400 font-bold text-2xl">Extensive
-                                        Connectivity</span>
-                                    <div class="text-gray-400 line-height-3 mt-3">Risus nec feugiat in fermentum posuere
-                                        urna nec. Posuere sollicitudin aliquam ultrices sagittis.</div>
-                                </div>
-                                <div class="mb-5"><span class="text-gray-400 font-bold text-2xl">Magical Privacy</span>
-                                    <div class="text-gray-400 line-height-3 mt-3">Laoreet sit amet cursus sit. Velit ut
-                                        tortor pretium viverra. Sollicitudin aliquam ultrices sagittis orci.</div>
-                                </div>
+
                             </div>
                         </div>
-                        <div class="col-12 md:col-6"><img src="https://blocks.primevue.org/images/blocks/feature/feature-3.png" alt="Image"
-                                class="w-full"></div>
+                        <div class="md:col-3"></div>
+                        <div class="col-12 md:col-3"><img
+                                src="https://ehr.meditech.com/themes/ehrmeditech/images/campaigns/physician-sitting-with-patient-talking.jpg"
+                                alt="Image" class="w-full" height="280" ></div>
                     </div>
                 </div>
             </div><!---->
@@ -654,105 +650,105 @@ const test = (event) => {
                                                                         <li class="py-2">
                                                                             <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
                                                                             <span class="text-xl line-height-3">Responsive Layout</span>
-                                                                                            </li>
-                                                                                                <li class="py-2">
-                                                                                                                <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
-                                                                                                                <span class="text-xl line-height-3">Unlimited Push Messages</span>
-                                                                                                            </li>
-                                                                                                            <li class="py-2">
-                                                                                                                        <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
-                                                                                                                            <span class="text-xl line-height-3">50 Support Ticket</span>
-                                                                                                                                            </li>
-                                                                                                                                                <li class="py-2">
-                                                                                                                                                        <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
-                                                                                                                                                        <span class="text-xl line-height-3">Free Shipping</span>
-                                                                                                                                                        </li>
-                                                                                                                                                    </ul>
-                                                                                                                                                </div>
-                                                                                                                                                </div>
+                                                                                                </li>
+                                                                                                    <li class="py-2">
+                                                                                                                    <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
+                                                                                                                    <span class="text-xl line-height-3">Unlimited Push Messages</span>
+                                                                                                                </li>
+                                                                                                                <li class="py-2">
+                                                                                                                            <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
+                                                                                                                                <span class="text-xl line-height-3">50 Support Ticket</span>
+                                                                                                                                                </li>
+                                                                                                                                                    <li class="py-2">
+                                                                                                                                                            <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
+                                                                                                                                                            <span class="text-xl line-height-3">Free Shipping</span>
+                                                                                                                                                            </li>
+                                                                                                                                                        </ul>
+                                                                                                                                                    </div>
+                                                                                                                                                    </div>
 
-                                                                                                                                                <div class="col-12 lg:col-4 p-0 md:p-3 mt-4 md:mt-0">
-                                                                                                                                                        <div class="p-3 flex flex-column border-200 pricing-card cursor-pointer border-2 hover:border-primary transition-duration-300 transition-all"
-                                                                                                                                                            style="border-radius: 10px">
-                                                                                                                                                                    <h3 class="text-900 text-center my-5">Enterprise</h3>
-                                                                                                                                                                    <img src="/demo/images/landing/enterprise.svg" class="w-10 h-10 mx-auto" alt="enterprise" />
-                                                                                                                                                                    <div class="my-5 text-center">
-                                                                                                                                                                        <span class="text-5xl font-bold mr-2 text-900">$999</span>
-                                                                                                                                                                        <span class="text-600">per month</span>
-                                                                                                                                                                        <Button label="Get a Quote"
-                                                                                                                                                                            class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-blue-500 text-white"></Button>
-                                                                                                                                                                    </div>
-                                                                                                                                                                            <Divider class="w-full bg-surface-200"></Divider>
-                                                                                                                                                                                    <ul class="my-5 list-none p-0 flex text-900 flex-column">
-                                                                                                                                                                                        <li class="py-2">
-                                                                                                                                                                                            <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
-                                                                                                                                                                                            <span class="text-xl line-height-3">Responsive Layout</span>
-                                                                                                                                                                                        </li>
-                                                                                                                                                                                        <li class="py-2">
-                                                                                                                                                                                            <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
-                                                                                                                                                                                            <span class="text-xl line-height-3">Unlimited Push Messages</span>
+                                                                                                                                                    <div class="col-12 lg:col-4 p-0 md:p-3 mt-4 md:mt-0">
+                                                                                                                                                            <div class="p-3 flex flex-column border-200 pricing-card cursor-pointer border-2 hover:border-primary transition-duration-300 transition-all"
+                                                                                                                                                                style="border-radius: 10px">
+                                                                                                                                                                        <h3 class="text-900 text-center my-5">Enterprise</h3>
+                                                                                                                                                                        <img src="/demo/images/landing/enterprise.svg" class="w-10 h-10 mx-auto" alt="enterprise" />
+                                                                                                                                                                        <div class="my-5 text-center">
+                                                                                                                                                                            <span class="text-5xl font-bold mr-2 text-900">$999</span>
+                                                                                                                                                                            <span class="text-600">per month</span>
+                                                                                                                                                                            <Button label="Get a Quote"
+                                                                                                                                                                                class="block mx-auto mt-4 p-button-rounded border-none ml-3 font-light line-height-2 bg-blue-500 text-white"></Button>
+                                                                                                                                                                        </div>
+                                                                                                                                                                                <Divider class="w-full bg-surface-200"></Divider>
+                                                                                                                                                                                        <ul class="my-5 list-none p-0 flex text-900 flex-column">
+                                                                                                                                                                                            <li class="py-2">
+                                                                                                                                                                                                <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
+                                                                                                                                                                                                <span class="text-xl line-height-3">Responsive Layout</span>
                                                                                                                                                                                             </li>
                                                                                                                                                                                             <li class="py-2">
-                                                                                                                                                                                                        <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
-                                                                                                                                                                                                        <span class="text-xl line-height-3">50 Support Ticket</span>
-                                                                                                                                                                                                        </li>
-                                                                                                                                                                                                            <li class="py-2">
-                                                                                                                                                                                                                <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
-                                                                                                                                                                                                                <span class="text-xl line-height-3">Free Shipping</span>
+                                                                                                                                                                                                <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
+                                                                                                                                                                                                <span class="text-xl line-height-3">Unlimited Push Messages</span>
+                                                                                                                                                                                                </li>
+                                                                                                                                                                                                <li class="py-2">
+                                                                                                                                                                                                            <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
+                                                                                                                                                                                                            <span class="text-xl line-height-3">50 Support Ticket</span>
                                                                                                                                                                                                             </li>
-                                                                                                                                                                                                        </ul>
+                                                                                                                                                                                                                <li class="py-2">
+                                                                                                                                                                                                                    <i class="pi pi-fw pi-check text-xl text-cyan-500 mr-2"></i>
+                                                                                                                                                                                                                    <span class="text-xl line-height-3">Free Shipping</span>
+                                                                                                                                                                                                                </li>
+                                                                                                                                                                                                            </ul>
+                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                            </div>
+
+                                                                                                                                                                                            <div class="py-4 px-4 mx-0 mt-8 lg:mx-8">
+                                                                                                                                                                                                <div class="grid justify-content-between">
+                                                                                                                                                                                                    <div class="col-12 md:col-2" style="margin-top: -1.5rem">
+                                                                                                                                                                                                        <a @click="smoothScroll('#home')"
+                                                                                                                                                                                                            class="flex flex-wrap align-items-center justify-content-center md:justify-content-start md:mb-0 mb-3 cursor-pointer">
+                                                                                                                                                                                                            <img :src="logoUrl" alt="footer sections" width="50" height="50" class="mr-2" />
+                                                                                                                                                                                                            <h4 class="font-medium text-3xl text-900">SAKAI</h4>
+                                                                                                                                                                                                        </a>
+                                                                                                                                                                                                    </div>
+
+                                                                                                                                                                                                    <div class="col-12 md:col-10 lg:col-7">
+                                                                                                                                                                                                        <div class="grid text-center md:text-left">
+                                                                                                                                                                                                            <div class="col-12 md:col-3">
+                                                                                                                                                                                                                <h4 class="font-medium text-2xl line-height-3 mb-3 text-900">Company</h4>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">About Us</a>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">News</a>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Investor Relations</a>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Careers</a>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer text-700">Media Kit</a>
+                                                                                                                                                                                                        </div>
+
+                                                                                                                                                                                                        <div class="col-12 md:col-3 mt-4 md:mt-0">
+                                                                                                                                                                                                            <h4 class="font-medium text-2xl line-height-3 mb-3 text-900">Resources</h4>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Get Started</a>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Learn</a>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer text-700">Case Studies</a>
+                                                                                                                                                                                                        </div>
+
+                                                                                                                                                                                                        <div class="col-12 md:col-3 mt-4 md:mt-0">
+                                                                                                                                                                                                            <h4 class="font-medium text-2xl line-height-3 mb-3 text-900">Community</h4>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Discord</a>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Events<img
+                                                                                                                                                                                                                    src="/demo/images/landing/new-badge.svg" class="ml-2" /></a>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">FAQ</a>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer text-700">Blog</a>
+                                                                                                                                                                                                        </div>
+
+                                                                                                                                                                                                        <div class="col-12 md:col-3 mt-4 md:mt-0">
+                                                                                                                                                                                                            <h4 class="font-medium text-2xl line-height-3 mb-3 text-900">Legal</h4>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Brand Policy</a>
+                                                                                                                                                                                                            <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Privacy Policy</a>
+                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer text-700">Terms of Service</a>
                                                                                                                                                                                                     </div>
                                                                                                                                                                                                 </div>
                                                                                                                                                                                             </div>
                                                                                                                                                                                         </div>
-
-                                                                                                                                                                                        <div class="py-4 px-4 mx-0 mt-8 lg:mx-8">
-                                                                                                                                                                                            <div class="grid justify-content-between">
-                                                                                                                                                                                                <div class="col-12 md:col-2" style="margin-top: -1.5rem">
-                                                                                                                                                                                                    <a @click="smoothScroll('#home')"
-                                                                                                                                                                                                        class="flex flex-wrap align-items-center justify-content-center md:justify-content-start md:mb-0 mb-3 cursor-pointer">
-                                                                                                                                                                                                        <img :src="logoUrl" alt="footer sections" width="50" height="50" class="mr-2" />
-                                                                                                                                                                                                        <h4 class="font-medium text-3xl text-900">SAKAI</h4>
-                                                                                                                                                                                                    </a>
-                                                                                                                                                                                                </div>
-
-                                                                                                                                                                                                <div class="col-12 md:col-10 lg:col-7">
-                                                                                                                                                                                                    <div class="grid text-center md:text-left">
-                                                                                                                                                                                                        <div class="col-12 md:col-3">
-                                                                                                                                                                                                            <h4 class="font-medium text-2xl line-height-3 mb-3 text-900">Company</h4>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">About Us</a>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">News</a>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Investor Relations</a>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Careers</a>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer text-700">Media Kit</a>
-                                                                                                                                                                                                    </div>
-
-                                                                                                                                                                                                    <div class="col-12 md:col-3 mt-4 md:mt-0">
-                                                                                                                                                                                                        <h4 class="font-medium text-2xl line-height-3 mb-3 text-900">Resources</h4>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Get Started</a>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Learn</a>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer text-700">Case Studies</a>
-                                                                                                                                                                                                    </div>
-
-                                                                                                                                                                                                    <div class="col-12 md:col-3 mt-4 md:mt-0">
-                                                                                                                                                                                                        <h4 class="font-medium text-2xl line-height-3 mb-3 text-900">Community</h4>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Discord</a>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Events<img
-                                                                                                                                                                                                                src="/demo/images/landing/new-badge.svg" class="ml-2" /></a>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">FAQ</a>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer text-700">Blog</a>
-                                                                                                                                                                                                    </div>
-
-                                                                                                                                                                                                    <div class="col-12 md:col-3 mt-4 md:mt-0">
-                                                                                                                                                                                                        <h4 class="font-medium text-2xl line-height-3 mb-3 text-900">Legal</h4>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Brand Policy</a>
-                                                                                                                                                                                                        <a class="line-height-3 text-xl block cursor-pointer mb-2 text-700">Privacy Policy</a>
-                                                                                                                                                                                                    <a class="line-height-3 text-xl block cursor-pointer text-700">Terms of Service</a>
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                            </div>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                </div> -->
+                                                                                                                                                                                    </div> -->
         </div>
     </div>
     <AppConfig simple />
@@ -806,7 +802,8 @@ const test = (event) => {
 </style> --> 
 
 
-<style scoped>@media screen and (max-width: 960px) {
+<style scoped>
+@media screen and (max-width: 960px) {
     ::v-deep(.fc-header-toolbar) {
         display: flex;
         flex-wrap: wrap;

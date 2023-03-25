@@ -140,11 +140,11 @@ const merge_local_todata = async () => {
         pat_id.value = data.pat_id;
     }
 }
-onMounted(async () => {
-    await get_provine_dis();
-    await merge_local_todata();
+onMounted(() => {
+    get_provine_dis();
+    merge_local_todata();
     if (route.fullPath !== '/edit/patient') {
-        await getmax_id();
+        getmax_id();
     }
 
     // inputFile.value = document.querySelector('input[type="file"]');
@@ -196,7 +196,7 @@ const nexpage = async () => {
     // formData.append('full_path', "resources/assets/pat-img");
     // formData.append('file', file.value)
     data.value = {
-        pat_id: pat_id.value == null ? '' : pat_id.value,
+        pat_id: pat_id.value ? '' : pat_id.value,
         pat_fristname: fristname.value,
         pat_lastname: lastname.value,
         pat_birthday: birthday.value,
@@ -275,7 +275,6 @@ const onFileUpload = async (event) => {
         <div class="col-12 md:col-8 mt-5 sm:col-6">
             <div class="card surface-50">
                 <h4>ข้อมูลส่วนตัว</h4>
-
                 <div class="grid formgrid mt-5">
                     <div class="col-12 mb-2 lg:col-4 lg:mb-0">
                         <span class="p-float-label">
@@ -412,17 +411,17 @@ const onFileUpload = async (event) => {
 
                 </div>
                 <!-- <div v-if="$route.path !== '/edit/patient'" class="grid formgrid mt-5">
-                    <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-                        <span class="p-float-label">
-                            <InputText id="inputheignt" disabled type="number" v-model="postal_code"
-                                :class="{ 'p-invalid': store.submitted && !postal_code }" />
-                            <label for="inputheignt">รหัสไปรษณีย์</label>
-                        </span>
-                        <small class="p-invalid text-red-500 text-base"
-                            v-if="store.submitted && !postal_code">กรุณาเลือกข้อมูล.</small>
+                            <div class="col-12 mb-2 lg:col-4 lg:mb-0">
+                                <span class="p-float-label">
+                                    <InputText id="inputheignt" disabled type="number" v-model="postal_code"
+                                        :class="{ 'p-invalid': store.submitted && !postal_code }" />
+                                    <label for="inputheignt">รหัสไปรษณีย์</label>
+                                </span>
+                                <small class="p-invalid text-red-500 text-base"
+                                    v-if="store.submitted && !postal_code">กรุณาเลือกข้อมูล.</small>
 
-                    </div>
-                </div> -->
+                            </div>
+                        </div> -->
 
             </div>
 

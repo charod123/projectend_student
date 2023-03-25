@@ -20,6 +20,7 @@ const displayConfirmation = ref(false);
 const store = useStore();
 const onview = ref(null);
 const showdetail_shell = ref(false);
+const show_btn_create = ref(false);
 const lavel = ref([
     { cname: 'น้อย', code: 1 },
     { cname: 'ค่อนข้างน้อย', code: 2 },
@@ -53,6 +54,7 @@ const get_all_pat = async () => {
 }
 onMounted(async () => {
     await get_all_pat();
+    store.priority?.filter(x => x.priority_id == 20)[0].can_write == 1 ? show_btn_create.value = true : show_btn_create.value = false
 
 })
 onBeforeMount(() => {
@@ -188,9 +190,8 @@ const reset = () => {
                         @click="showdetail_shell = true" />
                 </div>
 
-                <Button v-if="store.priority?.filter(x => x.priority_id == 20)[0].can_write == 1 ? true : false"
-                    style="width: auto;font-family: Kanit;" label="เพิ่มผู้ป่วย" icon="pi pi-plus" @click="addpatient"
-                    class="p-button-success m-2" />
+                <Button v-if="show_btn_create" style="width: auto;font-family: Kanit;" label="เพิ่มผู้ป่วย"
+                    icon="pi pi-plus" @click="addpatient" class="p-button-success m-2" />
             </div>
             <DataTable v-if="!loading && !showdetail_shell" :value="customer1" :paginator="true"
                 class="p-datatable-gridlines text-xl" :rows="10" dataKey="pat_id" :rowHover="true"
@@ -222,10 +223,10 @@ const reset = () => {
                 <template #empty> ไม่มีข้อมูล</template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column field="pat_id" header="#" :sortable="true">
-                    <template #body="{ data }">
-                        {{ data.pat_id }}
-                </template>
-                <template #filter="{ filterModel }">
+                <template #body="{ data }">
+                    {{ data.pat_id }}
+                    </template>
+                    <template #filter="{ filterModel }">
                         <InputText type="text" v-model="filterModel.value" class="p-column-filter"
                             placeholder="Search by id" />
                     </template>
@@ -288,8 +289,8 @@ const reset = () => {
                     </template>
                 </Column>
 
-                <Column bodyClass="text-center" style="min-width: 10rem">
-                    <template #body="{ data }">
+            <Column bodyClass="text-center" style="min-width: 10rem">
+                <template #body="{ data }">
 
                     <!-- <Button icon="pi pi-search" class="p-button-rounded p-button-info mr-2 mb-2"
                                                                         @click="opendetails(data)" /> -->
@@ -316,8 +317,8 @@ const reset = () => {
                         <Button type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined mb-2"
                             @click="clearFilter1()" style="width: auto;" />
                     </div>
-                    <div>
-                        <span class="p-input-icon-left mb-2">
+                        <div>
+                            <span class="p-input-icon-left mb-2">
                                 <i class="pi pi-search" />
                                 <InputText v-model="filters1['global'].value" placeholder="Keyword Search"
                                     style="width: auto;" />
@@ -331,8 +332,8 @@ const reset = () => {
                 </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column field="pat_id" header="#" style="min-width: 12rem">
-                    <template #body="{ data }">
-                        <Skeleton height="40px"></Skeleton>
+                <template #body="{ data }">
+                    <Skeleton height="40px"></Skeleton>
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter"
@@ -340,9 +341,9 @@ const reset = () => {
                 </template>
             </Column>
 
-            <Column field="pat_fristname + pat_lastname" header="ชื่อเต็ม" style="min-width: 12rem">
+                <Column field="pat_fristname + pat_lastname" header="ชื่อเต็ม" style="min-width: 12rem">
                 <template #body="{ data }">
-                        <Skeleton height="40px"></Skeleton>
+                    <Skeleton height="40px"></Skeleton>
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter"
@@ -380,9 +381,9 @@ const reset = () => {
             <Column header="IP อุปกรณ์" style="min-width: 10rem">
                 <template #body="{ data }">
                     <Skeleton height="40px"></Skeleton>
-                </template>
+                    </template>
                 <template #filter="{ filterModel }">
-                        <!-- <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" /> -->
+                    <!-- <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" /> -->
                 </template>
             </Column>
             <Column bodyClass="text-center" style="min-width: 8rem">
@@ -458,8 +459,8 @@ const reset = () => {
 
                         <h4 class="surface-100 p-4 border-round-lg w-auto line-height-4"
                             v-for="item in customer1[first].usertry" :key="item.ut_id">
-                            ชื่อ-นามสกุล : {{ item.fristname }} &nbsp; {{ item.lastname }} &nbsp; อายุ : {{ $moment(new
-                                Date()).format("YYYY") - $moment(item.birthday).format("YYYY") }}
+                                ชื่อ-นามสกุล : {{ item.fristname }} &nbsp; {{ item.lastname }} &nbsp; อายุ : {{ $moment(new
+                                    Date()).format("YYYY") - $moment(item.birthday).format("YYYY") }}
                                 &nbsp; เพศ : {{ item.gender }} &nbsp; ความสัมพันธ์กับผู้สูงอายุหรือผู้ป่วยติดเตียง : {{
                                     item.ut_relationship }} <br>เบอร์โทรศัพท์ : {{ item.phone }}
                             </h4>
@@ -468,35 +469,6 @@ const reset = () => {
                                 v-for="item in customer1[first].device" :key="item.device_id">
                                 IP : {{ item.device_ip }} &nbsp;&nbsp;&nbsp; ชื่ออุปกรณ์ :&nbsp; {{ item.device_name }}
                             </h4>
-                            <!-- <div class="text-center text-sm font-medium mt-3">Consequat nisl vel pretium lectus quam id leo
-                                                                                in.</div>
-                                                                            <p class="line-height-3 mt-0 mb-5"> Nisi est sit amet facilisis. Ac odio tempor orci dapibus
-                                                                                ultrices in iaculis nunc sed. Pellentesque pulvinar pellentesque habitant morbi tristique
-                                                                                senectus. Nullam vehicula ipsum a arcu cursus vitae congue. Leo urna molestie at elementum
-                                                                                eu facilisis. Fusce id velit ut tortor. Purus non enim praesent elementum facilisis leo vel
-                                                                                fringilla est. Semper risus in hendrerit gravida rutrum quisque non tellus orci. Neque
-                                                                                convallis a cras semper. Vitae elementum curabitur vitae nunc sed. Ornare massa eget egestas
-                                                                                purus viverra accumsan in. Leo integer malesuada nunc vel risus commodo viverra maecenas
-                                                                                accumsan. Sit amet risus nullam eget. Egestas maecenas pharetra convallis posuere morbi leo
-                                                                                urna molestie at. </p>
-                                                                            <p class="line-height-3 text-600 text-2xl mb-5"> “Science is the most reliable guide for
-                                                                                civilization, for life, for success in the world. Searching a guide other than the science
-                                                                                is meaning carelessness, ignorance and heresy.” </p>
-                                                                            <p class="line-height-3 mt-0 mb-5"> Convallis tellus id interdum velit laoreet id donec
-                                                                                ultrices. Lacus sed viverra tellus in hac habitasse platea dictumst. Ultricies tristique
-                                                                                nulla aliquet enim. Nunc scelerisque viverra mauris in aliquam sem fringilla. Laculis urna
-                                                                                id volutpat lacus laoreet. </p>
-                                                                            <ul class="pt-0 px-5 mt-0 mb-5">
-                                                                                <li class="line-height-3">Nunc sed velit dignissim sodales ut.</li>
-                                                                                <li class="line-height-3">Lorem mollis aliquam ut porttitor.</li>
-                                                                                <li class="line-height-3">Urna nec tincidunt praesent semper feugiat nibh sed.</li>
-                                                                            </ul>
-                                                                            <div class="text-3xl text-900">Massa vitae tortor condimentum lacinia</div>
-                                                                            <p class="line-height-3"> Lacus viverra vitae congue eu consequat ac felis donec et. A lacus
-                                                                                vestibulum sed arcu non. Mauris vitae ultricies leo integer malesuada nunc vel. Dolor sit
-                                                                                amet consectetur adipiscing elit ut aliquam purus. Ac tincidunt vitae semper quis lectus
-                                                                                nulla at volutpat. Enim lobortis scelerisque fermentum dui faucibus in ornare. In mollis
-                                                                                nunc sed id semper. Vitae ultricies leo integer malesuada nunc vel risus commodo. </p> -->
                         </div>
                     </div>
                     <Paginator v-model:first="first" :rows="1" :totalRecords="customer1.length"
@@ -511,134 +483,6 @@ const reset = () => {
                 </div>
 
             </div>
-            <!-- <Dialog v-model:visible="displayConfirmation" :style="{ width: '450px' }" header="Confirm" :modal="true">
-                                                                                                                                                                                        <div class="flex align-items-center justify-content-center">
-                                                                                                                                                                                            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                                                                                                                                                                                            <span v-if="product">Are you sure you want to delete the selected products?</span>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                        <template #footer>
-                                                                                                                                                                                            <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteProductsDialog = false" />
-                                                                                                                                                                                            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteSelectedProducts" />
-                                                                                                                                                                                        </template>
-                                                                                                                                                                                    </Dialog> -->
-            <!-- <Dialog header="รายละเอียด" v-model:visible="displayConfirmation" :breakpoints="{ '1080px': '75vw' }"
-                                                                                                                                                                                        :style="{ width: '45vw' }" :modal="true">
-                                                                                                                                                                                        <div class="grid p-fluid">
-                                                                                                                                                                                            <div class="col-12 md:col-12">
-                                                                                                                                                                                                <img :src="onview?.img_path[0]" />
-                                                                                                                                                                                                <h3>ข้อมูลส่วนตัว</h3>
-                                                                                                                                                                                            <div class="grid formgrid">
-                                                                                                                                                                                                <div class="col-12 mb-2 lg:col-12 lg:mb-0">
-                                                                                                                                                                                                    <h5>ชื่อ-นามสกุล {{ onview.pat_fristname + ' ' + onview.pat_lastname }}    อายุ  {{ onview.age }}  เพศ  {{ onview.pat_sax }}  ส่วนสูง  {{ onview.pat_height }}   น้ำหนัก   {{ onview.pat_weight }}</h5>
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                            </div>
-                                                                                                                                                                                            <h5>ที่อยู่</h5>
-                                                                                                                                                                                            <div class="grid formgrid">
-                                                                                                                                                                                                <div class="col-12 mb-2 lg:col-12 lg:mb-0">
-                                                                                                                                                                                                    <InputText type="text" placeholder="กรอกข้อมูล"></InputText>
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                            </div>
-
-                                                                                                                                                                                            <h5>โรคประจำตัว</h5>
-
-                                                                                                                                                                                            <Dropdown v-model="dropdownValue" :options="dropdownValues" optionLabel="name"
-                                                                                                                                                                                                placeholder="เลือกประเภท" :filter="true" :showClear="true" />
-
-
-                                                                                                                                                                                            <h5>ญาติที่สามารถติดต่อได้</h5>
-
-                                                                                                                                                                                            <Dropdown v-model="dropdownValue" :options="dropdownValues" optionLabel="name"
-                                                                                                                                                                                                placeholder="เลือกประเภท" :filter="true" :showClear="true" />
-
-
-                                                                                                                                                                                            <h5>รายละเอียดอุปกรณ์</h5>
-                                                                                                                                                                                            <Dropdown v-model="dropdownValue" :options="dropdownValues" optionLabel="name"
-                                                                                                                                                                                                placeholder="เลือกอุปกรณ์" />
-
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                    <template #footer>
-                                                                                                                                                                                        <Button label="บันทึก" @click="close" icon="pi pi-check" class="p-button-outlined" />
-                                                                                                                                                                                    </template>
-                                                                                                                                                                                </Dialog> -->
-            <!-- <Dialog v-model:visible="divisionDialog" :style="{ width: '450px' }" header="Product Details" :modal="true"
-                                                                                                                                                                                    class="p-fluid">
-                                                                                                                                                                                    <img :src="contextPath + 'demo/images/product/' + product.image" :alt="product.image"
-                                                                                                                                                                                        v-if="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" />
-                                                                                                                                                                                    <div class="field">
-                                                                                                                                                                                        <label for="name">Name</label>
-                                                                                                                                                                                        <InputText id="name" v-model.trim="division.subdivision_name" required="true" autofocus
-                                                                                                                                                                                            :class="{ 'p-invalid': submitted && !division.subdivision_name }" />
-                                                                                                                                                                                        <small class="p-invalid" v-if="submitted && !product.name">Name is required.</small>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                    <div class="field">
-                                                                                                                                                                                        <label for="description">Description</label>
-                                                                                                                                                                                        <Textarea id="description" v-model="product.description" required="true" rows="3" cols="20" />
-                                                                                                                                                                                    </div>
-
-                                                                                                                                                                                    <div class="field">
-                                                                                                                                                                                        <label for="inventoryStatus" class="mb-3">Inventory Status</label>
-                                                                                                                                                                                        <Dropdown id="inventoryStatus" v-model="product.inventoryStatus" :options="statuses"
-                                                                                                                                                                                            optionLabel="label" placeholder="Select a Status">
-                                                                                                                                                                                            <template #value="slotProps">
-                                                                                                                                                                                                <div v-if="slotProps.value && slotProps.value.value">
-                                                                                                                                                                                                    <span :class="'product-badge status-' + slotProps.value.value">{{
-                                                                                                                                                                                                        slotProps.value.label
-                                                                                                                                                                                                    }}</span>
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                                <div v-else-if="slotProps.value && !slotProps.value.value">
-                                                                                                                                                                                                    <span :class="'product-badge status-' + slotProps.value.toLowerCase()">{{
-                                                                                                                                                                                                        slotProps.value
-                                                                                                                                                                                                    }}</span>
-                                                                                                                                                                                                </div>
-                                                                                                                                                                                                <span v-else>
-                                                                                                                                                                                                    {{ slotProps.placeholder }}
-                                                                                                                                                                                                </span>
-                                                                                                                                                                                            </template>
-                                                                                                                                                                                        </Dropdown>
-                                                                                                                                                                                    </div>
-
-                                                                                                                                                                                    <div class="field">
-                                                                                                                                                                                        <label class="mb-3">Category</label>
-                                                                                                                                                                                        <div class="formgrid grid">
-                                                                                                                                                                                            <div class="field-radiobutton col-6">
-                                                                                                                                                                                                <RadioButton id="category1" name="category" value="Accessories"
-                                                                                                                                                                                                    v-model="product.category" />
-                                                                                                                                                                                                <label for="category1">Accessories</label>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                        <div class="field-radiobutton col-6">
-                                                                                                                                                                                            <RadioButton id="category2" name="category" value="Clothing" v-model="product.category" />
-                                                                                                                                                                                            <label for="category2">Clothing</label>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                        <div class="field-radiobutton col-6">
-                                                                                                                                                                                        <RadioButton id="category3" name="category" value="Electronics"
-                                                                                                                                                                                            v-model="product.category" />
-                                                                                                                                                                                        <label for="category3">Electronics</label>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                    <div class="field-radiobutton col-6">
-                                                                                                                                                                                        <RadioButton id="category4" name="category" value="Fitness" v-model="product.category" />
-                                                                                                                                                                                        <label for="category4">Fitness</label>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                </div>
-                                                                                                                                                                            </div>
-
-                                                                                                                                                                            <div class="formgrid grid">
-                                                                                                                                                                                <div class="field col">
-                                                                                                                                                                                    <label for="price">Price</label>
-                                                                                                                                                                                    <InputNumber id="price" v-model="product.price" mode="currency" currency="USD" locale="en-US"
-                                                                                                                                                                                        :class="{ 'p-invalid': submitted && !product.price }" :required="true" />
-                                                                                                                                                                                    <small class="p-invalid" v-if="submitted && !product.price">Price is required.</small>
-                                                                                                                                                                                </div>
-                                                                                                                                                                                <div class="field col">
-                                                                                                                                                                                    <label for="quantity">Quantity</label>
-                                                                                                                                                                                    <InputNumber id="quantity" v-model="product.quantity" integeronly />
-                                                                                                                                                                                </div>
-                                                                                                                                                                            </div>
-                                                                                                                                                                            <template #footer>
-                                                                                                                                                                                <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-                                                                                                                                                                                <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveProduct" />
-                                                                                                                                                                            </template>
-                                                                                                                                                                        </Dialog> -->
         </div>
     </div>
 </template>

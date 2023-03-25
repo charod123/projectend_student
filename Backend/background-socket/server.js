@@ -195,21 +195,27 @@ const sendLINE_Notify = async (data) => {
 
 }
 const insert_notifications = async (data) => {
-  const device = data.device
-  const notify = data.notify
-  const get_maxid = await pg('notification').max('ni_id as max')
-  const insert_noti = await pg('notification').insert({
-    ni_id: get_maxid[0].max + 1,
-    detail_deliver: '',
-    del_flag: '1',
-    detail_patient: '',
-    device_ip: device[0].device_ip,
-    time_event: moment(new Date(notify.data.date)).format("YYYY-MM-DD HH:mm:ss"),
-    status: notify.data.status,
-    ping_gsm: notify.data.GSMCSQ
-  }).returning('ni_id');
-  if (insert_noti.code) {
-    return { code: true, status: 400, message: insert_noti, data: [] };
+  try {
+    const device = data.device
+    const notify = data.notify
+    const get_maxid = await pg('notification').max('ni_id as max')
+    const insert_noti = await pg('notification').insert({
+      ni_id: get_maxid[0].max + 1,
+      detail_deliver: '',
+      del_flag: '1',
+      detail_patient: '',
+      device_ip: device[0].device_ip,
+      time_event: moment(new Date(notify.data.date)).format("YYYY-MM-DD HH:mm:ss"),
+      status: notify.data.status,
+      ping_gsm: notify.data.GSMCSQ
+    }).returning('ni_id');
+    if (!insert_noti) {
+      return { code: true, status: 400, message: insert_noti, data: [] };
+    }
+    return { code: false, status: 200, message: "success", data: insert_noti };
+  } catch (error) {
+    return { code: true, status: 400, message: error.message, data: [] };
+
   }
-  return { code: false, status: 200, message: "success", data: insert_noti };
+
 }

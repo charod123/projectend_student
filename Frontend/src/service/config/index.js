@@ -1,6 +1,6 @@
 // const url = 'http://localhost'
 // const ur_socket = 'ws://localhost'
-let chk = true
+let chk = false
 const url = chk == true ? 'http://202.149.117.35' : 'http://localhost'
 const ur_socket = chk == true ? 'ws://202.149.117.35' : 'ws://localhost'
 

@@ -26,7 +26,8 @@ const toast = useToast();
 const subdivision = ref(null);
 const show_btn_next = ref(false);
 const audio = ref(new Audio(`${config.backend_url_img}/resources/assets/X2Download.app.mp3`))
-
+let playPromise = null;
+const audioRef = ref(null);
 const data = ref({
     agency_that_forwards: '',
     detail_patient: '',
@@ -53,7 +54,7 @@ const getMarker = (data) => {
     }).addTo(map)
         .bindPopup(`<div class="grid p-fluid" style="font-size:1.2rem;color:var(--text-color);width:20rem;">
     <div class="col-12 md:col-12">
-    <div><span>ชื่อ-นามสกุล</span> ${data.pat[0].fristname + " " + data.pat[0].lastname} อายุ ${moment(new Date()).format("YYYY") - moment(data.pat[0].patient_birthday).format("YYYY")}<br>
+    <div><span>ชื่อ-นามสกุล</span> ${data.pat[0].fristname + " " + data.pat[0].lastname} อายุ ${moment(new Date()).format("YYYY") - moment(data.pat[0].birthday).format("YYYY")}<br>
     
     </div>
      </div>
@@ -104,8 +105,12 @@ const getMap = () => {
 }
 
 const continue_ = async () => {
+    debugger
     visibleFull.value = true
     // StopSound();
+    audio.value.pause()
+    document.removeEventListener('click', handleUserInteraction);
+    document.removeEventListener('touchstart', handleUserInteraction);
     await nextTick();
     getMap();
 }
@@ -126,7 +131,14 @@ const get_subdivision = async () => {
 //     const audio = new Audio('http://localhost:3010/resources/assets/X2Download.app.mp3');
 //     audio.pause();
 // }
+const playAudio = () => {
+    audio.value.play();
+}
+const handleUserInteraction = () => {
+    playAudio();
+}
 onMounted(() => {
+
     // getMap();
     socket.value.onopen = () => {
         console.log('WebSocket connected')
@@ -140,6 +152,8 @@ onMounted(() => {
                 show_btn_next.value = store.priority.filter(x => x.priority_id == 8)[0].can_write == 1 ? true : false;
                 message.value.pat[0].disease = JSON.parse(message.value.pat[0].disease)
                 await get_subdivision();
+                document.addEventListener('click', handleUserInteraction);
+                document.addEventListener('touchstart', handleUserInteraction);
                 if (!message.value.not_token_line) {
                     displayConfirmation.value = true;
                 }
@@ -202,7 +216,6 @@ const onConfirm = () => {
 </script>
 <template>
     <div>
-        <audio v-if="show_btn_next" src="http://localhost:3010/resources/assets/X2Download.app.mp3" autoplay></audio>
         <Dialog :header="``" v-model:visible="displayConfirmation" :style="{ width: '60vw', height: '100vh' }"
             :closable="false" :modal="true" style="font-family: Kanit;">
 

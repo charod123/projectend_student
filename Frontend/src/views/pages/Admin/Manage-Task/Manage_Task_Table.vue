@@ -476,6 +476,7 @@ const create_task_type = async (url) => {
             </Column>
             <Column field="start_date" header="วันที่เริ่มงาน" style="min-width:15rem" :sortable="true">
                 <template #body="{ data }">
+                    
                     {{ $moment(data.start_date, 'YYYY-MM-DD').format("DD/MM/YYYY") }}
                 </template>
             </Column>

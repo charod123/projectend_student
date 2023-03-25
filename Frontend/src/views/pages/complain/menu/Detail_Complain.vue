@@ -110,8 +110,11 @@ store.$subscribe((mutation) => {
 const get = async () => {
     const res = await service.post('read/get-complain', {});
     if (res.message == 'success') {
+        console.log(res.data);
         complain.value = await res.data.map((e) => {
             e.cp_type_name = type.value.filter(e_ => e_.complain_type_id == e.cp_type_id)[0].complain_type_name;
+            e.img_path = typeof e.img_path == "string" ? [e.img_path] : e.img_path
+
             return e
         })
     }
@@ -382,10 +385,9 @@ const save = async (data) => {
                     </div>
                     <h5>รูปเพิ่มเติม</h5>
 
-                    <Image :src="data_create_complain.img_path"></Image>
 
-                    <div class="grid mt-2" v-if="store.data">
-                        <div class="col-12 mb-2 lg:col-3 lg:mb-0" v-for="item in img" :key="item">
+                    <div class="grid mt-2">
+                        <div class="col-12 mb-2 lg:col-3 lg:mb-0" v-for="item in data_create_complain.img_path" :key="item">
                             <Image :src="item" alt="Image Text" width="220" preview />
                         </div>
                     </div>
