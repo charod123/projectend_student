@@ -184,7 +184,10 @@ const save = async (data) => {
             <DataTable v-if="!loading" :value="customer1" :paginator="true" class="p-datatable-gridlines mt-5 text-xl"
                 style="font-family: Kanit;" :rows="10" dataKey="division_name" :rowHover="true" v-model:filters="filters1"
                 sortMode="single" sortField="division_name" :sortOrder="1" filterDisplay="menu" :loading="loading1"
-                :filters="filters1" responsiveLayout="scroll" :globalFilterFields="['division_name']">
+                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                :rowsPerPageOptions="[5, 10, 25]" 
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} " :filters="filters1"
+                responsiveLayout="scroll" :globalFilterFields="['division_name']">
                 <template #header>
                     <div class="flex justify-content-between flex-column sm:flex-row">
                         <span class="p-input-icon-left mb-2">
@@ -216,8 +219,8 @@ const save = async (data) => {
                     </template>
 
                 </Column>
-                <Column v-if="store.priority?.filter(x => x.priority_id == 4)[0]?.can_write == 1 ? true : false" field="verified"
-                    dataType="boolean" bodyClass="text-center" style="min-width: 8rem">
+                <Column v-if="store.priority?.filter(x => x.priority_id == 4)[0]?.can_write == 1 ? true : false"
+                    field="verified" dataType="boolean" bodyClass="text-center" style="min-width: 8rem">
                     <template #body="{ data }">
                         <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
                             @click="editDivision(data)" />
@@ -274,7 +277,7 @@ const save = async (data) => {
             <Dialog v-model:visible="divisionDialog" :style="{ width: '450px' }" header="แก้ไขข้อมูล" :modal="true"
                 class="p-fluid">
                 <!-- <img :src="contextPath + 'demo/images/product/' + product.image" :alt="product.image"
-                                v-if="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" /> -->
+                                    v-if="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" /> -->
                 <div class="field">
                     <label for="name">ชื่อหน่วยงาน</label>
                     <InputText id="name" v-model.trim="division.division_name" required="true" autofocus

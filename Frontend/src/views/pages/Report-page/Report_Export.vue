@@ -72,9 +72,9 @@ onMounted(() => {
         }
     }
     const wo = XLSX.utils.book_new();
-    wsxzz['!cols'] = [{ width: 10 }, { width: 20 }, { width: 30 }, { width: 30 }, { width: 30 }, { width: 50 }, { width: 30 }, { width: 30 }];
+    wsxzz['!cols'] = [{ width: 10 }, { width: 20 }, { width: 30 }, { width: 50 }, { width: 30 }, { width: 50 }];
     XLSX.utils.book_append_sheet(wo, wsxzz, 'Reports');
-    XLSX.writeFile(wo, 'inform_days.xlsx');
+    XLSX.writeFile(wo, `${store.data_report.name_excel}.xlsx`);
     
 })
 </script>

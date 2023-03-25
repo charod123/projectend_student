@@ -193,10 +193,12 @@ const reset = () => {
                 <Button v-if="show_btn_create" style="width: auto;font-family: Kanit;" label="เพิ่มผู้ป่วย"
                     icon="pi pi-plus" @click="addpatient" class="p-button-success m-2" />
             </div>
-            <DataTable v-if="!loading && !showdetail_shell" :value="customer1" :paginator="true"
+            <DataTable v-if="!loading && !showdetail_shell" :value="customer1" :paginator="true" style="font-family: Kanit;"
                 class="p-datatable-gridlines text-xl" :rows="10" dataKey="pat_id" :rowHover="true"
                 v-model:filters="filters1" sortMode="single" sortField="pat_id" :sortOrder="1" filterDisplay="menu"
                 :filters="filters1" responsiveLayout="scroll"
+                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} "
                 :globalFilterFields="['pat_fristname', 'pat_lastname', 'pat_birthday', 'pat_sax', 'device.device_name', 'device.device_ip']">
                 <template #header>
                     <div class="flex justify-content-between ">
@@ -208,7 +210,7 @@ const reset = () => {
                             <span class="p-input-icon-left mb-2">
                                 <i class="pi pi-search" />
                                 <InputText v-model="filters1['global'].value" placeholder="Keyword Search"
-                                    style="width: auto;" />
+                                    style="width: ;" />
                             </span>
                         </div>
 
@@ -289,34 +291,34 @@ const reset = () => {
                     </template>
                 </Column>
 
-            <Column bodyClass="text-center" style="min-width: 10rem">
-                <template #body="{ data }">
+                <Column bodyClass="text-center" style="min-width: 10rem">
+                    <template #body="{ data }">
 
-                    <!-- <Button icon="pi pi-search" class="p-button-rounded p-button-info mr-2 mb-2"
-                                                                        @click="opendetails(data)" /> -->
-                    <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
-                        @click="editpatient(data)" />
-                    <Button icon="pi pi-trash" class="p-button-rounded p-button-danger mr-2 mb-2"
-                        @click="confirm2($event, data)" />
-                </template>
+                        <!-- <Button icon="pi pi-search" class="p-button-rounded p-button-info mr-2 mb-2"
+                                                                            @click="opendetails(data)" /> -->
+                        <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
+                            @click="editpatient(data)" />
+                        <Button icon="pi pi-trash" class="p-button-rounded p-button-danger mr-2 mb-2"
+                            @click="confirm2($event, data)" />
+                    </template>
 
-            </Column>
-        </DataTable>
-        <ConfirmPopup></ConfirmPopup>
+                </Column>
+            </DataTable>
+            <ConfirmPopup></ConfirmPopup>
 
 
 
-        <!--************************* loding **************************-->
-        <DataTable v-if="loading" :value="customer1" :paginator="true" class="p-datatable-gridlines " :rows="10"
-            dataKey="pat_id" :rowHover="true" v-model:filters="filters1" sortMode="single" sortField="pat_id"
-            :sortOrder="1" filterDisplay="menu" :filters="filters1" responsiveLayout="scroll"
-            :globalFilterFields="['pat_fristname', 'pat_lastname', 'pat_birthday', 'pat_sax', 'device.device_name', 'device.device_ip']">
-            <template #header>
-                <div class="flex justify-content-between ">
-                    <div>
-                        <Button type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined mb-2"
-                            @click="clearFilter1()" style="width: auto;" />
-                    </div>
+            <!--************************* loding **************************-->
+            <DataTable v-if="loading" :value="customer1" :paginator="true" class="p-datatable-gridlines " :rows="10"
+                dataKey="pat_id" :rowHover="true" v-model:filters="filters1" sortMode="single" sortField="pat_id"
+                :sortOrder="1" filterDisplay="menu" :filters="filters1" responsiveLayout="scroll"
+                :globalFilterFields="['pat_fristname', 'pat_lastname', 'pat_birthday', 'pat_sax', 'device.device_name', 'device.device_ip']" style="font-family: Kanit;">
+                <template #header>
+                    <div class="flex justify-content-between ">
+                        <div>
+                            <Button type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined mb-2"
+                                @click="clearFilter1()" style="width: auto;" />
+                        </div>
                         <div>
                             <span class="p-input-icon-left mb-2">
                                 <i class="pi pi-search" />
@@ -332,136 +334,136 @@ const reset = () => {
                 </template>
                 <template #loading> Loading customers data. Please wait. </template>
                 <Column field="pat_id" header="#" style="min-width: 12rem">
-                <template #body="{ data }">
-                    <Skeleton height="40px"></Skeleton>
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText type="text" v-model="filterModel.value" class="p-column-filter"
-                        placeholder="Search by id" />
-                </template>
-            </Column>
+                    <template>
+                        <Skeleton height="40px"></Skeleton>
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText type="text" v-model="filterModel.value" class="p-column-filter"
+                            placeholder="Search by id" />
+                    </template>
+                </Column>
 
                 <Column field="pat_fristname + pat_lastname" header="ชื่อเต็ม" style="min-width: 12rem">
-                <template #body="{ data }">
-                    <Skeleton height="40px"></Skeleton>
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText type="text" v-model="filterModel.value" class="p-column-filter"
-                        placeholder="Search by name" />
-                </template>
-            </Column>
-            <Column field="pat_sax" header="เพศ" style="min-width: 12rem">
-                <template #body="{ data }">
-                    <Skeleton height="40px"></Skeleton>
-
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText type="text" v-model="filterModel.value" class="p-column-filter"
-                        placeholder="Search by name" />
-                </template>
-            </Column>
-            <Column header="วัน/เดือน/ปีเกิด" dataType="date" style="min-width: 10rem">
-                <template #body="{ data }">
-                    <Skeleton height="40px"></Skeleton>
-                </template>
-            </Column>
-
-            <Column field="pat_weight" header="น้ำหนัก/ส่วนสูง" :showFilterMatchModes="false" style="min-width: 12rem">
-                <template #body="{ data }">
-                    {{ data.pat_weight + "/" + data.pat_height }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <Slider v-model="filterModel.value" :range="true" class="m-3"></Slider>
-                    <div class="flex align-items-center justify-content-between px-2">
-                        <span>{{ filterModel.value ? filterModel.value[0] : 0 }}</span>
-                        <span>{{ filterModel.value ? filterModel.value[1] : 200 }}</span>
-                    </div>
-                </template>
-            </Column>
-            <Column header="IP อุปกรณ์" style="min-width: 10rem">
-                <template #body="{ data }">
-                    <Skeleton height="40px"></Skeleton>
+                    <template>
+                        <Skeleton height="40px"></Skeleton>
                     </template>
-                <template #filter="{ filterModel }">
-                    <!-- <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" /> -->
-                </template>
-            </Column>
-            <Column bodyClass="text-center" style="min-width: 8rem">
-                <template #body="{ data }">
-                    <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
-                        @click="editpatient(data)" />
-                    <Button icon="pi pi-trash" class="p-button-rounded p-button-danger mr-2 mb-2" />
-                </template>
+                    <template #filter="{ filterModel }">
+                        <InputText type="text" v-model="filterModel.value" class="p-column-filter"
+                            placeholder="Search by name" />
+                    </template>
+                </Column>
+                <Column field="pat_sax" header="เพศ" style="min-width: 12rem">
+                    <template>
+                        <Skeleton height="40px"></Skeleton>
 
-            </Column>
-        </DataTable>
-        <ConfirmPopup></ConfirmPopup>
-        <!--************************* loding **************************-->
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText type="text" v-model="filterModel.value" class="p-column-filter"
+                            placeholder="Search by name" />
+                    </template>
+                </Column>
+                <Column header="วัน/เดือน/ปีเกิด" dataType="date" style="min-width: 10rem">
+                    <template>
+                        <Skeleton height="40px"></Skeleton>
+                    </template>
+                </Column>
 
-        <Toast />
-        <div class="grid" v-if="showdetail_shell">
-            <div class="surface-section px-4 py-8 md:px-6 lg:px-8 text-700">
-                <div class="flex flex-wrap">
-                    <div class="w-full lg:w-6 pr-0 lg:pr-5 mb-5" style="font-family: Kanit;">
-                        <!-- <span
-                            class="text-blue-700 bg-blue-50 inline-block py-2 px-3" style="border-radius: 50px;">Long
-                            Read</span> -->
-                        <div class="font-normal text-4xl mt-3 mb-3 text-900">รายละเอียดผู้ป่วย</div>
-                        <div class="line-height-3 mt-0 text-2xl">
-                            <h4 class="surface-100 p-4 border-round-lg w-auto">ชื่อ-นามสกุล : &nbsp; {{
-                                customer1[first].pat_fristname }}&nbsp; {{ customer1[first].pat_lastname }}</h4>
-                            <h4 class="surface-100 p-4 border-round-lg w-auto">
-                                เพศ : {{ customer1[first].pat_sax }} &nbsp; อายุ : {{ customer1[first].age }}&nbsp;
-                                น้ำหนัก : {{ customer1[first].pat_weight }}&nbsp; ส่วนสูง : {{
-                                    customer1[first].pat_height
-                                }}&nbsp;
-                                เบอร์โทรศัพท์ : {{ !customer1[first].pat_phone ? 'ไม่มีเบอร์มือถือ' :
-                                    customer1[first].pat_phone
-                                }}
-                            </h4>
+                <Column field="pat_weight" header="น้ำหนัก/ส่วนสูง" :showFilterMatchModes="false" style="min-width: 12rem">
+                    <template #body="{ data }">
+                        {{ data.pat_weight + "/" + data.pat_height }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <Slider v-model="filterModel.value" :range="true" class="m-3"></Slider>
+                        <div class="flex align-items-center justify-content-between px-2">
+                            <span>{{ filterModel.value ? filterModel.value[0] : 0 }}</span>
+                            <span>{{ filterModel.value ? filterModel.value[1] : 200 }}</span>
                         </div>
-                        <div class="font-normal text-4xl mt-3 mb-3 text-900">รายละเอียดโรคประจำตัว</div>
-                        <div class="line-height-3 mt-0 text-2xl">
-                            <div v-for="item in customer1[first].disease" :key="item"
-                                class="surface-100 p-3 border-round-lg w-auto m-2">
-                                <h4>{{ item.cd_name }}</h4>
-                                <div class="grid">
-                                    <div v-for="category of lavel" :key="category.code" class="field-radiobutton col">
-                                        <RadioButton :inputId="category.code" name="category" :value="category.code"
-                                            v-model="item.lavel" disabled />
-                                        <label :for="category.code">{{ category.cname }}</label>
+                    </template>
+                </Column>
+                <Column header="IP อุปกรณ์" style="min-width: 10rem">
+                    <template>
+                        <Skeleton height="40px"></Skeleton>
+                    </template>
+                    <template>
+                        <!-- <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" /> -->
+                    </template>
+                </Column>
+                <Column bodyClass="text-center" style="min-width: 8rem">
+                    <template #body="{ data }">
+                        <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
+                            @click="editpatient(data)" />
+                        <Button icon="pi pi-trash" class="p-button-rounded p-button-danger mr-2 mb-2" />
+                    </template>
+
+                </Column>
+            </DataTable>
+            <ConfirmPopup></ConfirmPopup>
+            <!--************************* loding **************************-->
+
+            <Toast />
+            <div class="grid" v-if="showdetail_shell">
+                <div class="surface-section px-4 py-8 md:px-6 lg:px-8 text-700">
+                    <div class="flex flex-wrap">
+                        <div class="w-full lg:w-6 pr-0 lg:pr-5 mb-5" style="font-family: Kanit;">
+                            <!-- <span
+                                class="text-blue-700 bg-blue-50 inline-block py-2 px-3" style="border-radius: 50px;">Long
+                                Read</span> -->
+                            <div class="font-normal text-4xl mt-3 mb-3 text-900">รายละเอียดผู้ป่วย</div>
+                            <div class="line-height-3 mt-0 text-2xl">
+                                <h4 class="surface-100 p-4 border-round-lg w-auto">ชื่อ-นามสกุล : &nbsp; {{
+                                    customer1[first].pat_fristname }}&nbsp; {{ customer1[first].pat_lastname }}</h4>
+                                <h4 class="surface-100 p-4 border-round-lg w-auto">
+                                    เพศ : {{ customer1[first].pat_sax }} &nbsp; อายุ : {{ customer1[first].age }}&nbsp;
+                                    น้ำหนัก : {{ customer1[first].pat_weight }}&nbsp; ส่วนสูง : {{
+                                        customer1[first].pat_height
+                                    }}&nbsp;
+                                    เบอร์โทรศัพท์ : {{ !customer1[first].pat_phone ? 'ไม่มีเบอร์มือถือ' :
+                                        customer1[first].pat_phone
+                                    }}
+                                </h4>
+                            </div>
+                            <div class="font-normal text-4xl mt-3 mb-3 text-900">รายละเอียดโรคประจำตัว</div>
+                            <div class="line-height-3 mt-0 text-2xl">
+                                <div v-for="item in customer1[first].disease" :key="item"
+                                    class="surface-100 p-3 border-round-lg w-auto m-2">
+                                    <h4>{{ item.cd_name }}</h4>
+                                    <div class="grid">
+                                        <div v-for="category of lavel" :key="category.code" class="field-radiobutton col">
+                                            <RadioButton :inputId="category.code" name="category" :value="category.code"
+                                                v-model="item.lavel" disabled />
+                                            <label :for="category.code">{{ category.cname }}</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="font-normal text-4xl mt-3 mb-3 text-900">รายละเอียดที่อยู่</div>
-                        <div>
-                            <h4 class="surface-100 p-4 border-round-lg w-auto line-height-4">บ้านเลขที่ : {{
-                                customer1[first].address.member }} &nbsp; &nbsp; &nbsp; ถนน : {{
+                            <div class="font-normal text-4xl mt-3 mb-3 text-900">รายละเอียดที่อยู่</div>
+                            <div>
+                                <h4 class="surface-100 p-4 border-round-lg w-auto line-height-4">บ้านเลขที่ : {{
+                                    customer1[first].address.member }} &nbsp; &nbsp; &nbsp; ถนน : {{
         customer1[first].address.road }} &nbsp; &nbsp; &nbsp; ซอย :
-                                {{ customer1[first].address.alley }} <br>
-                                ตำบล : {{ customer1[first].address.subdistrict?.sub_name_in_thai }}&nbsp; &nbsp; อำเภอ :
-                                {{
-                                    customer1[first].address.district?.dis_name_in_thai }}
-                                &nbsp; จังหวัด : {{ customer1[first].address.province?.pro_name_in_thai }} &nbsp; &nbsp;
-                                <br> รหัสไปรษณีย์ :&nbsp; {{ customer1[first].address?.postal_code }}
-                            </h4>
+                                    {{ customer1[first].address.alley }} <br>
+                                    ตำบล : {{ customer1[first].address.subdistrict?.sub_name_in_thai }}&nbsp; &nbsp; อำเภอ :
+                                    {{
+                                        customer1[first].address.district?.dis_name_in_thai }}
+                                    &nbsp; จังหวัด : {{ customer1[first].address.province?.pro_name_in_thai }} &nbsp; &nbsp;
+                                    <br>
+                                </h4>
+
+                            </div>
+
 
                         </div>
+                        <div class="w-full lg:w-6 pl-0 lg:pl-5 pt-5">
+                            <div class="flex justify-content-center">
+                                <img :src="customer1[first].img_path" alt="Image" class="border-round" height="250">
+                            </div>
+                            <div class="font-normal text-4xl mt-3 mb-3 text-900">รายละเอียดญาติที่สามารถติดต่อได้</div>
 
-
-                    </div>
-                    <div class="w-full lg:w-6 pl-0 lg:pl-5 pt-5">
-                        <div class="flex justify-content-center">
-                            <img :src="customer1[first].img_path" alt="Image" class="border-round" height="250">
-                        </div>
-                        <div class="font-normal text-4xl mt-3 mb-3 text-900">รายละเอียดญาติที่สามารถติดต่อได้</div>
-
-                        <h4 class="surface-100 p-4 border-round-lg w-auto line-height-4"
-                            v-for="item in customer1[first].usertry" :key="item.ut_id">
+                            <h4 class="surface-100 p-4 border-round-lg w-auto line-height-4"
+                                v-for="item in customer1[first].usertry" :key="item.ut_id">
                                 ชื่อ-นามสกุล : {{ item.fristname }} &nbsp; {{ item.lastname }} &nbsp; อายุ : {{ $moment(new
                                     Date()).format("YYYY") - $moment(item.birthday).format("YYYY") }}
-                                &nbsp; เพศ : {{ item.gender }} &nbsp; ความสัมพันธ์กับผู้สูงอายุหรือผู้ป่วยติดเตียง : {{
+                                &nbsp; เพศ : {{ item.gender }} &nbsp;<br> ความสัมพันธ์กับผู้สูงอายุหรือผู้ป่วยติดเตียง : {{
                                     item.ut_relationship }} <br>เบอร์โทรศัพท์ : {{ item.phone }}
                             </h4>
                             <div class="font-normal text-4xl mt-3 mb-3 text-900">รายละเอียดอุปกรณ์</div>

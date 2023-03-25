@@ -4,8 +4,12 @@ import Service from '../../../../service/api';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode } from 'primevue/api';
+import { useRouter } from 'vue-router';
+import { useStore } from '../../../../store';
+const store = useStore();
 const toast = useToast();
 const data_user = ref();
+const router = useRouter();
 const confirm = useConfirm();
 const filters1 = ref(null);
 const sigup_popup = ref(false);
@@ -13,8 +17,16 @@ const service = new Service();
 const option_sundivision = ref();
 const disabled_on_edit = ref(false);
 const conut_user = ref();
+const showreport = ref(false);
 const otion_gender = ref([{ name: 'ชาย', value: 1 }, { name: 'หญิง', value: 2 }]);
 const total_users = ref(0);
+const subdivision = ref([])
+const data_on_report = ref({
+    select_type_report: '',
+    select_type_complain: '',
+
+})
+const type = ref([])
 const data = ref({
     emp_id: 0,
     user_id: 0,
@@ -33,9 +45,61 @@ const data = ref({
     file: null,
     role_id: null,
 });
+const exportCSV = async () => {
+
+    console.log(data_on_report.value);
+    const res = await service.post('/read/get_user_admin_on_report', { subdivision_id_: data_on_report.value.select_type_complain });
+    if (res.message == 'success') {
+        const data_report = res.data.map((e, i) => {
+            return {
+                'ลำดับ': i + 1,
+                'ชื่อ-นามสกุล': e.fristname + ' ' + e.lastname,
+                'ตำแหน่ง': e.emp_name_position,
+                'ชื่อหน่วยงานที่สังกัด': e.subdivision_name,
+                'หน่วยงาน': e.division_name,
+            }
+        })
+        store.data_report = { data: data_report, header: `รายงานการข้อมูลพนักงาน${subdivision.value.filter(x => x.subdivision_id == data_on_report.value.select_type_complain)[0].subdivision_name}`, type: 'user_admin', name_excel: 'รายงานข้อมูลพนักงาน' }
+        if (data_report.length > 0 && data_on_report.value.select_type_report == 2) {
+            return router.push('/report_pdf')
+        }
+        if (data_report.length > 0 && data_on_report.value.select_type_report == 1) {
+            return router.push('/report_export')
+        }
+        return toast.add({ severity: 'warn', summary: 'ไม่มีข้อมูลที่คุณเลือก', life: 2000 });
+    }
+};
 const handleFileUpload = (event) => {
     data.value.file = event.files;
 };
+
+const type_report = ref([
+    {
+        report_type_id: 1,
+        report_type_name: 'excel'
+    },
+    {
+        report_type_id: 2,
+        report_type_name: 'print pdf'
+    },
+
+]
+)
+const onreport = async () => {
+
+    subdivision.value = [...option_sundivision.value,
+    {
+        create_by: "sp_admin",
+        create_date: "2023-03-26 00:44:12",
+        del_flag: "1",
+        division_id: 9.9,
+        division_name: "ทั้งหมด",
+        subdivision_id: 9.9,
+        subdivision_name: "ทั้งหมด",
+        update_date: "Invalid date",
+    }]
+    showreport.value = true;
+}
 const save = async () => {
     const res = await service.post('/write/insert_user_admin', { data: data.value });
     if (res.message == 'success') {
@@ -186,11 +250,11 @@ onBeforeMount(() => {
                 <div class="card mb-0">
                     <div class="flex justify-content-between mb-3">
                         <div class="grid" style="width: 100%;">
-                            <div class="col-3 mb-2 lg:col-2 md:col-4 sm:col-6 lg:mb-0">
+                            <div class="col-6 mb-2 lg:col-2 md:col-4 sm:col-6 lg:mb-0">
                                 <span class="block text-500 text-2xl font-medium mb-3">พนักงานทั้งหมด</span>
                                 <div class="text-900 font-medium text-2xl text-xl">{{ total_users }}</div>
                             </div>
-                            <div class="col-3 mb-2 lg:col-2 md:col-4 sm:col-6 lg:mb-0" v-for="item in conut_user"
+                            <div class="col-6 mb-2 lg:col-2 md:col-4 sm:col-6 lg:mb-0" v-for="item in conut_user"
                                 :key="item">
                                 <span class="block text-500 text-2xl font-medium mb-3">{{ item.subdivision.subdivision_name
                                 }}/คน</span>
@@ -208,12 +272,15 @@ onBeforeMount(() => {
             </div>
         </div>
 
-        <DataTable :value="data_user" :paginator="true" class="p-datatable-gridlines text-xl" :rows="6" ref="dt"
-            dataKey="user_id" :rowHover="true" v-model:filters="filters1" filterDisplay="menu" :loading="loading1"
-            style="font-family:Kanit" :filters="filters1" responsiveLayout="scroll"
+        <DataTable :value="data_user" :paginator="true" class="p-datatable-gridlines text-xl" ref="dt" dataKey="user_id"
+            :rowHover="true" v-model:filters="filters1" filterDisplay="menu" :loading="loading1" style="font-family:Kanit"
+            :filters="filters1" responsiveLayout="scroll"
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+            :rowsPerPageOptions="[5, 10, 25]" :rows="5"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} "
             :globalFilterFields="['user_id', 'fristname', 'lastname', 'birthday', 'phone', 'emp_name_position', 'subdivision_name']">
             <template #header>
-                <div class="flex justify-content-between flex-column sm:flex-row">
+                <div class="flex justify-content-between flex-column sm:flex-row gap-2">
                     <span class="p-input-icon-left mb-2">
                         <i class="pi pi-search" />
                         <InputText v-model="filters1['global'].value" placeholder="Keyword Search" style="width: 30%" />
@@ -221,8 +288,12 @@ onBeforeMount(() => {
                     <div>
                         <Button style="font-family: Kanit;" class="w-10rem p-button-success" icon="pi pi-plus"
                             label="เพิ่มพนักงาน" @click="opencreate(option_sundivision)" />
-                    </div>
 
+                    </div>
+                    <div>
+                        <Button style="font-family: Kanit;" icon="pi pi-external-link" label="ออกรายงาน" class="w-10rem"
+                            @click="onreport" />
+                    </div>
                 </div>
             </template>
             <template #empty> No customers found. </template>
@@ -378,6 +449,24 @@ onBeforeMount(() => {
             <template #footer>
                 <Button label="บันทึก" @click="disabled_on_edit ? edit_save(data) : save(data)" icon="pi pi-check"
                     class="p-button-outlined" />
+            </template>
+        </Dialog>
+        <Dialog header="เลือกรูปแบบรายงาน" v-model:visible="showreport" :breakpoints="{ '1080px': '75vw' }"
+            :style="{ width: '45vw' }" :modal="true" style="font-family:Kanit">
+            <div class="grid p-fluid">
+                <div class="col-12 md:col-12">
+                    <h5>เลือกหน่วยงานที่ต้องการข้อมูลพนักงาน</h5>
+                    <Dropdown v-model="data_on_report.select_type_complain" :options="subdivision"
+                        optionLabel="subdivision_name" optionValue="subdivision_id" placeholder="เลือกหน่วยงาน" />
+                </div>
+                <div class="col-12 md:col-12">
+                    <h5>เลือกประเภทรายงาน</h5>
+                    <Dropdown v-model="data_on_report.select_type_report" :options="type_report"
+                        optionLabel="report_type_name" optionValue="report_type_id" placeholder="เลือกประเภทรายงาน" />
+                </div>
+            </div>
+            <template #footer>
+                <Button label="ยืนยัน" @click="exportCSV()" icon="pi pi-check" class="p-button-outlined" />
             </template>
         </Dialog>
     </div>

@@ -147,13 +147,13 @@ const setChart = async () => {
                 label: 'ค่าเฉลี่ย',
                 backgroundColor: [documentStyle.getPropertyValue('--primary-500'), documentStyle.getPropertyValue('--orange-500'), documentStyle.getPropertyValue('--surface-500'), documentStyle.getPropertyValue('--red-500'), documentStyle.getPropertyValue('--red-500')],
                 borderColor: documentStyle.getPropertyValue('--primary-500'),
-                data: [count_task.value?.task.open_task,  count_task.value?.task.action_task, count_task.value?.task.pending_task, count_task.value?.task.success_task, count_task.value?.task.cancel_task, count_task.value?.task.late_task]
+                data: [count_task.value?.task.open_task, count_task.value?.task.action_task, count_task.value?.task.pending_task, count_task.value?.task.success_task, count_task.value?.task.cancel_task, count_task.value?.task.late_task]
             },
             {
                 label: 'งานทั้งหมด',
                 backgroundColor: documentStyle.getPropertyValue('--primary-200'),
                 borderColor: documentStyle.getPropertyValue('--primary-200'),
-                data: [count_task.value?.task.all_task, count_task.value?.task.all_task , count_task.value?.task.all_task, count_task.value?.task.all_task, count_task.value?.task.all_task, count_task.value?.task.all_task]
+                data: [count_task.value?.task.all_task, count_task.value?.task.all_task, count_task.value?.task.all_task, count_task.value?.task.all_task, count_task.value?.task.all_task, count_task.value?.task.all_task]
             }
         ]
     };
@@ -382,21 +382,19 @@ const get = async () => {
 
         </div>
         <div class="col-12 card">
-            <div class="flex justify-content-between align-items-end">
-                <div class="gap-4 flex align-items-center">
-                    <div>
-                        <p>เลือกวันเริ่มต้น</p>
-                        <Calendar v-model="date.date_start" showIcon dateFormat="yy-mm-dd" />
+            <div class="grid">
+                <div class="col-12 md:col-2 sm:col-2">
+                    <p>เลือกวันเริ่มต้น</p>
+                    <Calendar v-model="date.date_start" showIcon dateFormat="yy-mm-dd" />
 
-                    </div>
-                    <div>
-                        <p>เลือกวันสิ้นสุด</p>
-                        <Calendar v-model="date.date_end" showIcon dateFormat="yy-mm-dd" />
-
-                    </div>
                 </div>
+                <div class="col-12 md:col-2 sm:col-2">
+                    <p>เลือกวันสิ้นสุด</p>
+                    <Calendar v-model="date.date_end" showIcon dateFormat="yy-mm-dd" />
 
-                <div class="pl-3">
+                </div>
+                <div class="col-0 md:col-6"></div>
+                <div class="col-2 align-self-end">
                     <Button label="ค้นหา" severity="success" class="w-10rem" @click="setChart()" />
                 </div>
             </div>
@@ -415,7 +413,7 @@ const get = async () => {
                     </div>
                 </div>
                 <!-- <span class="text-green-500 font-medium">24 new </span>
-                                    <span class="text-500">since last visit</span> -->
+                                            <span class="text-500">since last visit</span> -->
             </div>
         </div>
         <div :class="`col-12 lg:col-6 xl:col-${store.role == 1 ? '2' : '3'}`">
@@ -432,7 +430,7 @@ const get = async () => {
                     </div>
                 </div>
                 <!-- <span class="text-green-500 font-medium">24 new </span>
-                                    <span class="text-500">since last visit</span> -->
+                                            <span class="text-500">since last visit</span> -->
             </div>
         </div>
 
@@ -452,7 +450,7 @@ const get = async () => {
                     </div>
                 </div>
                 <!-- <span class="text-green-500 font-medium">24 new </span>
-                                    <span class="text-500">since last visit</span> -->
+                                            <span class="text-500">since last visit</span> -->
             </div>
         </div>
         <div :class="`col-12 lg:col-6 xl:col-3`">
@@ -470,7 +468,7 @@ const get = async () => {
                     </div>
                 </div>
                 <!-- <span class="text-green-500 font-medium">%52+ </span>
-                                    <span class="text-500">since last week</span> -->
+                                            <span class="text-500">since last week</span> -->
             </div>
         </div>
         <div :class="`col-12 lg:col-6 xl:col-3`">
@@ -488,7 +486,7 @@ const get = async () => {
                     </div>
                 </div>
                 <!-- <span class="text-green-500 font-medium">520 </span>
-                                    <span class="text-500">newly registered</span> -->
+                                            <span class="text-500">newly registered</span> -->
             </div>
         </div>
 
@@ -514,33 +512,33 @@ const get = async () => {
 
 
         <!-- <div class="col-12 xl:col-6">
-                                <div class="card">
-                                    <h5>Recent Sales</h5>
-                                    <DataTable :value="products" :rows="5" :paginator="true" responsiveLayout="scroll">
-                                        <Column style="width: 15%">
-                                            <template #header> Image </template>
-                                            <template #body="slotProps">
-                                                <img :src="contextPath + 'demo/images/product/' + slotProps.data.image"
-                                                    :alt="slotProps.data.image" width="50" class="shadow-2" />
-                                            </template>
-                                        </Column>
-                                        <Column field="name" header="Name" :sortable="true" style="width: 35%"></Column>
-                                        <Column field="price" header="Price" :sortable="true" style="width: 35%">
-                                            <template #body="slotProps">
-                                                {{ formatCurrency(slotProps.data.price) }}
-                                            </template>
-                                        </Column>
-                                        <Column style="width: 15%">
-                                            <template #header> View </template>
-                                            <template #body>
-                                                <Button icon="pi pi-search" type="button" class="p-button-text"></Button>
-                                            </template>
-                                        </Column>
-                                    </DataTable>
+                                        <div class="card">
+                                            <h5>Recent Sales</h5>
+                                            <DataTable :value="products" :rows="5" :paginator="true" responsiveLayout="scroll">
+                                                <Column style="width: 15%">
+                                                    <template #header> Image </template>
+                                                    <template #body="slotProps">
+                                                        <img :src="contextPath + 'demo/images/product/' + slotProps.data.image"
+                                                            :alt="slotProps.data.image" width="50" class="shadow-2" />
+                                                    </template>
+                                                </Column>
+                                                <Column field="name" header="Name" :sortable="true" style="width: 35%"></Column>
+                                                <Column field="price" header="Price" :sortable="true" style="width: 35%">
+                                                    <template #body="slotProps">
+                                                        {{ formatCurrency(slotProps.data.price) }}
+                                                    </template>
+                                                </Column>
+                                                <Column style="width: 15%">
+                                                    <template #header> View </template>
+                                                    <template #body>
+                                                        <Button icon="pi pi-search" type="button" class="p-button-text"></Button>
+                                                    </template>
+                                                </Column>
+                                            </DataTable>
 
-                                </div>
+                                        </div>
 
-                            </div> -->
+                                    </div> -->
     </div>
 </template>
 <style scoped>

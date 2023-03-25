@@ -9,6 +9,7 @@ import moment from 'moment';
 import L from 'leaflet';
 import { useToast } from 'primevue/usetoast';
 import Service from '../../../service/api';
+import { useRouter } from 'vue-router';
 import { useStore } from '../../../store';
 const service = new Service()
 const store = useStore();
@@ -18,6 +19,7 @@ const customer1 = ref(null);
 const customer2 = ref(null);
 const customer3 = ref(null);
 const filters1 = ref(null);
+const router = useRouter();
 const loading1 = ref(null);
 const loading2 = ref(null);
 const toast = useToast();
@@ -34,6 +36,13 @@ const datadialog = ref(null);
 const subdivision = ref();
 const mapContainer = ref(null);
 const edit_data = ref();
+const showreport = ref(false);
+const data_on_report = ref({
+    select_type_report: '',
+    select_type_complain: '',
+    start_date: '',
+    end_date: ''
+})
 const data = ref({
     agency_that_forwards: '',
     detail_patient: '',
@@ -72,9 +81,42 @@ const representatives = ref([
     { name: 'Stephen Shaw', image: 'stephenshaw.png' },
     { name: 'XuXue Feng', image: 'xuxuefeng.png' }
 ]);
-const exportCSV = () => {
-    dt.value.exportCSV();
+const type_report = ref([
+    {
+        report_type_id: 1,
+        report_type_name: 'excel'
+    },
+    {
+        report_type_id: 2,
+        report_type_name: 'print pdf'
+    },
+
+])
+const exportCSV = async () => {
+
+    console.log(data_on_report.value);
+    const res = await service.post('/read/get_notify_on_report', { start_date: data_on_report.value.start_date, end_date: data_on_report.value.end_date });
+    if (res.message == 'success') {
+        const data_report = res.data.map((e, i) => {
+            return {
+                'ลำดับ': i + 1,
+                'ชื่อ-นามสกุลผู้ป่วย': e.fristname + ' ' + e.lastname,
+                'ชื่ออุปกรณ์/IPอุปกรณ์': e.device_name + '/' + e.device_ip,
+                'เวลาที่เกิดแจ้งเตือน': e.time_event,
+                'สถานะการดำเนินการ': e.status_noti,
+            }
+        })
+        store.data_report = { data: data_report, header: `รายงานการแจ้งเตือนระหว่าง ${moment(data_on_report.value.start_date).format('DD/MM/YYYY')} ถึง ${moment(data_on_report.value.end_date).format('DD/MM/YYYY')}`, type: 'noti', name_excel: 'รายงานแจ้งเตือนฉุกเฉิน' }
+        if (data_report.length > 0 && data_on_report.value.select_type_report == 2) {
+            return router.push('/report_pdf')
+        }
+        if (data_report.length > 0 && data_on_report.value.select_type_report == 1) {
+            return router.push('/report_export')
+        }
+        return toast.add({ severity: 'warn', summary: 'ไม่มีข้อมูลที่คุณเลือก', life: 2000 });
+    }
 };
+
 const get_data_notification = async () => {
     const res = await service.post('/read/get-notify', {});
     if (res.message == 'success') {
@@ -196,6 +238,7 @@ const calculateCustomerTotal = (name) => {
 const openviewdetailnoti = async (e, data) => {
     console.log(data);
     data.agency_more = JSON.parse(data.agency_more)
+    data.internal_division = JSON.parse(data.internal_division)
     datadialog.value = { ...data }
     displayConfirmation.value = true;
 }
@@ -243,8 +286,12 @@ const save = async (data, message_) => {
         <div class="col-12">
             <div class="card">
                 <h3>ประวัติการแจ้งเตือนทั้งหมด</h3>
-                <DataTable :value="customer1" :paginator="true" class="p-datatable-gridlines text-xl" :rows="6" ref="dt"
+                <DataTable :value="customer1" :paginator="true" class="p-datatable-gridlines text-xl"  ref="dt"
                     dataKey="ni_id" :rowHover="true" v-model:filters="filters1" filterDisplay="menu" :loading="loading1"
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    :rowsPerPageOptions="[5, 10, 25]"
+                    :rows="5"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} " 
                     style="font-family:Kanit" :filters="filters1" responsiveLayout="scroll"
                     :globalFilterFields="['ni_id', 'fristname', 'gender', 'birthday', 'device_ip']">
                     <template #header>
@@ -255,7 +302,7 @@ const save = async (data, message_) => {
                                     style="width: 100%" />
                             </span>
                             <div>
-                                <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
+                                <Button icon="pi pi-external-link" label="ออกรายงาน" @click="showreport = true;" />
                             </div>
 
                         </div>
@@ -314,7 +361,8 @@ const save = async (data, message_) => {
                         <template #body="{ data }">
                             <Button icon="pi pi-search" class="p-button-rounded p-button-info mr-2 mb-2"
                                 @click="openviewdetailnoti($event, data)" />
-                            <Button v-if="store.priority?.filter(x => x.priority_id == 8)[0]?.can_write == 1 ? true : false" icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
+                            <Button v-if="store.priority?.filter(x => x.priority_id == 8)[0]?.can_write == 1 ? true : false"
+                                icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
                                 @click="edit(data)" />
 
                         </template>
@@ -334,10 +382,19 @@ const save = async (data, message_) => {
                         <div class="col-6">
                             <span>ชื่อ-นามสกุล</span>
                             <p class="line-height-3 mt-3">{{ datadialog.fristname + ' ' + datadialog.lastname }}</p>
-                            <p class="line-height-3">{{ datadialog.time_event }}</p>
+                            <p class="line-height-3">เวลาที่เกิดแจ้งเตือน {{ datadialog.time_event }}</p>
+                            <p class="text-md">หน่วยงานภายใน</p>
                             <div class="flex">
                                 <div class="border-round-sm p-2 mr-2" style="background-color: aquamarine;"
-                                    v-for="item in datadialog.agency_more">{{ item }}</div>
+                                    v-for="item in datadialog.internal_division" :key="item">{{ item }}</div>
+
+
+
+                            </div>
+                            <p class="text-md mt-2">หน่วยงานภายนอก</p>
+                            <div class="flex">
+                                <div class="border-round-sm p-2 mr-2" style="background-color: aquamarine;"
+                                    v-for="item in datadialog.agency_more" :key="item">{{ item }}</div>
                             </div>
                         </div>
                         <div class="col-6">
@@ -448,7 +505,30 @@ const save = async (data, message_) => {
                 <Toast />
             </div>
         </div>
+        <Dialog header="เลือกรูปแบบรายงาน" v-model:visible="showreport" :breakpoints="{ '1080px': '75vw' }"
+            :style="{ width: '45vw' }" :modal="true" style="font-family:Kanit">
+            <div class="grid p-fluid">
 
+                <div class="col-12 md:col-6 sm:col-12">
+                    <p>เลือกวันเริ่มต้น</p>
+                    <Calendar v-model="data_on_report.start_date" showIcon dateFormat="yy-mm-dd" />
+
+                </div>
+                <div class="col-12 md:col-6 sm:col-12">
+                    <p>เลือกวันสิ้นสุด</p>
+                    <Calendar v-model="data_on_report.end_date" showIcon dateFormat="yy-mm-dd" />
+                </div>
+
+                <div class="col-12 md:col-12">
+                    <h5>เลือกประเภทรายงาน</h5>
+                    <Dropdown v-model="data_on_report.select_type_report" :options="type_report"
+                        optionLabel="report_type_name" optionValue="report_type_id" placeholder="เลือกประเภทรายงาน" />
+                </div>
+            </div>
+            <template #footer>
+                <Button label="ยืนยัน" @click="exportCSV()" icon="pi pi-check" class="p-button-outlined" />
+            </template>
+        </Dialog>
     </div>
 </template>
 

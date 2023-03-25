@@ -23,8 +23,7 @@ const data_on_report = ref({
     select_type_report: '',
     select_type_complain: '',
 
-}
-)
+})
 const data_create_complain = ref()
 const exportCSV = async () => {
 
@@ -40,7 +39,7 @@ const exportCSV = async () => {
                 'สถานะ': e.cp_status == 1 ? 'แจ้งเรื่อง' : e.cp_status == 2 ? 'กำลังดำเนินการ' : e.cp_status == 3 ? 'ปิดงาน' : 'ยกเลิก',
             }
         })
-        store.data_report = { data: data_report, header: 'รายงานการแจ้งเรื่องร้องเรียน' }
+        store.data_report = { data: data_report, header: 'รายงานการแจ้งเรื่องร้องเรียน', type: 'complain',name_excel:'รายงานร้องเรียน'  }
         if (data_report.length > 0 && data_on_report.value.select_type_report == 2) {
             return router.push('/report_pdf')
         }

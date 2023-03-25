@@ -16,6 +16,9 @@ const { get_type_task, get_task, get_user_in_subdivision } = require('../API/tas
 const { get_dashboard_task } = require('../API/Reports/Tasks');
 const { get_dashboard_count_time } = require('../API/Reports/Dashboard');
 const { get_on_report } = require('../API/Reports/Complain');
+const { get_notify_on_report } = require('../API/Reports/Sos_Notify');
+const { get_disease_manage } = require('../API/disease_profile');
+const { get_user_admin_on_report } = require('../API/Reports/User_admin');
 
 const resourceMethods = {
   get_patient_all: get_patient_all,
@@ -39,12 +42,15 @@ const resourceMethods = {
   get_main_menu,
   get_content_on_show,
   getData_notify,
+  get_disease_manage,
   get_type_task,
   get_task,
   get_user_in_subdivision,
   get_dashboard_task,
   get_dashboard_count_time,
-  get_on_report
+  get_on_report,
+  get_user_admin_on_report,
+  get_notify_on_report
 };
 
 dynamicGetRouter.post("/:resource", async (req, res) => {

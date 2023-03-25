@@ -29,7 +29,12 @@ const nestedRouteItems = ref([
 
     },
 
+    {
+        label: 'จัดการข้อมูลโรคประจำตัว',
+        to: '/main/patient/manage_disaease',
+        visible: prority?.filter(x => x.priority_id == 21)[0]?.can_read == 1 ? true : false ?? true
 
+    },
 
 ]);
 </script>

@@ -80,6 +80,7 @@ const save = async (data) => {
                 divisionDialog.value = false;
                 customer1.value[findIndexById(division.value.subdivision_id)] = division.value;
                 sub_dialog.value = false;
+                get_data();
                 return toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
 
             }
@@ -90,6 +91,7 @@ const save = async (data) => {
             if (res.message == 'success') {
                 loading.value = false;
                 divisionDialog.value = false;
+                get_data();
                 customer1.value[findIndexById(division.value.subdivision_id)] = division.value;
                 return toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
 
@@ -154,11 +156,13 @@ const initFilters1 = () => {
                 <Button style="width: auto" label="เพิ่มผหน่วยงาน" icon="pi pi-plus" @click="create_subdivision"
                     class="p-button-success m-2" />
             </div>
-            <DataTable v-if="!loading" :value="customer1" :paginator="true" class="p-datatable-gridlines mt-5 text-xl" style="font-family: Kanit;"
-                :rows="10" dataKey="subdivision_id" :rowHover="true" v-model:filters="filters1" sortMode="single"
+            <DataTable v-if="!loading" :value="customer1" :paginator="true" class="p-datatable-gridlines mt-5 text-xl"
+                style="font-family: Kanit;" :rows="10" dataKey="subdivision_id" :rowHover="true" v-model:filters="filters1"
+                sortMode="single"
+                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} "
                 sortField="subdivision_id" :sortOrder="1" filterDisplay="menu" :loading="loading1" :filters="filters1"
-                responsiveLayout="scroll" :globalFilterFields="['subdivision_id', 'division_name', 'subdivision_name']"
-               >
+                responsiveLayout="scroll" :globalFilterFields="['subdivision_id', 'division_name', 'subdivision_name']">
                 <template #header>
                     <div class="flex justify-content-between flex-column sm:flex-row">
                         <span class="p-input-icon-left mb-2">
@@ -189,7 +193,8 @@ const initFilters1 = () => {
                             placeholder="Search by name" />
                     </template>
                 </Column>
-                <Column field="create_date" header="วันที่เพิ่มข้อมูล" filterField="create_date" dataType="date" style="min-width: 10rem" :sortable="true">
+                <Column field="create_date" header="วันที่เพิ่มข้อมูล" filterField="create_date" dataType="date"
+                    style="min-width: 10rem" :sortable="true">
                     <template #body="{ data }">
                         {{ (data.create_date) }}
                     </template>
@@ -197,9 +202,10 @@ const initFilters1 = () => {
                         <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
                     </template>
                 </Column>
-                <Column field="update_date" header="วันที่แก้ไขล่าสุด" filterField="update_date" dataType="date" style="min-width: 10rem" :sortable="true">
+                <Column field="update_date" header="วันที่แก้ไขล่าสุด" filterField="update_date" dataType="date"
+                    style="min-width: 10rem" :sortable="true">
                     <template #body="{ data }">
-                        {{ (data.update_date) }}
+                        {{ (data.update_date)=='Invalid date'?'ยังไม่มีการแก้ไข': (data.update_date) }}
                     </template>
                     <template #filter="{ filterModel }">
                         <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
@@ -262,7 +268,7 @@ const initFilters1 = () => {
             <Dialog v-model:visible="divisionDialog" :style="{ width: '450px' }" header="แก้ไขข้อมูล" :modal="true"
                 class="p-fluid">
                 <!-- <img :src="contextPath + 'demo/images/product/' + product.image" :alt="product.image"
-                            v-if="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" /> -->
+                                v-if="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" /> -->
                 <div class="field">
                     <label for="name">ชื่อหน่วยงานย่อย</label>
                     <InputText id="name" v-model.trim="division.subdivision_name" required="true" autofocus

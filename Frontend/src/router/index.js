@@ -24,6 +24,7 @@ const router = createRouter({
                     meta: { priority: 13 },
                     component: () => import('@/views/pages/Admin/Manage-Task/Manage_Task_Table.vue')
                 },
+
                 {
                     path: '/admin/dashboard_task',
                     meta: { priority: 19 },
@@ -259,7 +260,11 @@ const router = createRouter({
                             meta: { priority: 3 },
                             component: () => import('@/views/pages/main/menu/Manage_user_basic.vue')
                         },
-
+                        {
+                            path: '/main/patient/manage_disaease',
+                            meta: { priority: 21 },
+                            component: () => import('@/views/pages/Admin/Manage-Disease/Manage_Disease.vue')
+                        },
                     ]
                 },
                 {

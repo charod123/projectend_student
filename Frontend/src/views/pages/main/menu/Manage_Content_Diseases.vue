@@ -232,7 +232,7 @@ onBeforeMount(() => {
             </Column>
             <Column field="update_date" header="แก้ไขล่าสุด" style="min-width:15rem" :sortable="true">
                 <template #body="{ data }">
-                    {{ $moment(data.update_date).format("YYYY-MM-DD HH:mm:ss") }}
+                {{ $moment(data.update_date).format("YYYY-MM-DD HH:mm:ss")=='Invalid date'?'ยังไม่มีการแก้ไข':$moment(data.update_date).format("YYYY-MM-DD HH:mm:ss") }}
                 </template>
             </Column>
 

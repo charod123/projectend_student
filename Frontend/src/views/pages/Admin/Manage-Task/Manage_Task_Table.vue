@@ -376,7 +376,7 @@ const create_task_type = async (url) => {
         <DataTable :value="task" v-model:expandedRows="expandedRows" dataKey="id" style="font-family: Kanit;"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5, 10, 25]" :filters="filters1" v-model:filters="filters1"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" responsiveLayout="scroll"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} " responsiveLayout="scroll"
             :globalFilterFields="['task_type_name', 'opener_task', 'task_title', 'start_date', 'end_date']"
             :paginator="true" :rows="10">
             <template #header>

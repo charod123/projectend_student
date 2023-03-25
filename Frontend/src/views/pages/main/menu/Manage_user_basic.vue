@@ -258,44 +258,12 @@ onBeforeMount(() => {
 
                     </div>
                 </div>
-                <!-- <div class="col-12 md:col-6 lg:col-3">
-                                                                                                                                                            <div class="surface-card shadow-2 p-3 border-round">
-                                                                                                                                                                <div class="flex justify-content-between mb-3">
-                                                                                                                                                                    <div>
-                                                                                                                                                                        <span class="block text-500 font-medium mb-3">Customers</span>
-                                                                                                                                                                        <div class="text-900 font-medium text-xl">28441</div>
-                                                                                                                                                                    </div>
-                                                                                                                                                                    <div class="flex align-items-center justify-content-center bg-cyan-100 border-round"
-                                                                                                                                                                        style="width:2.5rem;height:2.5rem">
-                                                                                                                                                                        <i class="pi pi-inbox text-cyan-500 text-xl"></i>
-                                                                                                                                                                    </div>
-                                                                                                                                                                </div>
-                                                                                                                                                                <span class="text-green-500 font-medium">520 </span>
-                                                                                                                                                                <span class="text-500">newly registered</span>
-                                                                                                                                                            </div>
-                                                                                                                                                        </div>
-                                                                                                                                                        <div class="col-12 md:col-6 lg:col-3">
-                                                                                                                                                            <div class="surface-card shadow-2 p-3 border-round">
-                                                                                                                                                                <div class="flex justify-content-between mb-3">
-                                                                                                                                                                    <div>
-                                                                                                                                                                        <span class="block text-500 font-medium mb-3">Comments</span>
-                                                                                                                                                                        <div class="text-900 font-medium text-xl">152 Unread</div>
-                                                                                                                                                                    </div>
-                                                                                                                                                                    <div class="flex align-items-center justify-content-center bg-purple-100 border-round"
-                                                                                                                                                                        style="width:2.5rem;height:2.5rem">
-                                                                                                                                                                        <i class="pi pi-comment text-purple-500 text-xl"></i>
-                                                                                                                                                                    </div>
-                                                                                                                                                                </div>
-                                                                                                                                                                <span class="text-green-500 font-medium">85 </span>
-                                                                                                                                                                <span class="text-500">responded</span>
-                                                                                                                                                            </div>
-                                                                                                                                                        </div> -->
             </div>
         </div>
         <DataTable :value="data_user" v-model:expandedRows="expandedRows" dataKey="id" @rowExpand="onRowExpand" style="font-family: Kanit;"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5, 10, 25]"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" responsiveLayout="scroll"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} " responsiveLayout="scroll"
             :paginator="true" :rows="10" @rowCollapse="onRowCollapse">
             <template #header>
                 <div class="table-header-container flex justify-content-between">

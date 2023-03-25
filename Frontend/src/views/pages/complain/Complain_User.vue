@@ -200,23 +200,23 @@ const openpopup = () => {
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div class="grid" style="width: 100%;">
-                        <div class="col-3 mb-2 lg:col-3 md:col-4 sm:col-6 lg:mb-0">
+                        <div class="col-6 mb-2 lg:col-3 md:col-4 sm:col-6 lg:mb-0">
                             <span class="block text-500 text-2xl font-medium mb-3">เรื่องทั้งหมด</span>
                             <div class="text-900 font-medium text-2xl text-xl">{{ count_title.count_all }}</div>
                         </div>
 
-                        <div class="col-3 mb-2 lg:col-3 md:col-4 sm:col-6 lg:mb-0">
+                        <div class="col-6 mb-2 lg:col-3 md:col-4 sm:col-6 lg:mb-0">
                             <span class="block text-500 text-2xl font-medium mb-3">เรื่องแจ้ง</span>
                             <div class="text-900 font-medium text-2xl text-xl">{{ count_title.count_start }}</div>
                         </div>
 
-                        <div class="col-3 mb-2 lg:col-3 md:col-4 sm:col-6 lg:mb-0">
+                        <div class="col-6 mb-2 lg:col-3 md:col-4 sm:col-6 lg:mb-0">
                             <span class="block text-500 text-2xl font-medium mb-3">กำลังดำเนินการ</span>
                             <div class="text-900 text-orange-500 text-2xl font-medium text-xl">{{ count_title.count_process
                             }}</div>
                         </div>
 
-                        <div class="col-3 mb-2 lg:col-3 md:col-4 sm:col-6 lg:mb-0">
+                        <div class="col-6 mb-2 lg:col-3 md:col-4 sm:col-6 lg:mb-0">
                             <span class="block text-500 text-2xl font-medium mb-3">ปิดงาน</span>
                             <div class="text-900 text-green-500 text-2xl font-medium text-xl">{{ count_title.count_colse }}
                             </div>
