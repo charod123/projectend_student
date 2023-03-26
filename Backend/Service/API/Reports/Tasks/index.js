@@ -105,10 +105,75 @@ const get_dashboard_task = async ({ start_date, end_date }, { email, role, subdi
         return { code: true, status: 400, message: error.message, data: [] };
     }
 };
-const get_task_on_type = async ({ start_date, end_date, task_type_id }, { email, role, subdistrict_id, division_id, subdivision_id }) => {
+const get_task_on_report = async ({ task_type_id, subdivision_id_ }, { email, role, subdistrict_id, division_id, subdivision_id }) => {
+    try {
+        let taskList = pg('task as t')
+            .leftJoin('task_type as tt', 'tt.task_type_id', 't.task_type_id')
+            .leftJoin('user_master as um', 'um.email', 't.opener_task')
+            .leftJoin('user_master as umm', 'umm.email', 't.person_responsible')
+            .leftJoin('user_profile as upp', 'upp.user_pro_id', 'umm.user_pro_id')
+            .leftJoin('user_profile as up', 'up.user_pro_id', 'um.user_pro_id')
+            .leftJoin('subdivision_master as sm', 'sm.subdivision_id', 't.subdivision_id')
+            .leftJoin('division_master as dm', 'dm.division_id', 'sm.division_id')
+            .select(
+                pg.raw(
+                    `CASE WHEN t.status = '1' THEN 'งานเปิด' 
+                  WHEN t.status = '2' THEN 'งานที่ดำเนินการ' 
+                  WHEN t.status = '3' THEN 'งานปิด' 
+                  WHEN t.status = '4' THEN 'งานสาย'
+                  WHEN t.status = '8' THEN 'งานที่กำลังดำเนินการ' 
+                  WHEN t.status = '0' THEN 'งานยกเลิก' END as status_task`
+                ),
+                'tt.task_type_name',
+                pg.raw(`concat(up.fristname,' ',up.lastname) as open_task`),
+                pg.raw(`concat(upp.fristname,' ',upp.lastname) as person_responsible`),
+                'sm.subdivision_name',
+                'dm.division_name',
+                't.start_date',
+                't.end_date'
+
+            ).where({ 't.del_flag': 1 })
+        if (role == 2) {
+            taskList.andWhere('t.subdivision_id', subdivision_id)
+            if (task_type_id != 9.9) {
+                taskList.andWhere('t.task_type_id', task_type_id)
+                taskList.andWhere((builder) => {
+                    builder.where('t.task_type_id', 1)
+                        .orWhere('t.opener_task', email)
+                        .orWhere('t.person_responsible', email);
+                })
+            }
+
+        }
+        if (role == 1) {
+            if (subdivision_id_ != 9.9 && task_type_id != 9.9) {
+                taskList.andWhere('t.subdivision_id', subdivision_id_)
+                taskList.andWhere('t.task_type_id', task_type_id)
+            }
+            if (subdivision_id_ != 9.9) {
+                taskList.andWhere('t.subdivision_id', subdivision_id_)
+            }
+            if (task_type_id != 9.9) {
+                taskList.andWhere('t.task_type_id', task_type_id)
+            }
+
+        }
+        const data = await taskList
+        const data__ = await data.map(e => {
+            e.start_date = moment(e.start_date,'YYYY-MM-DD').format('DD/MM/YYYY')
+            e.end_date = moment(e.end_date,'YYYY-MM-DD').format('DD/MM/YYYY')
+            return e
+        })
+        return { code: false, status: 200, message: "success", data: await Promise.all(data__) };
+
+
+    } catch (error) {
+        return { code: true, status: 400, message: error.message, data: [] };
+    }
 
 }
 module.exports = {
     get_dashboard_task,
+    get_task_on_report
 
 };

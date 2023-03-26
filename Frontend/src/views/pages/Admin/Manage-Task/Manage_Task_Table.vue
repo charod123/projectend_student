@@ -4,10 +4,12 @@ import Service from '../../../../service/api';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode } from 'primevue/api';
+import { useRouter } from 'vue-router';
 import { useStore } from '../../../../store';
 import moment from 'moment';
 const store = useStore();
 const toast = useToast();
+const router = useRouter();
 const confirm = useConfirm();
 const filters1 = ref(null);
 const service = new Service();
@@ -34,10 +36,85 @@ const users = ref();
 const select_user = ref();
 const op = ref();
 const subdivision = ref();
+const subdivision_option = ref();
 const task = ref();
 const task_backup = ref();
 const data_view = ref();
 const showdropdonw = ref(false);
+const task_option = ref([]);
+const showreport = ref(false);
+const data_on_report = ref({
+    select_type_report: '',
+    select_subdivision: '',
+    select_task_type: '',
+
+})
+const exportCSV = async () => {
+
+    console.log(data_on_report.value);
+    const res = await service.post('/read/get_task_on_report', { task_type_id: data_on_report.value.select_task_type, subdivision_id_: data_on_report.value.select_subdivision });
+    if (res.message == 'success') {
+        const data_report = res.data.map((e, i) => {
+            return {
+                'ลำดับ': i + 1,
+                'ชื่อผู้เปิด': !e.open_task ? 'ระบบ' : e.open_task,
+                'ชื่อรับผิดชอบ': !e.person_responsible ? 'ยังไม่มีผู้รับงาน' : e.person_responsible,
+                'งานของหน่วยงาน': e.subdivision_name,
+                'หน่วยงาน': e.division_name,
+                'วันที่เปิดงาน': e.start_date,
+                'กำหนดเสร็จ': e.end_date,
+                'สถานะงาน': e.status_task,
+            }
+        })
+        store.data_report = { data: data_report, header: `รายงานการข้อมูลแผนประฏิบัติงาน`, type: 'task', name_excel: 'รายงานการข้อมูลแผนประฏิบัติงาน' }
+        if (data_report.length > 0 && data_on_report.value.select_type_report == 2) {
+            return router.push('/report_pdf')
+        }
+        if (data_report.length > 0 && data_on_report.value.select_type_report == 1) {
+            return router.push('/report_export')
+        }
+        return toast.add({ severity: 'warn', summary: 'ไม่มีข้อมูลที่คุณเลือก', life: 2000 });
+    }
+};
+
+const type_report = ref([
+    {
+        report_type_id: 1,
+        report_type_name: 'excel'
+    },
+    {
+        report_type_id: 2,
+        report_type_name: 'print pdf'
+    },
+
+]
+)
+const onreport = async () => {
+
+    task_option.value = [...task_type.value,
+    {
+        task_type_id: 9.9,
+        task_type_name: "ทั้งหมด",
+        del_flag: "1",
+        create_by: '',
+        create_date: "2023-03-17T07:49:55.000Z",
+        update_date: "Invalid date",
+    }]
+    subdivision_option.value = [
+        ...subdivision_option.value,
+        {
+            create_by: "sp_admin",
+            create_date: "2023-03-26 00:44:12",
+            del_flag: "1",
+            division_id: 9.9,
+            division_name: "ทั้งหมด",
+            subdivision_id: 9.9,
+            subdivision_name: "ทั้งหมด",
+            update_date: "Invalid date",
+        }
+    ]
+    showreport.value = true;
+}
 const addUertry = async (value) => {
     values.value.task.length > 5 ? toast.add({ severity: 'warn', summary: 'สามารถเพิ่มอุปกรณ์ได้แค่ 5 ชิ้น', life: 3000 }) : values.value.task = (value.task || []).concat([{}]);
 }
@@ -183,6 +260,7 @@ const get = async () => {
     const sub = await service.post('/read/get_subdivison', {});
     if (sub.message == 'success') {
         subdivision.value = sub.data[0];
+        subdivision_option.value = sub.data
     }
 
 }
@@ -353,9 +431,18 @@ const create_task_type = async (url) => {
 
             </span>
             <div class="col-12">
-                <h4 class="mt-2 mr-2">ประเภทงาน: </h4>
-                <Dropdown v-model="task_type_id" :options="task_type" optionLabel="task_type_name"
-                    optionValue="task_type_id" placeholder="เลือกประเภท" class="w-full md:w-20rem" />
+                <div class="flex justify-content-between">
+                    <div>
+                        <h4 class="mt-2 mr-2">ประเภทงาน: </h4>
+                        <Dropdown v-model="task_type_id" :options="task_type" optionLabel="task_type_name"
+                            optionValue="task_type_id" placeholder="เลือกประเภท" class="w-full md:w-20rem" />
+                    </div>
+                    <div class="flex align-items-end">
+                        <Button style="font-family: Kanit;" icon="pi pi-external-link" label="ออกรายงาน" class="w-10rem"
+                            @click="onreport" />
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -420,9 +507,9 @@ const create_task_type = async (url) => {
                                 @click="create_main" />
                         </div>
 
-                    </template>
-                    <Column field="task_type_name" header="ชื่อประเภทงาน" sortable style="width: 50%"></Column>
-                    <Column style="width: 40%">
+                </template>
+                <Column field="task_type_name" header="ชื่อประเภทงาน" sortable style="width: 50%"></Column>
+                <Column style="width: 40%">
                         <template #body="{ data }">
                             <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2 mb-2"
                                 @click="edit_task_type(data)" />
@@ -476,7 +563,7 @@ const create_task_type = async (url) => {
             </Column>
             <Column field="start_date" header="วันที่เริ่มงาน" style="min-width:15rem" :sortable="true">
                 <template #body="{ data }">
-                    
+
                     {{ $moment(data.start_date, 'YYYY-MM-DD').format("DD/MM/YYYY") }}
                 </template>
             </Column>
@@ -498,8 +585,8 @@ const create_task_type = async (url) => {
                         :value="data.status == 1 ? 'งานเปิด' : data.status == 2 ? 'งานที่รอดำเนินการตรวจสอบ' : data.status == 0 ? 'งานที่ยกเลิก' : data.status == 8 ? 'กำลังดำเนินการ' : data.status == 4 ? 'งานสาย' : 'งานที่ปิด'"
                         :severity="data.status == 1 ? 'info' : data.status == 2 ? 'warning' : data.status == 0 ? 'danger' : data.status == 8 ? 'help' : data.status == 4 ? 'danger' : 'secondary'" />
 
-            </template>
-        </Column>
+                </template>
+            </Column>
 
 
             <Column header="Tools" style="min-width: 15rem">
@@ -624,9 +711,9 @@ const create_task_type = async (url) => {
                                                             <Button @click="chooseCallback()" icon="pi pi-cloud-upload"
                                                                 class="p-button-rounded p-button-info p-button-outlined mr-2 mb-2 w-3rem"></Button>
                                                             <!-- <Button @click="uploadEvent(uploadCallback)"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            icon="pi pi-cloud-upload"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            :disabled="!files || files.length === 0"></Button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        icon="pi pi-cloud-upload"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        :disabled="!files || files.length === 0"></Button> -->
                                                             <Button @click="clearCallback()" icon="pi pi-times"
                                                                 class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2 w-3rem"
                                                                 :disabled="!files || files.length === 0"></Button>
@@ -828,9 +915,9 @@ const create_task_type = async (url) => {
                                                     <Button @click="chooseCallback()" icon="pi pi-cloud-upload"
                                                         class="p-button-rounded p-button-info p-button-outlined mr-2 mb-2 w-3rem"></Button>
                                                     <!-- <Button @click="uploadEvent(uploadCallback)"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            icon="pi pi-cloud-upload"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            :disabled="!files || files.length === 0"></Button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        icon="pi pi-cloud-upload"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="p-button-rounded p-button-success p-button-outlined mr-2 mb-2 w-3rem"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        :disabled="!files || files.length === 0"></Button> -->
                                                     <Button @click="clearCallback()" icon="pi pi-times"
                                                         class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2 w-3rem"
                                                         :disabled="!files || files.length === 0"></Button>
@@ -898,7 +985,29 @@ const create_task_type = async (url) => {
             </div>
 
         </Sidebar>
-
+        <Dialog header="เลือกรูปแบบรายงาน" v-model:visible="showreport" :breakpoints="{ '1080px': '75vw' }"
+            :style="{ width: '45vw' }" :modal="true" style="font-family:Kanit">
+            <div class="grid p-fluid">
+                <div class="col-12 md:col-12">
+                    <h5>เลือกประเภทงานที่ต้องการออกรายงาน</h5>
+                    <Dropdown v-model="data_on_report.select_task_type" :options="task_option" optionLabel="task_type_name"
+                        optionValue="task_type_id" placeholder="เลือกประเภทงาน" />
+                </div>
+                <div class="col-12 md:col-12" v-if="store.role == 1">
+                    <h5>เลือกหน่วยงานที่ต้องการออกรายงาน</h5>
+                    <Dropdown v-model="data_on_report.select_subdivision" :options="subdivision_option"
+                        optionLabel="subdivision_name" optionValue="subdivision_id" placeholder="เลือกหน่วยงาน" />
+                </div>
+                <div class="col-12 md:col-12">
+                    <h5>เลือกประเภทรายงาน</h5>
+                    <Dropdown v-model="data_on_report.select_type_report" :options="type_report"
+                        optionLabel="report_type_name" optionValue="report_type_id" placeholder="เลือกประเภทรายงาน" />
+                </div>
+            </div>
+            <template #footer>
+                <Button label="ยืนยัน" @click="exportCSV()" icon="pi pi-check" class="p-button-outlined" />
+            </template>
+        </Dialog>
     </div>
 </template>
 

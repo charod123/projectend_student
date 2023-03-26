@@ -1,6 +1,6 @@
 // const url = 'http://localhost'
 // const ur_socket = 'ws://localhost'
-let chk = false
+let chk = true
 const url = chk == true ? 'http://202.149.117.35' : 'http://localhost'
 const ur_socket = chk == true ? 'ws://202.149.117.35' : 'ws://localhost'
 
@@ -15,5 +15,5 @@ export default {
     backend_url_socket: `${ur_socket}:${port_socket}`,
     // background_noti : `ws://localhost:3020`,
     // background_data : `ws://localhost:3081`,
-    token_map: 'pk.eyJ1IjoidG9uZ3p6enoiLCJhIjoiY2s5N3ZuM3hiMGVzYTNncGt6cnVrZHE4eiJ9.jh_uPx9BkdNpdG1LdhenUw'
+    // token_map: 'pk.eyJ1IjoidG9uZ3p6enoiLCJhIjoiY2s5N3ZuM3hiMGVzYTNncGt6cnVrZHE4eiJ9.jh_uPx9BkdNpdG1LdhenUw'
 } 

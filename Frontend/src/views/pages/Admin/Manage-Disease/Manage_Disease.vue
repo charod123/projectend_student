@@ -182,7 +182,7 @@ onBeforeMount(() => {
             </div>
             <template #footer>
                 <Button label="บันทึก" icon="pi pi-check"
-                    @click="create_main_menu(`${disabled_on_edit ? 'udpate_disease' : 'create_disease'}`)" autofocus />
+                    @click="create_main_menu(`${disabled_on_edit ? 'update_disease' : 'create_disease'}`)" autofocus />
             </template>
         </Dialog>
 

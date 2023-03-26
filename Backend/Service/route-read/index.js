@@ -13,7 +13,7 @@ const { get_clint } = require('../API/clint');
 const { get_user_admin, get_count_on_subdivision } = require('../API/Admin/user');
 const { get_count_user_devive } = require('../API/login & Register/user');
 const { get_type_task, get_task, get_user_in_subdivision } = require('../API/task');
-const { get_dashboard_task } = require('../API/Reports/Tasks');
+const { get_dashboard_task,get_task_on_report } = require('../API/Reports/Tasks');
 const { get_dashboard_count_time } = require('../API/Reports/Dashboard');
 const { get_on_report } = require('../API/Reports/Complain');
 const { get_notify_on_report } = require('../API/Reports/Sos_Notify');
@@ -50,7 +50,8 @@ const resourceMethods = {
   get_dashboard_count_time,
   get_on_report,
   get_user_admin_on_report,
-  get_notify_on_report
+  get_notify_on_report,
+  get_task_on_report
 };
 
 dynamicGetRouter.post("/:resource", async (req, res) => {
