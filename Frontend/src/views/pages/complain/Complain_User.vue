@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, onUpdated, defineComponent } from 'vue';
+import { ref, onMounted, watch, onUpdated, defineComponent, onBeforeMount } from 'vue';
 // import Dialog_Create_complain from './Create/Dialog_Create_complain.vue';
 import Service from '../../../service/api';
 import { useToast } from 'primevue/usetoast';
@@ -7,6 +7,7 @@ import { useStore } from '../../../store';
 const store = useStore();
 const toast = new useToast();
 const service = new Service();
+const priority = JSON.parse(sessionStorage.getItem('priority'));
 const file = ref(null);
 const img = ref(null);
 const show_btn_create = ref(false);
@@ -135,7 +136,10 @@ const get_data_pat_device = async () => {
 watch(store.opendialog, (newValue) => {
     console.log(newValue);
 })
+onBeforeMount(() => {
+    priority?.filter(x => x.priority_id == 18)[0].can_read == 1 ? show_btn_create.value = true : show_btn_create.value = false
 
+})
 onUpdated(() => {
     if (store.data.cp_id != data_create_complain.value.cp_id) {
         console.log(store.data);
@@ -152,7 +156,6 @@ onUpdated(() => {
 })
 
 onMounted(async () => {
-    store.priority?.filter(x => x.priority_id == 18)[0].can_read == 1 ? show_btn_create.value = true : show_btn_create.value = false
     await get_data_pat_device();
 })
 const nestedRouteItems = ref([
@@ -317,7 +320,7 @@ const openpopup = () => {
                     </Editor>
 
                     <!-- <Editor v-if="!loading" v-model="content" apiKey="uomi65v16zevnt069dsx2hjwbed3dbdofksts9tixcty1fqw"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        :init="tinymceSettings" :readonly="true" /> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            :init="tinymceSettings" :readonly="true" /> -->
 
 
 

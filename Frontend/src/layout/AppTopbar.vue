@@ -147,8 +147,8 @@ const isOutsideClicked = (event) => {
             <Dialog header="คุณต้องการออกจากระบบใช่หรือไม่" v-model:visible="displayConfirmation"
                 :style="{ width: '350px' }" :modal="true">
                 <template #footer>
-                    <Button label="ไม่ใช่" icon="pi pi-times" @click="closeConfirmation" class="p-button-text" />
-                    <Button label="ใช่" icon="pi pi-check" @click="Confirmation" class="p-button-text" autofocus />
+                    <Button label="ไม่ใช่" icon="pi pi-times" @click="closeConfirmation" class="p-button-info" />
+                    <Button label="ใช่" icon="pi pi-check" @click="Confirmation" class="p-button-danger" autofocus />
                 </template>
             </Dialog>
 

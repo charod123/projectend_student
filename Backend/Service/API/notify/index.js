@@ -51,6 +51,7 @@ const get_notify = async ({ limit }, { email, role, subdistrict_id, division_id 
         const img = await readfile_({ id: `pat-${e.pat_id}`, full_path: e.img_path }).then((e) => e[0]).catch(err => err);
         e.time_event_table = moment(e.time_event).format("LLLL");
         e.time_event = moment(e.time_event).format("YYYY-MM-DD HH:mm:ss");
+        e.time_event_detail = moment(e.time_event).add(543,'y').format("LLLL");
         e.time_event_dashborad = moment(e.time_event, 'YYYY-MM-DD HH:mm:ss').fromNow();
         e.device_time = moment(e.device_time).format("YYYY-MM-DD HH:mm:ss");
         e.create_date = moment(e.create_date).format("YYYY-MM-DD HH:mm:ss");

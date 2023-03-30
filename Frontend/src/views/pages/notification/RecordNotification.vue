@@ -343,10 +343,10 @@ const save = async (data, message_) => {
                             {{ data.device_ip }}
                         </template>
                     </Column>
-                    <Column field="time_event_table" header="เวลาที่เกิดแจ้งเตือน" dataType="date" style="min-width: 19rem"
+                    <Column field="time_event_detail" header="เวลาที่เกิดแจ้งเตือน" dataType="date" style="min-width: 19rem"
                         :sortable="true">
                         <template #body="{ data }">
-                            {{ data.time_event_table }}
+                            {{ data.time_event_detail }}
                         </template>
                     </Column>
                     <Column field="detail_patient" header="สถานะการดำเนินการ" style="min-width: 15rem" :sortable="true">
@@ -382,7 +382,7 @@ const save = async (data, message_) => {
                         <div class="col-6">
                             <span>ชื่อ-นามสกุล</span>
                             <p class="line-height-3 mt-3">{{ datadialog.fristname + ' ' + datadialog.lastname }}</p>
-                            <p class="line-height-3">เวลาที่เกิดแจ้งเตือน {{ datadialog.time_event }}</p>
+                            <p class="line-height-3">เวลาที่เกิดแจ้งเตือน {{ datadialog.time_event_detail }}</p>
                             <p class="text-md">หน่วยงานภายใน</p>
                             <div class="flex">
                                 <div class="border-round-sm p-2 mr-2" style="background-color: aquamarine;"

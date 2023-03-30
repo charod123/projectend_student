@@ -12,6 +12,7 @@ const router = useRouter()
 const confirm = useConfirm();
 const customer1 = ref(null);
 const filters1 = ref(null);
+const priority = JSON.parse(sessionStorage.getItem('priority'));
 const division = ref(null);
 const divisionDialog = ref(false)
 const loading = ref(false);
@@ -54,10 +55,11 @@ const get_all_pat = async () => {
 }
 onMounted(async () => {
     await get_all_pat();
-    store.priority?.filter(x => x.priority_id == 20)[0].can_write == 1 ? show_btn_create.value = true : show_btn_create.value = false
+    
 
 })
 onBeforeMount(() => {
+    priority?.filter(x => x.priority_id == 20)[0].can_write == 1 ? show_btn_create.value = true : show_btn_create.value = false
     initFilters1();
     loading.value = true;
 });
@@ -476,10 +478,9 @@ const reset = () => {
                     <Paginator v-model:first="first" :rows="1" :totalRecords="customer1.length"
                         template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink">
                         <template #start>
-                            <Button type="button" icon="pi pi-refresh" @click="reset()" />
+                            <Button type="button" icon="pi pi-refresh" @click="get_all_pat()" />
                         </template>
                         <template #end>
-                            <Button type="button" icon="pi pi-search" />
                         </template>
                     </Paginator>
                 </div>

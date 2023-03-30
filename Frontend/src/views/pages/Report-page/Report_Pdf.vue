@@ -1,12 +1,19 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useStore } from '../../../store';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const store = useStore();
 onMounted(() => {
     setTimeout(() => {
         window.print();
     }, 1000)
+
 })
+
+window.addEventListener('afterprint', () => {
+    router.back()
+});
 </script>
 
 <template>
@@ -21,6 +28,10 @@ onMounted(() => {
                     style="font-family: Kanit;">
                     <Column v-if="store.data_report.type == 'complain'" field="ลำดับ" header="ลำดับ"></Column>
                     <Column v-if="store.data_report.type == 'complain'" field="เรื่องร้องเรียน" header="เรื่องร้องเรียน">
+                    </Column>
+                    <Column v-if="store.data_report.type == 'complain'" field="ผู้แจ้ง" header="ผู้แจ้ง">
+                    </Column>
+                    <Column v-if="store.data_report.type == 'complain'" field="เวลาที่แจ้ง" header="เวลาที่แจ้ง">
                     </Column>
                     <Column v-if="store.data_report.type == 'complain'" field="ประเภทเรื่องร้องเรียน"
                         header="ประเภทเรื่องร้องเรียน"></Column>
@@ -90,4 +101,5 @@ onMounted(() => {
         display: grid
     }
 
-}</style>
+}
+</style>

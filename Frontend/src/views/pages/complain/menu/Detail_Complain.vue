@@ -34,11 +34,14 @@ const exportCSV = async () => {
             return {
                 'ลำดับ': i + 1,
                 'เรื่องร้องเรียน': e.cp_title,
+                'ผู้แจ้ง': e.create_by,
+                'เวลาที่แจ้ง': e.cp_create_date,
                 'ประเภทเรื่องร้องเรียน': e.cp_type,
                 'เบอร์โทรติดต่อกลับ': e.cp_tel,
                 'สถานะ': e.cp_status == 1 ? 'แจ้งเรื่อง' : e.cp_status == 2 ? 'กำลังดำเนินการ' : e.cp_status == 3 ? 'ปิดงาน' : 'ยกเลิก',
             }
         })
+        console.log(res);
         store.data_report = { data: data_report, header: 'รายงานการแจ้งเรื่องร้องเรียน', type: 'complain',name_excel:'รายงานร้องเรียน'  }
         if (data_report.length > 0 && data_on_report.value.select_type_report == 2) {
             return router.push('/report_pdf')
@@ -243,9 +246,9 @@ const save = async (data) => {
                         placeholder="Search by name" />
                 </template>
             </Column>
-            <Column field="cp_create_date" header="วัน-เวลา ที่แจ้ง" style="min-width: 12rem">
+            <Column field="cp_create_date_table" header="วัน-เวลา ที่แจ้ง" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.cp_create_date }}
+                    {{ data.cp_create_date_table }}
 
                 </template>
                 <template #filter="{ filterModel }">
@@ -268,8 +271,8 @@ const save = async (data) => {
                     <span
                         :class="`customer-badge status-${data.cp_status == 1 ? 'new' : data.cp_status == 2 ? 'proposal' : 'qualified'}`">{{
                             data.cp_status
-                            == 1 ? 'สถานะ: ยังไม่มีการดำเนินการ' : data.cp_status == 2 ? 'สถานะ: อยู่ระหว่างดำเนินการ' :
-                            'สถานะ:ดำเนินการเสร็จสิ้น' }}</span>
+                            == 1 ? ' ยังไม่มีการดำเนินการ' : data.cp_status == 2 ? ' อยู่ระหว่างดำเนินการ' :
+                            'ดำเนินการเสร็จสิ้น' }}</span>
                 </template>
                 <template #filter="{ filterModel }">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter"

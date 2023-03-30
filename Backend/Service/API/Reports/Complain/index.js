@@ -7,7 +7,7 @@ const pg = config.connectionString_pg();
 const get_on_report = async ({ select_type_complain }, { email, role, subdistrict_id, division_id, subdivision_id }) => {
     console.log(email, role);
     try {
-        let sql = pg.select('*', pg.raw("CASE WHEN c.cp_type_id='1' THEN 'แจ้งปัญหาการใช้งานระบบ' WHEN c.cp_type_id='2' THEN 'แจ้งปัญหาอุปกรณ์' ELSE 'อื่นๆ' END as cp_type"))
+        let sql = pg.select('*','c.user_id as create_by', pg.raw("CASE WHEN c.cp_type_id='1' THEN 'แจ้งปัญหาการใช้งานระบบ' WHEN c.cp_type_id='2' THEN 'แจ้งปัญหาอุปกรณ์' ELSE 'อื่นๆ' END as cp_type"))
             .from('complain as c')
             .leftJoin('patient_master as p', 'p.pat_id', 'c.pat_id')
             .leftJoin('device_master as dm', 'dm.device_ip', 'c.device_id');
@@ -29,7 +29,7 @@ const get_on_report = async ({ select_type_complain }, { email, role, subdistric
         if (get_com.length > 0) {
 
             const taskTypePromises = get_com.map(e => {
-                e.cp_create_date = moment(e.cp_create_date).format("YYYY-MM-DD HH:mm:ss")
+                e.cp_create_date = moment(e.cp_create_date).add(543,'y').format("LLLL")
                 e.cp_update_date = moment(e.cp_update_date).format("YYYY-MM-DD HH:mm:ss")
                 return e
             })

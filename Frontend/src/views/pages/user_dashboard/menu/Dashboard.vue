@@ -60,6 +60,9 @@ const radarOptions = ref(null);
 const task_type = ref();
 const pie_label_task_type = ref();
 const pie_value_task_type = ref();
+const label_dis = ref('');
+const dis_count = ref();
+const barData_ = ref();
 onMounted(() => {
     productService.getProductsSmall().then((data) => (products.value = data));
 });
@@ -147,7 +150,19 @@ const setChart = async () => {
                 label: 'ค่าเฉลี่ย',
                 backgroundColor: [documentStyle.getPropertyValue('--primary-500')],
                 borderColor: documentStyle.getPropertyValue('--primary-500'),
-                data: [count_task.value[0]?.time_00_04, count_task.value[0]?.time_04_08, count_task.value[0]?.time_08_12, count_task.value[0]?.time_12_16, count_task.value[0]?.time_16_20, count_task.value[0]?.time_20_00]
+                data: [count_task.value?.time_00_04, count_task.value?.time_04_08, count_task.value?.time_08_12, count_task.value?.time_12_16, count_task.value?.time_16_20, count_task.value?.time_20_00]
+            }
+
+        ]
+    };
+    barData_.value = {
+        labels: label_dis.value,
+        datasets: [
+            {
+                label: 'ค่าเฉลี่ยโรค',
+                backgroundColor: [documentStyle.getPropertyValue('--red-500'),documentStyle.getPropertyValue('--indigo-500'),documentStyle.getPropertyValue('--purple-500'),documentStyle.getPropertyValue('--teal-500'),documentStyle.getPropertyValue('--teal-500'),documentStyle.getPropertyValue('--indigo-500')],
+                borderColor: documentStyle.getPropertyValue('--primary-500'),
+                data: dis_count.value.sums
             }
 
         ]
@@ -186,10 +201,10 @@ const setChart = async () => {
     };
 
     pieData.value = {
-        labels: pie_label_task_type.value,
+        labels: ['das', 'dsad'],
         datasets: [
             {
-                data: pie_value_task_type.value,
+                data: [10, 5],
                 backgroundColor: [documentStyle.getPropertyValue('--red-500'), documentStyle.getPropertyValue('--indigo-500'), documentStyle.getPropertyValue('--purple-500'), documentStyle.getPropertyValue('--teal-500')],
                 hoverBackgroundColor: [documentStyle.getPropertyValue('--red-500'), documentStyle.getPropertyValue('--indigo-400'), documentStyle.getPropertyValue('--purple-400'), documentStyle.getPropertyValue('--teal-400')]
             }
@@ -353,56 +368,61 @@ const get = async () => {
     date.value.date_end = moment(date.value.date_end).format("YYYY-MM-DD")
     const res = await service.post('/read/get_dashboard_count_time', { start_date: date.value.date_start, end_date: date.value.date_end });
     if (res.message == 'success') {
-        count_task.value = res.data;
+        count_task.value = res.data[0];
         console.log(count_task.value);
+        dis_count.value = res.count
+        label_dis.value = res.count.data.map(x => x.cd_name)
+        console.log(dis_count.value);
         // pie_value_task_type.value = res.data.task_type.map(e => e.count_task_type);
     }
 
-    const sub = await service.post('/read/get_subdivison', {});
-    if (sub.message == 'success') {
-        subdivision.value = sub.data[0];
-    }
-    const task_t = await service.post('/read/get_type_task', {});
-    if (task_t.message == 'success') {
-        task_type.value = task_t.data;
-        pie_label_task_type.value = task_type.value.map(e => e.task_type_name);
-    }
 }
 </script>
 
 <template>
-    <div class="grid p-3">
-        <div class="col-12 flex justify-content-center" v-if="store.role != 3">
-            <h1>เทศบาล {{ subdivision?.division_name }} &nbsp;&nbsp; หน่วยงาน {{ subdivision?.subdivision_name }}</h1>
-            {{ count_task }}
-        </div>
+    <div class="grid p-5">
         <div class="col-12 card">
-            <div class="flex justify-content-between align-items-end">
-                <div class="gap-4 flex align-items-center">
-                    <div>
-                        <p>เลือกวันเริ่มต้น</p>
-                        <Calendar v-model="date.date_start" showIcon dateFormat="yy-mm-dd" />
+            <div class="grid">
+                <div class="col-12 md:col-2 sm:col-2">
+                    <p>เลือกวันเริ่มต้น</p>
+                    <Calendar v-model="date.date_start" showIcon dateFormat="yy-mm-dd" />
 
-                    </div>
-                    <div>
-                        <p>เลือกวันสิ้นสุด</p>
-                        <Calendar v-model="date.date_end" showIcon dateFormat="yy-mm-dd" />
-
-                    </div>
                 </div>
+                <div class="col-12 md:col-2 sm:col-2">
+                    <p>เลือกวันสิ้นสุด</p>
+                    <Calendar v-model="date.date_end" showIcon dateFormat="yy-mm-dd" />
 
-                <div class="pl-3">
+                </div>
+                <div class="col-0 md:col-6"></div>
+                <div class="col-2 align-self-end">
                     <Button label="ค้นหา" severity="success" class="w-10rem" @click="setChart()" />
                 </div>
             </div>
 
         </div>
-        <div :class="`col-12 lg:col-6 xl:col-${store.role == 1 ? '2' : '3'}`" v-if="store.role == 1">
+
+        <div :class="`col-12 lg:col-6 xl:col-4`">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-500 font-medium mb-3">พนักงานทั้งหมด</span>
-                        <div class="text-900 font-medium text-xl">{{ count_task?.user.count }}</div>
+                        <span class="block text-500 font-medium mb-3">จำนวนการแจ้งเตือนทั้งหมด</span>
+                        <div class="text-900 font-medium text-xl">{{ count_task?.count_noti }}</div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-orange-100 border-round"
+                        style="width: 2.5rem; height: 2.5rem">
+                        <i class="pi pi-megaphone text-orange-500 text-xl"></i>
+                    </div>
+                </div>
+                <!-- <span class="text-green-500 font-medium">24 new </span>
+                                                                    <span class="text-500">since last visit</span> -->
+            </div>
+        </div>
+        <div :class="`col-12 lg:col-6 xl:col-4`">
+            <div class="card mb-0">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-500 font-medium mb-3">จำนวนผู้ป่วย </span>
+                        <div class="text-900 font-medium text-xl">{{ count_task?.count_pat }}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
                         style="width: 2.5rem; height: 2.5rem">
@@ -410,90 +430,42 @@ const get = async () => {
                     </div>
                 </div>
                 <!-- <span class="text-green-500 font-medium">24 new </span>
-                                        <span class="text-500">since last visit</span> -->
-            </div>
-        </div>
-        <div :class="`col-12 lg:col-6 xl:col-${store.role == 1 ? '2' : '3'}`">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-500 font-medium mb-3">งานทั้งหมด </span>
-                        <!-- <div class="text-900 font-medium text-xl">{{ count_task?.task.all_task ? count_task?.task.all_task :
-                            0 }}</div> -->
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
-                        style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-briefcase text-blue-500 text-xl"></i>
-                    </div>
-                </div>
-                <!-- <span class="text-green-500 font-medium">24 new </span>
-                                        <span class="text-500">since last visit</span> -->
+                                                                    <span class="text-500">since last visit</span> -->
             </div>
         </div>
 
-        <div :class="`col-12 lg:col-6 xl:col-${store.role == 1 ? '2' : '3'}`">
+        <div :class="`col-12 lg:col-6 xl:col-4`">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-500 font-medium mb-3">งานค้าง </span>
-                        <!-- <div class="text-900 font-medium text-xl">
-                            {{ count_task?.task.open_task ? parseInt(count_task?.task.open_task) +
-                                parseInt(count_task?.task.late_task) +
-                                parseInt(count_task?.task.action_task) : 0 }}</div> -->
+                        <span class="block text-500 font-medium mb-3">จำนวนอุปกรณ์ </span>
+                        <div class="text-900 font-medium text-xl">
+                            {{ count_task?.count_device }}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
                         style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-briefcase text-blue-500 text-xl"></i>
+                        <i class="pi pi-inbox text-blue-500 text-xl"></i>
                     </div>
                 </div>
                 <!-- <span class="text-green-500 font-medium">24 new </span>
-                                        <span class="text-500">since last visit</span> -->
+                                                                    <span class="text-500">since last visit</span> -->
             </div>
         </div>
-        <div :class="`col-12 lg:col-6 xl:col-3`">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-500 font-medium mb-3">งานที่รอดำเนินการตรวจสอบ</span>
-                        <!-- <div class="text-900 font-medium text-xl">{{ count_task?.task.pending_task ?
-                            count_task?.task.pending_task : 0 }}
-                        </div> -->
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-orange-100 border-round"
-                        style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-briefcase text-orange-500 text-xl"></i>
-                    </div>
-                </div>
-                <!-- <span class="text-green-500 font-medium">%52+ </span>
-                                        <span class="text-500">since last week</span> -->
-            </div>
-        </div>
-        <div :class="`col-12 lg:col-6 xl:col-3`">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-500 font-medium mb-3">งานที่ปิด</span>
-                        <!-- <div class="text-900 font-medium text-xl">{{ count_task?.task.success_task ?
-                            count_task?.task.success_task : 0 }}
-                        </div> -->
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-cyan-100 border-round"
-                        style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-briefcase text-cyan-500 text-xl"></i>
-                    </div>
-                </div>
-                <!-- <span class="text-green-500 font-medium">520 </span>
-                                        <span class="text-500">newly registered</span> -->
-            </div>
-        </div>
+
 
         <div class="col-12 xl:col-6">
             <div class="card">
-                <h5>รายงานสรุปแผนงานกราฟแท่ง</h5>
+                <h5>รายงานสรุปการแจ้งเตือนฉุกเฉินแบ่งตามช่วงเวลา</h5>
                 <Chart type="bar" :data="barData" :options="barOptions"></Chart>
             </div>
         </div>
-        <div class="col-12 xl:col-3">
+        <div class="col-12 xl:col-6">
+            <div class="card">
+                <h5>รายงานสรุปโรคที่เป็นมากที่สดตามลำดับ</h5>
+                <Chart type="bar" :data="barData_" :options="barOptions"></Chart>
+            </div>
+        </div>
+        <!-- <div class="col-12 xl:col-3">
             <div class="card">
                 <h5>เฉลี่ยนตามประเภทงาน</h5>
                 <Chart type="pie" :data="pieData" :options="pieOptions" />
@@ -505,37 +477,9 @@ const get = async () => {
                 <h5>ปิดงานสำเร็จ</h5>
                 <Chart type="pie" :data="pieData" :options="pieOptions" />
             </div>
-        </div>
+        </div> -->
 
 
-        <!-- <div class="col-12 xl:col-6">
-                                    <div class="card">
-                                        <h5>Recent Sales</h5>
-                                        <DataTable :value="products" :rows="5" :paginator="true" responsiveLayout="scroll">
-                                            <Column style="width: 15%">
-                                                <template #header> Image </template>
-                                                <template #body="slotProps">
-                                                    <img :src="contextPath + 'demo/images/product/' + slotProps.data.image"
-                                                        :alt="slotProps.data.image" width="50" class="shadow-2" />
-                                                </template>
-                                            </Column>
-                                            <Column field="name" header="Name" :sortable="true" style="width: 35%"></Column>
-                                            <Column field="price" header="Price" :sortable="true" style="width: 35%">
-                                                <template #body="slotProps">
-                                                    {{ formatCurrency(slotProps.data.price) }}
-                                                </template>
-                                            </Column>
-                                            <Column style="width: 15%">
-                                                <template #header> View </template>
-                                                <template #body>
-                                                    <Button icon="pi pi-search" type="button" class="p-button-text"></Button>
-                                                </template>
-                                            </Column>
-                                        </DataTable>
-
-                                    </div>
-
-                                </div> -->
     </div>
 </template>
 <style scoped>

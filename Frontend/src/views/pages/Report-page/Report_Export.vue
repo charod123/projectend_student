@@ -2,7 +2,9 @@
 import { ref, onMounted } from 'vue';
 import XLSX from 'xlsx-js-style';
 import { useStore } from '../../../store';
+import { useRouter } from 'vue-router';
 const store = useStore();
+const router = useRouter();
 onMounted(() => {
     const wsxzz = XLSX.utils.json_to_sheet(store.data_report?.data);
     for (var i in wsxzz) {
@@ -75,8 +77,13 @@ onMounted(() => {
     wsxzz['!cols'] = [{ width: 10 }, { width: 20 }, { width: 30 }, { width: 50 }, { width: 30 }, { width: 50 }];
     XLSX.utils.book_append_sheet(wo, wsxzz, 'Reports');
     XLSX.writeFile(wo, `${store.data_report.name_excel}.xlsx`);
+
+    setTimeout(() => {
+        router.back();
+    }, 2000);
     
 })
+
 </script>
 
 <template>
