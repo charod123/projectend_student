@@ -1,10 +1,9 @@
 const config = require("../../../../config/config");
 // const pgcon = require("../../../../pgConnection/pgCon");
 const moment = require("moment");
-const { readfile_ } = require("../../../readfile");
 moment.locale("th");
 const pg = config.connectionString_pg();
-const get_dashboard_task = async ({ start_date, end_date }, { email, role, subdistrict_id, division_id, subdivision_id }) => {
+const get_lavel_emergency = async ({ start_date, end_date }, { email, role, subdistrict_id, division_id, subdivision_id }) => {
     console.log(email, role);
     try {
         if (role == 3) {
@@ -12,90 +11,87 @@ const get_dashboard_task = async ({ start_date, end_date }, { email, role, subdi
         }
         if (role == 2) {
 
-            const task = await pg('task as t')
-                .join('task_type as tt', 'tt.task_type_id', 't.task_type_id')
-                .where('t.subdivision_id', subdivision_id)
-                .andWhere('t.create_date', '>', start_date)
-                .andWhere('t.create_date', '<', end_date)
-                .andWhere((builder) => {
-                    builder.where('t.task_type_id', 1)
-                        .orWhere('t.opener_task', email)
-                        .orWhere('t.person_responsible', email);
-                })
-                .select(
-                    pg.raw('COUNT(t.task_id) as all_task'),
-                    pg.raw(`SUM(CASE WHEN t.status = '1' THEN 1 ELSE 0 END) as open_task`),
-                    pg.raw(`SUM(CASE WHEN t.status = '2' THEN 1 ELSE 0 END) as pending_task`),
-                    pg.raw(`SUM(CASE WHEN t.status = '3' THEN 1 ELSE 0 END) as success_task`),
-                    pg.raw(`SUM(CASE WHEN t.status = '4' THEN 1 ELSE 0 END) as late_task`),
-                    pg.raw(`SUM(CASE WHEN t.status = '8' THEN 1 ELSE 0 END) as action_task`),
-                    pg.raw(`SUM(CASE WHEN t.status = '0' THEN 1 ELSE 0 END) as cancel_task`)
-                );
+            // const pat_count = pg('notification AS n_')
+            //     .innerJoin('device_master AS dm', 'dm.device_ip', 'n_.device_ip')
+            //     .innerJoin('patient_master AS p_', 'p_.pat_id', 'dm.pat_id')
+            //     .select('p_.*')
+            //     .count('* AS total_records')
+            //     .groupBy('p_.pat_id')
+            //     .as('pat_count');
 
-            const taskTypes = await pg.select('task_type_id')
-                .from('task_type')
-                .where({ del_flag: '1' });
+            // const max_pat_count = pg(pat_count).max('total_records AS total_records');
+            // const min_pat_count = pg(pat_count).min('total_records AS total_records');
 
-            const taskTypePromises = taskTypes.map(async (taskType) => {
-                const countTaskType = await pg('task')
-                    .select(pg.raw(`SUM(CASE WHEN task_type_id = '${taskType.task_type_id}' THEN 1 ELSE 0 END) as count_task_type`))
-                    .where('subdivision_id', subdivision_id)
-                    .andWhere('create_date', '>', start_date)
-                    .andWhere('create_date', '<', end_date)
-                    .andWhere({ del_flag: '1' })
-                    .andWhere((builder) => {
-                        builder.where('task_type_id', taskType.task_type_id)
-                            .orWhere('opener_task', email)
-                            .orWhere('person_responsible', email);
-                    });
+            // const result = pg.unionAll([
+            //     pg(pat_count)
+            //         .select('*', pg.raw('total_records, \'max\' AS type'))
+            //         .whereIn('total_records', max_pat_count),
+            //     pg(pat_count)
+            //         .select('*', pg.raw('total_records, \'min\' AS type'))
+            //         .whereIn('total_records', min_pat_count),
+            // ]);
 
-                return {
-                    task_type_id: taskType.task_type_id,
-                    count_task_type: countTaskType[0].count_task_type,
-                };
-            });
+            // console.log(result.toSQL().sql);
 
+            // const taskTypes = await pg.select('task_type_id')
+            //     .from('task_type')
+            //     .where({ del_flag: '1' });
+
+            // const taskTypePromises = taskTypes.map(async (taskType) => {
+            //     const countTaskType = await pg('task')
+            //         .select(pg.raw(`SUM(CASE WHEN task_type_id = '${taskType.task_type_id}' THEN 1 ELSE 0 END) as count_task_type`))
+            //         .where('subdivision_id', subdivision_id)
+            //         .andWhere('create_date', '>', start_date)
+            //         .andWhere('create_date', '<', end_date)
+            //         .andWhere({ del_flag: '1' })
+            //         .andWhere((builder) => {
+            //             builder.where('task_type_id', taskType.task_type_id)
+            //                 .orWhere('opener_task', email)
+            //                 .orWhere('person_responsible', email);
+            //         });
+
+            //     return {
+            //         task_type_id: taskType.task_type_id,
+            //         count_task_type: countTaskType[0].count_task_type,
+            //     };
+            // });
+
+
+            const ni = await pg('notification as n_')
+                .select('p_.*')
+                .count('n_.ni_id as emergency_count')
+                .innerJoin('device_master as dm', 'dm.device_ip', 'n_.device_ip')
+                .innerJoin('patient_master as p_', 'p_.pat_id', 'dm.pat_id')
+                .groupBy('p_.pat_id')
+
+            const avg = ni.reduce((sum, p) => sum + p.emergency_count, 0) / patientData.length;
+
+            const stdDev = Math.sqrt(
+                ni.reduce((sum, p) => sum + Math.pow(p.emergency_count - avg, 2), 0) / patientData.length
+            );
+
+            const patient = ni.find((p) => p.pat_id === 1);
+            let risk = '';
+
+            if (patient.emergency_count >= riskLevels.low.min && patient.emergency_count <= riskLevels.low.max) {
+                risk = 'น้อย';
+            } else if (patient.emergency_count >= riskLevels.moderateLow.min && patient.emergency_count <= riskLevels.moderateLow.max) {
+                risk = 'ค่อนข้างน้อย';
+            } else if (patient.emergency_count >= riskLevels.moderateHigh.min && patient.emergency_count <= riskLevels.moderateHigh.max) {
+                risk = 'ปานกลาง';
+            } else if (patient.emergency_count >= riskLevels.high.min && patient.emergency_count <= riskLevels.high.max) {
+                risk = 'ค่อนข้างมาก';
+            } else {
+                risk = 'มาก';
+            }
+
+            console.log(`ความเสี่ยงของผู้ป่วย ${patient.pat_id}: ${risk}`);
 
 
             return { code: false, status: 200, message: "success", data: { task: task[0], task_type: await Promise.all(taskTypePromises) } };
 
-        }
-        if (role == 1) {
-            const user = await pg('user_master as um')
-                .count('um.user_id')
-                .join('employee as emp', 'emp.user_id', '=', 'um.user_id')
-                .join('subdivision_master as sm', 'sm.subdivision_id', '=', 'emp.subdivision_id')
-                .where('sm.subdivision_id', '=', subdivision_id);
 
 
-            const task = await pg('task as t')
-                .join('task_type as tt', 'tt.task_type_id', 't.task_type_id')
-                .where('t.subdivision_id', subdivision_id)
-                .andWhere('t.create_date', '>', start_date)
-                .andWhere('t.create_date', '<', end_date)
-                .andWhere({ 't.del_flag': '1' })
-
-                .select(
-                    pg.raw('COUNT(t.task_id) as all_task'),
-                    pg.raw(`SUM(CASE WHEN t.status = '1' THEN 1 ELSE 0 END) as open_task`),
-                    pg.raw(`SUM(CASE WHEN t.status = '2' THEN 1 ELSE 0 END) as pending_task`),
-                    pg.raw(`SUM(CASE WHEN t.status = '3' THEN 1 ELSE 0 END) as success_task`),
-                    pg.raw(`SUM(CASE WHEN t.status = '4' THEN 1 ELSE 0 END) as late_task`),
-                    pg.raw(`SUM(CASE WHEN t.status = '8' THEN 1 ELSE 0 END) as action_task`),
-                    pg.raw(`SUM(CASE WHEN t.status = '0' THEN 1 ELSE 0 END) as cancel_task`)
-                )
-            const tasl_type_count = await pg.select('*').from('task_type as tt').where({ 'tt.del_flag': '1' })
-            const task_type = tasl_type_count.map(async (e) => {
-                const task = await pg('task').select(pg.raw(`SUM(CASE WHEN task_type_id = '${e.task_type_id}' THEN 1 ELSE 0 END) as count_task_type`))
-                    .where('task.subdivision_id', subdivision_id)
-                    .andWhere('task.create_date', '>', start_date)
-                    .andWhere('task.create_date', '<', end_date)
-                    .andWhere({ 'task.del_flag': '1' })
-
-                return task[0]
-            })
-
-            return { code: false, status: 200, message: "success", data: { task: task[0], user: user[0], task_type: await Promise.all(task_type) } };
 
         }
 
@@ -107,6 +103,6 @@ const get_dashboard_task = async ({ start_date, end_date }, { email, role, subdi
 };
 
 module.exports = {
-    get_dashboard_task,
+    get_lavel_emergency,
 
 };

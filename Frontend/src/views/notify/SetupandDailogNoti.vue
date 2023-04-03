@@ -179,6 +179,7 @@ onMounted(() => {
 const categories = ref([
     { name: 'เร่งด่วน', key: 'A' },
     { name: 'ปานกลาง', key: 'M' },
+    { name: 'ไม่ต้องการความช่วยเหลือ', key: 'M' },
 ]);
 const selectedCategory = ref(categories.value[1].name);
 const checked = ref(false);

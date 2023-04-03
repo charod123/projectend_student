@@ -153,7 +153,7 @@ const initFilters1 = () => {
                 <h2>{{ header }}</h2>
             </div>
             <div class="flex justify-content-end">
-                <Button style="width: auto" label="เพิ่มผหน่วยงาน" icon="pi pi-plus" @click="create_subdivision"
+                <Button style="width: auto" label="เพิ่มหน่วยงาน" icon="pi pi-plus" @click="create_subdivision"
                     class="p-button-success m-2" />
             </div>
             <DataTable v-if="!loading" :value="customer1" :paginator="true" class="p-datatable-gridlines mt-5 text-xl"
