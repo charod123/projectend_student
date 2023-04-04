@@ -37,13 +37,13 @@ window.addEventListener('afterprint', () => {
                         </tr>
                         <tr v-show="store.data_report.type == 'complain'" v-for="item in store.data_report?.data"
                             :key="item">
-                            <td>{{ item['ลำดับ'] }}</td>
-                            <td>{{ item['เรื่องร้องเรียน'] }}</td>
-                            <td>{{ item['ผู้แจ้ง'] }}</td>
-                            <td>{{ item['เวลาที่แจ้ง'] }}</td>
-                            <td>{{ item['ประเภทเรื่องร้องเรียน'] }}</td>
-                            <td>{{ item['เบอร์โทรติดต่อกลับ'] }}</td>
-                            <td>{{ item['สถานะ'] }}</td>
+                            <td class="p-2 text-center">{{ item['ลำดับ'] }}</td>
+                            <td class="p-2 text-center">{{ item['เรื่องร้องเรียน'] }}</td>
+                            <td class="p-2 text-center">{{ item['ผู้แจ้ง'] }}</td>
+                            <td class="p-2 text-center">{{ item['เวลาที่แจ้ง'] }}</td>
+                            <td class="p-2 text-center">{{ item['ประเภทเรื่องร้องเรียน'] }}</td>
+                            <td class="p-2 text-center">{{ item['เบอร์โทรติดต่อกลับ'] }}</td>
+                            <td class="p-2 text-center">{{ item['สถานะ'] }}</td>
                         </tr>
 
 
@@ -55,11 +55,11 @@ window.addEventListener('afterprint', () => {
                             <th v-if="store.data_report.type == 'noti'">สถานะการดำเนินการ</th>
                         </tr>
                         <tr v-show="store.data_report.type == 'noti'" v-for="item in store.data_report?.data" :key="item">
-                            <td>{{ item['ลำดับ'] }}</td>
-                            <td>{{ item['ชื่อ-นามสกุลผู้ป่วย'] }}</td>
-                            <td>{{ item['ชื่ออุปกรณ์/IPอุปกรณ์'] }}</td>
-                            <td>{{ item['เวลาที่เกิดแจ้งเตือน'] }}</td>
-                            <td>{{ item['สถานะการดำเนินการ'] }}</td>
+                            <td class="p-2 text-center">{{ item['ลำดับ'] }}</td>
+                            <td class="p-2 text-center">{{ item['ชื่อ-นามสกุลผู้ป่วย'] }}</td>
+                            <td class="p-2 text-center">{{ item['ชื่ออุปกรณ์/IPอุปกรณ์'] }}</td>
+                            <td class="p-2 text-center">{{ item['เวลาที่เกิดแจ้งเตือน'] }}</td>
+                            <td class="p-2 text-center">{{ item['สถานะการดำเนินการ'] }}</td>
                         </tr>
 
                         <tr>
@@ -69,12 +69,13 @@ window.addEventListener('afterprint', () => {
                             <th v-if="store.data_report.type == 'user_admin'">ชื่อหน่วยงานที่สังกัด</th>
                             <th v-if="store.data_report.type == 'user_admin'">หน่วยงาน</th>
                         </tr>
-                        <tr v-show="store.data_report.type == 'user_admin'" v-for="item in store.data_report?.data" :key="item">
-                            <td>{{ item['ลำดับ'] }}</td>
-                            <td>{{ item['ชื่อ-นามสกุล'] }}</td>
-                            <td>{{ item['ตำแหน่ง'] }}</td>
-                            <td>{{ item['ชื่อหน่วยงานที่สังกัด'] }}</td>
-                            <td>{{ item['หน่วยงาน'] }}</td>
+                        <tr v-show="store.data_report.type == 'user_admin'" v-for="item in store.data_report?.data"
+                            :key="item">
+                            <td class="p-2 text-center">{{ item['ลำดับ'] }}</td>
+                            <td class="p-2 text-center">{{ item['ชื่อ-นามสกุล'] }}</td>
+                            <td class="p-2 text-center">{{ item['ตำแหน่ง'] }}</td>
+                            <td class="p-2 text-center">{{ item['ชื่อหน่วยงานที่สังกัด'] }}</td>
+                            <td class="p-2 text-center">{{ item['หน่วยงาน'] }}</td>
                         </tr>
 
                         <tr>
@@ -82,24 +83,24 @@ window.addEventListener('afterprint', () => {
                             <th v-if="store.data_report.type == 'task'">ชื่อผู้เปิด</th>
                             <th v-if="store.data_report.type == 'task'">ชื่อรับผิดชอบ</th>
                             <th v-if="store.data_report.type == 'task'">งานของหน่วยงาน</th>
-                            <th v-if="store.data_report.type == 'task'">หน่วยงาน</th>
-                            <th v-if="store.data_report.type == 'task'">วันที่เปิดงาน</th>
-                            <th v-if="store.data_report.type == 'task'">กำหนดเสร็จ</th>
-                            <th v-if="store.data_report.type == 'task'">สถานะงาน</th>
-                        </tr>
-                        <tr v-show="store.data_report.type == 'task'" v-for="item in store.data_report?.data" :key="item">
-                            <td>{{ item['ลำดับ'] }}</td>
-                            <td>{{ item['ชื่อผู้เปิด'] }}</td>
-                            <td>{{ item['ชื่อรับผิดชอบ'] }}</td>
-                            <td>{{ item['งานของหน่วยงาน'] }}</td>
-                            <td>{{ item['หน่วยงาน'] }}</td>
-                            <td>{{ item['วันที่เปิดงาน'] }}</td>
-                            <td>{{ item['กำหนดเสร็จ'] }}</td>
-                            <td>{{ item['สถานะงาน'] }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <!-- <DataTable :value="store.data_report?.data" showGridlines tableStyle="min-width: 50rem"
+                        <th v-if="store.data_report.type == 'task'">หน่วยงาน</th>
+                        <th v-if="store.data_report.type == 'task'">วันที่เปิดงาน</th>
+                        <th v-if="store.data_report.type == 'task'">กำหนดเสร็จ</th>
+                        <th v-if="store.data_report.type == 'task'">สถานะงาน</th>
+                    </tr>
+                    <tr v-show="store.data_report.type == 'task'" v-for="item in store.data_report?.data" :key="item">
+                        <td class="p-2 text-center">{{ item['ลำดับ'] }}</td>
+                        <td class="p-2 text-center">{{ item['ชื่อผู้เปิด'] }}</td>
+                        <td class="p-2 text-center">{{ item['ชื่อรับผิดชอบ'] }}</td>
+                        <td class="p-2 text-center">{{ item['งานของหน่วยงาน'] }}</td>
+                        <td class="p-2 text-center">{{ item['หน่วยงาน'] }}</td>
+                        <td class="p-2 text-center">{{ item['วันที่เปิดงาน'] }}</td>
+                        <td class="p-2 text-center">{{ item['กำหนดเสร็จ'] }}</td>
+                        <td class="p-2 text-center">{{ item['สถานะงาน'] }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- <DataTable :value="store.data_report?.data" showGridlines tableStyle="min-width: 50rem"
                     style="font-family: Kanit;">
                     <Column v-if="store.data_report.type == 'complain'" field="ลำดับ" header="ลำดับ"></Column>
                     <Column v-if="store.data_report.type == 'complain'" field="เรื่องร้องเรียน" header="เรื่องร้องเรียน">
@@ -132,23 +133,23 @@ window.addEventListener('afterprint', () => {
                         header="ชื่อหน่วยงานที่สังกัด"></Column>
                     <Column v-if="store.data_report.type == 'user_admin'" field="หน่วยงาน" header="หน่วยงาน"></Column>
 
-                    <Column v-if="store.data_report.type == 'task'" field="ลำดับ" header="ลำดับ" style="font-size: 14px;">
-                    </Column>
-                    <Column v-if="store.data_report.type == 'task'" field="ชื่อผู้เปิด" header="ชื่อผู้เปิด"
-                        style="font-size: 14px;"></Column>
-                    <Column v-if="store.data_report.type == 'task'" field="ชื่อรับผิดชอบ" header="ชื่อรับผิดชอบ"
-                        style="font-size: 14px;"></Column>
-                    <Column v-if="store.data_report.type == 'task'" field="งานของหน่วยงาน" header="งานของหน่วยงาน"
-                        style="font-size: 14px;"></Column>
-                    <Column v-if="store.data_report.type == 'task'" field="หน่วยงาน" header="หน่วยงาน"
-                        style="font-size: 14px;"></Column>
-                    <Column v-if="store.data_report.type == 'task'" field="วันที่เปิดงาน" header="วันที่เปิดงาน"
-                        style="font-size: 14px;"></Column>
-                    <Column v-if="store.data_report.type == 'task'" field="กำหนดเสร็จ" header="กำหนดเสร็จ"
-                        style="font-size: 14px;"></Column>
-                    <Column v-if="store.data_report.type == 'task'" field="สถานะงาน" header="สถานะงาน"
-                        style="font-size: 14px;"></Column>
-                </DataTable> -->
+                        <Column v-if="store.data_report.type == 'task'" field="ลำดับ" header="ลำดับ" style="font-size: 14px;">
+                        </Column>
+                        <Column v-if="store.data_report.type == 'task'" field="ชื่อผู้เปิด" header="ชื่อผู้เปิด"
+                            style="font-size: 14px;"></Column>
+                        <Column v-if="store.data_report.type == 'task'" field="ชื่อรับผิดชอบ" header="ชื่อรับผิดชอบ"
+                            style="font-size: 14px;"></Column>
+                        <Column v-if="store.data_report.type == 'task'" field="งานของหน่วยงาน" header="งานของหน่วยงาน"
+                            style="font-size: 14px;"></Column>
+                        <Column v-if="store.data_report.type == 'task'" field="หน่วยงาน" header="หน่วยงาน"
+                            style="font-size: 14px;"></Column>
+                        <Column v-if="store.data_report.type == 'task'" field="วันที่เปิดงาน" header="วันที่เปิดงาน"
+                            style="font-size: 14px;"></Column>
+                        <Column v-if="store.data_report.type == 'task'" field="กำหนดเสร็จ" header="กำหนดเสร็จ"
+                            style="font-size: 14px;"></Column>
+                        <Column v-if="store.data_report.type == 'task'" field="สถานะงาน" header="สถานะงาน"
+                            style="font-size: 14px;"></Column>
+                    </DataTable> -->
             </div>
 
         </div>
