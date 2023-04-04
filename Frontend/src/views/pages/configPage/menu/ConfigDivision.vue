@@ -1,6 +1,6 @@
 <script setup>
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-import ReadDataJson from '@/service/ReadDataJson.js';
+// import ReadDataJson from '@/service/ReadDataJson.js';
 import { useConfirm } from "primevue/useconfirm";
 import { ref, onBeforeMount, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';

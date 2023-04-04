@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, reactive, ref, watch, onBeforeMount } from 'vue';
-import ProductService from '@/service/ProductService';
 import { useLayout } from '@/layout/composables/layout';
 import Service from '../../../../service/api';
 import moment from 'moment';
@@ -46,7 +45,6 @@ const date = ref({
 
 const lineOptions = ref(null);
 const subdivision = ref(null);
-const productService = new ProductService();
 const store = useStore();
 const pieData = ref(null);
 const polarData = ref(null);
@@ -64,7 +62,6 @@ const label_dis = ref('');
 const dis_count = ref();
 const barData_ = ref();
 onMounted(() => {
-    productService.getProductsSmall().then((data) => (products.value = data));
 });
 onBeforeMount(() => {
     setChart();

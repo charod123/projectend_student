@@ -66,7 +66,7 @@ const exportCSV = async () => {
                 'สถานะงาน': e.status_task,
             }
         })
-        store.data_report = { data: data_report, header: `รายงานการข้อมูลแผนประฏิบัติงาน`, type: 'task', name_excel: 'รายงานการข้อมูลแผนประฏิบัติงาน' }
+        store.data_report = { data: data_report, header: `รายงานข้อมูลแผนประฏิบัติงาน`, type: 'task', name_excel: 'รายงานการข้อมูลแผนประฏิบัติงาน' }
         if (data_report.length > 0 && data_on_report.value.select_type_report == 2) {
             return router.push('/report_pdf')
         }

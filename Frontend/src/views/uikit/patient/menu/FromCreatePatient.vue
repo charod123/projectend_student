@@ -1,8 +1,6 @@
 <script setup>
 import { ref, onMounted, watch, computed, defineComponent } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import CountryService from '@/service/CountryService';
-import NodeService from '@/service/NodeService';
 import moment from 'moment';
 import Service from '../../../../service/api';
 import { useStore } from '@/store';

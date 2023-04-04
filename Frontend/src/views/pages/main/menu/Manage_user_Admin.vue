@@ -59,7 +59,7 @@ const exportCSV = async () => {
                 'หน่วยงาน': e.division_name,
             }
         })
-        store.data_report = { data: data_report, header: `รายงานการข้อมูลพนักงาน${subdivision.value.filter(x => x.subdivision_id == data_on_report.value.select_type_complain)[0].subdivision_name}`, type: 'user_admin', name_excel: 'รายงานข้อมูลพนักงาน' }
+        store.data_report = { data: data_report, header: `รายงานข้อมูลพนักงาน${subdivision.value.filter(x => x.subdivision_id == data_on_report.value.select_type_complain)[0].subdivision_name}`, type: 'user_admin', name_excel: 'รายงานข้อมูลพนักงาน' }
         if (data_report.length > 0 && data_on_report.value.select_type_report == 2) {
             return router.push('/report_pdf')
         }

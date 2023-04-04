@@ -24,7 +24,82 @@ window.addEventListener('afterprint', () => {
             </div>
             <br>
             <div class="col-12">
-                <DataTable :value="store.data_report?.data" showGridlines tableStyle="min-width: 50rem"
+                <table style="border-collapse: collapse; width: 100%;" border="1">
+                    <tbody>
+                        <tr>
+                            <th v-if="store.data_report.type == 'complain'">ลำดับ</th>
+                            <th v-if="store.data_report.type == 'complain'">เรื่องร้องเรียน</th>
+                            <th v-if="store.data_report.type == 'complain'">ผู้แจ้ง</th>
+                            <th v-if="store.data_report.type == 'complain'">เวลาที่แจ้ง</th>
+                            <th v-if="store.data_report.type == 'complain'">ประเภทเรื่องร้องเรียน</th>
+                            <th v-if="store.data_report.type == 'complain'">เบอร์โทรติดต่อกลับ</th>
+                            <th v-if="store.data_report.type == 'complain'">สถานะ</th>
+                        </tr>
+                        <tr v-show="store.data_report.type == 'complain'" v-for="item in store.data_report?.data"
+                            :key="item">
+                            <td>{{ item['ลำดับ'] }}</td>
+                            <td>{{ item['เรื่องร้องเรียน'] }}</td>
+                            <td>{{ item['ผู้แจ้ง'] }}</td>
+                            <td>{{ item['เวลาที่แจ้ง'] }}</td>
+                            <td>{{ item['ประเภทเรื่องร้องเรียน'] }}</td>
+                            <td>{{ item['เบอร์โทรติดต่อกลับ'] }}</td>
+                            <td>{{ item['สถานะ'] }}</td>
+                        </tr>
+
+
+                        <tr>
+                            <th v-if="store.data_report.type == 'noti'">ลำดับ</th>
+                            <th v-if="store.data_report.type == 'noti'">ชื่อ-นามสกุลผู้ป่วย</th>
+                            <th v-if="store.data_report.type == 'noti'">ชื่ออุปกรณ์/IPอุปกรณ์</th>
+                            <th v-if="store.data_report.type == 'noti'">เวลาที่เกิดแจ้งเตือน</th>
+                            <th v-if="store.data_report.type == 'noti'">สถานะการดำเนินการ</th>
+                        </tr>
+                        <tr v-show="store.data_report.type == 'noti'" v-for="item in store.data_report?.data" :key="item">
+                            <td>{{ item['ลำดับ'] }}</td>
+                            <td>{{ item['ชื่อ-นามสกุลผู้ป่วย'] }}</td>
+                            <td>{{ item['ชื่ออุปกรณ์/IPอุปกรณ์'] }}</td>
+                            <td>{{ item['เวลาที่เกิดแจ้งเตือน'] }}</td>
+                            <td>{{ item['สถานะการดำเนินการ'] }}</td>
+                        </tr>
+
+                        <tr>
+                            <th v-if="store.data_report.type == 'user_admin'">ลำดับ</th>
+                            <th v-if="store.data_report.type == 'user_admin'">ชื่อ-นามสกุล</th>
+                            <th v-if="store.data_report.type == 'user_admin'">ตำแหน่ง</th>
+                            <th v-if="store.data_report.type == 'user_admin'">ชื่อหน่วยงานที่สังกัด</th>
+                            <th v-if="store.data_report.type == 'user_admin'">หน่วยงาน</th>
+                        </tr>
+                        <tr v-show="store.data_report.type == 'user_admin'" v-for="item in store.data_report?.data" :key="item">
+                            <td>{{ item['ลำดับ'] }}</td>
+                            <td>{{ item['ชื่อ-นามสกุล'] }}</td>
+                            <td>{{ item['ตำแหน่ง'] }}</td>
+                            <td>{{ item['ชื่อหน่วยงานที่สังกัด'] }}</td>
+                            <td>{{ item['หน่วยงาน'] }}</td>
+                        </tr>
+
+                        <tr>
+                            <th v-if="store.data_report.type == 'task'">ลำดับ</th>
+                            <th v-if="store.data_report.type == 'task'">ชื่อผู้เปิด</th>
+                            <th v-if="store.data_report.type == 'task'">ชื่อรับผิดชอบ</th>
+                            <th v-if="store.data_report.type == 'task'">งานของหน่วยงาน</th>
+                            <th v-if="store.data_report.type == 'task'">หน่วยงาน</th>
+                            <th v-if="store.data_report.type == 'task'">วันที่เปิดงาน</th>
+                            <th v-if="store.data_report.type == 'task'">กำหนดเสร็จ</th>
+                            <th v-if="store.data_report.type == 'task'">สถานะงาน</th>
+                        </tr>
+                        <tr v-show="store.data_report.type == 'task'" v-for="item in store.data_report?.data" :key="item">
+                            <td>{{ item['ลำดับ'] }}</td>
+                            <td>{{ item['ชื่อผู้เปิด'] }}</td>
+                            <td>{{ item['ชื่อรับผิดชอบ'] }}</td>
+                            <td>{{ item['งานของหน่วยงาน'] }}</td>
+                            <td>{{ item['หน่วยงาน'] }}</td>
+                            <td>{{ item['วันที่เปิดงาน'] }}</td>
+                            <td>{{ item['กำหนดเสร็จ'] }}</td>
+                            <td>{{ item['สถานะงาน'] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- <DataTable :value="store.data_report?.data" showGridlines tableStyle="min-width: 50rem"
                     style="font-family: Kanit;">
                     <Column v-if="store.data_report.type == 'complain'" field="ลำดับ" header="ลำดับ"></Column>
                     <Column v-if="store.data_report.type == 'complain'" field="เรื่องร้องเรียน" header="เรื่องร้องเรียน">
@@ -73,7 +148,7 @@ window.addEventListener('afterprint', () => {
                         style="font-size: 14px;"></Column>
                     <Column v-if="store.data_report.type == 'task'" field="สถานะงาน" header="สถานะงาน"
                         style="font-size: 14px;"></Column>
-                </DataTable>
+                </DataTable> -->
             </div>
 
         </div>

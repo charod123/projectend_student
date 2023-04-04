@@ -1,7 +1,7 @@
 <script setup>
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-import CustomerService from '@/service/CustomerService';
-import ProductService from '@/service/ProductService';
+// import CustomerService from '@/service/CustomerService';
+// import ProductService from '@/service/ProductService';
 import { ref, onMounted, onBeforeMount, nextTick } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import config from '@/service/config';
