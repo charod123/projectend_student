@@ -8,7 +8,7 @@ WORKDIR /home/share/web-sos-patient
 COPY  Frontend/dist /home/share/web-sos-patient
 COPY  server.js /home/share/web-sos-patient
 
-COPY package*.json ./
+COPY Frontend/package*.json ./
 
 RUN npm install
 # ระบุ port ที่ Docker จะ "ส่งออก" เมื่อ application ทำงาน
