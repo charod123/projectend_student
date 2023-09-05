@@ -8,12 +8,6 @@ pipeline {
             }
         }
 
-        // stage('Test') {
-        //     steps {
-        //         sh 'docker run sos-web-app npm test'
-        //     }
-        // }
-
         stage('Deploy') {
             steps {
                 sh 'docker run -d -p 3002:3002 sos-web-app'
