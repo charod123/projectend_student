@@ -6,8 +6,9 @@ FROM node:16.14.1
 WORKDIR /home/share/web-sos-patient
 
 # คัดลอกไฟล์ที่เกี่ยวข้องไปยัง Docker image
-COPY Frontend/ /home/share/web-sos-patient
-COPY server.js /home/share/web-sos-patient
+COPY ./Frontend/dist /home/share/web-sos-patient
+COPY package*.json ./
+COPY ./server.js /home/share/web-sos-patient
 # ติดตั้ง dependencies
 RUN yarn install
 
@@ -16,3 +17,5 @@ EXPOSE 3002
 
 # ระบุ command ที่จะทำงานเมื่อ container ถูกสร้าง
 CMD [ "node", "server.js" ]
+
+# docker run -d --name cont-sos-demo-webaapp --restart always -p 3002:3002 -v /:/home/share/web-sos-patient img-sos-demo-app
