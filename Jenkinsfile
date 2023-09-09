@@ -1,28 +1,19 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:16.14.1' // ระบุ base image
-            args '-v $PWD:/home/share/web-sos-patient' // mount volume ของโปรเจค
-        }
-    }
-    
+    agent any
     stages {
-        stage('Build') {
+        stage('Hello') {
             steps {
-                sh 'npm install' // ติดตั้ง dependencies
-                sh 'npm run build' // สร้าง build
+                echo 'Hello World' 
             }
         }
-        
-        stage('Docker Build') {
+         stage('Hello11') {
             steps {
-                sh 'docker build -t sos-web-app .' // Build Docker image
+                echo 'Hello World' 
             }
         }
-        
-        stage('Deploy') {
+         stage('Hello22') {
             steps {
-                sh 'docker run -d -p 3002:3002 sos-web-app' // สร้างและเริ่ม container
+                echo 'Hello World' 
             }
         }
     }
