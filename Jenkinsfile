@@ -1,38 +1,20 @@
 pipeline {
     agent any
+
     stages {
-        stage('Hello') {
+        stage('Docker Compose Handling') {
             steps {
-                echo 'Hello World' 
-            }
-        }
-         stage('Hello11') {
-            steps {
-                echo 'Hello World' 
-            }
-        }
-         stage('Hello22') {
-            steps {
-                echo 'Hello World' 
-            }
-        }
-        stage('Hello22') {
-            steps {
-                echo 'Hello World' 
-            }
-        }
-        stage('Hello22') {
-            steps {
-                echo 'Hello World' 
-            }
-        }
-         stage('Hello22') {
-            steps {
-                echo 'Hello World' 
+                script {
+                    def serviceIsRunning = sh(script: 'docker-compose -f docker-compose.yml ps | grep service-sos', returnStatus: true)
+                    if (serviceIsRunning == 0) {
+                        // If service is running, restart it
+                        sh 'docker-compose -f docker-compose.yml restart service-sos'
+                    } else {
+                        // Otherwise, start the service
+                        sh 'docker-compose -f docker-compose.yml up -d'
+                    }
+                }
             }
         }
     }
 }
-
-
-

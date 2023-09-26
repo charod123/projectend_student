@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  service-sos:
+    build:
+      context: ./Backend  # Directory ที่มี Dockerfile
+    image: service-sos:latest  # ชื่อ image ที่จะถูกสร้าง
+    ports:
+      - "3001:3001"
+      - "3003:3003"
+      - "3000:3000"
+    volumes:
+      - .:/home/share/service  # mount ไดเร็กทอรีปัจจุบันของ host เข้าไปยัง container
